@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#191923</color>
+    <color name="colorPrimaryDark">#191923</color>
+    <color name="colorAccent">#191923</color>
+    <color name="colorWhite">@android:color/white</color>
+    <color name="colorBlack">@android:color/black</color>
+
+    <color name="colorMainBg">#191923</color>
+    <color name="colorOrange">#FF9A86</color>
+    <color name="colorPurple">#7D55FF</color>
+
+    <color name="transparent_6">#60000000</color>
+    <color name="transparent_4">#40000000</color>
+    <color name="transparent_2">#20000000</color>
+
+    <color name="colorTotalPoint">#262C3A</color>
+</resources>

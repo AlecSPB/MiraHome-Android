@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MiraHome</string>
+    <string name="start_tip">This is Start Page</string>
+    <string name="guide_tip">This is Guide Page</string>
+
+    <string name="guide_four_start">Start</string>
+
+</resources>
