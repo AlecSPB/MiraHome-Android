@@ -1,24 +1,34 @@
 package com.mooring.mh.fragment;
 
+import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mooring.mh.R;
+import com.mooring.mh.activity.MoreActivity;
 import com.mooring.mh.views.other.CircleDisplay;
 
 /**
  * Created by Will on 16/3/24.
  */
-public class WeatherFragment extends BaseFragment implements CircleDisplay.SelectionListener {
+public class WeatherFragment extends BaseFragment implements CircleDisplay.SelectionListener, View.OnClickListener {
 
     private CircleDisplay circle_progress_1;
     private CircleDisplay circle_progress_2;
     private CircleDisplay circle_progress_3;
     private CircleDisplay circle_progress_4;
 
+    private TextView tv_more;
+
+    private View layout_show;
+    private View layout_data_fail;
+
 
     @Override
     protected int getLayoutId() {
-        return R.layout.test;
+        return R.layout.fragment_weather;
     }
 
     @Override
@@ -34,6 +44,9 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
         setmCircleDisplay(circle_progress_2, 20f);
         setmCircleDisplay(circle_progress_3, 68f);
         setmCircleDisplay(circle_progress_4, 90f);
+
+        tv_more = (TextView) rootView.findViewById(R.id.tv_more);
+        tv_more.setOnClickListener(this);
 
     }
 
@@ -56,4 +69,14 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
         Log.e("onValueUpdate", "value  " + value + "  maxValue  " + value);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_more:
+                Intent it = new Intent();
+                it.setClass(getActivity(), MoreActivity.class);
+                getActivity().startActivity(it);
+                break;
+        }
+    }
 }

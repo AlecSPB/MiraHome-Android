@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/data_select"
+            layout="@layout/date_select_layout" />
+
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/chart_heart_rate"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:drawableRight="@drawable/shape_white_circle"
+                android:text="Sleep"
+                android:textColor="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_16" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:drawablePadding="10dp"
+                android:drawableRight="@drawable/shape_purple_circle"
+                android:text="Deep Sleep"
+                android:textColor="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_16" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:text="Average Sleep efficiency"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_18" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:text="Deep Sleep 50%"
+                android:textColor="@color/colorPurple"
+                android:textSize="@dimen/text_dimen_18" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:text="Deep Sleep"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_18" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:text="Deep Sleep"
+                android:textColor="@color/colorPurple"
+                android:textSize="@dimen/text_dimen_18" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -139,7 +139,7 @@ public class CircleDisplay extends View {
         mTextPaint.setStyle(Style.STROKE);
         mTextPaint.setTextAlign(Align.CENTER);
         mTextPaint.setColor(textColor);
-        mTextPaint.setTextSize(Utils.sp2px(getResources(), 12f));
+        mTextPaint.setTextSize(Utils.sp2px(getResources(), 10f));
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
         mDrawAnimator.setInterpolator(new AccelerateDecelerateInterpolator());

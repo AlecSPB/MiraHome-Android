@@ -2,11 +2,11 @@
 <resources>
     <color name="colorPrimary">#191923</color>
     <color name="colorPrimaryDark">#191923</color>
-    <color name="colorAccent">#191923</color>
+    <color name="colorAccent">@color/colorPurple</color>
     <color name="colorWhite">@android:color/white</color>
     <color name="colorBlack">@android:color/black</color>
 
-    <color name="colorMainBg">#191923</color>
+    <color name="colorMainBg">#22222C</color>
     <color name="colorOrange">#FF9A86</color>
     <color name="colorPurple">#7D55FF</color>
 
@@ -14,5 +14,10 @@
     <color name="transparent_4">#40000000</color>
     <color name="transparent_2">#20000000</color>
 
+    <color name="colorWhite50">#7fffffff</color>
+
     <color name="colorTotalPoint">#262C3A</color>
+
+    <color name="colorLightGrey">#919196</color>
+
 </resources>
