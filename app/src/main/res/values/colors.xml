@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#191923</color>
-    <color name="colorPrimaryDark">#191923</color>
+    <color name="colorPrimaryDark">@color/colorDeepBlue</color>
     <color name="colorAccent">@color/colorPurple</color>
     <color name="colorWhite">@android:color/white</color>
     <color name="colorBlack">@android:color/black</color>
@@ -9,15 +9,18 @@
     <color name="colorMainBg">#22222C</color>
     <color name="colorOrange">#FF9A86</color>
     <color name="colorPurple">#7D55FF</color>
+    <color name="colorPurple50">#7f7D55FF</color>
 
     <color name="transparent_6">#60000000</color>
     <color name="transparent_4">#40000000</color>
     <color name="transparent_2">#20000000</color>
 
-    <color name="colorWhite50">#7fffffff</color>
+    <color name="colorWhite50">#7FFFFFFF</color>
 
     <color name="colorTotalPoint">#262C3A</color>
 
     <color name="colorLightGrey">#919196</color>
+
+    <color name="colorDeepBlue">#0F0F1B</color>
 
 </resources>

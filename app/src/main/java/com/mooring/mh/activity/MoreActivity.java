@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.adapter.SectionsPagerAdapter;
+import com.mooring.mh.adapter.DayAndMonthPagerAdapter;
 
 /**
  * Created by Will on 16/3/28.
@@ -18,7 +18,7 @@ public class MoreActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager main_viewPager;
     private TabLayout main_tabLayout;
     private ImageView imgView_back;
-    private SectionsPagerAdapter pagerAdapter;
+    private DayAndMonthPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +33,17 @@ public class MoreActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
 
-        main_viewPager = (ViewPager) findViewById(R.id.main_viewPager);
+        main_viewPager = (ViewPager) findViewById(R.id.more_viewPager);
         main_tabLayout = (TabLayout) findViewById(R.id.main_tabLayout);
         imgView_back = (ImageView) findViewById(R.id.imgView_back);
 
-
-        main_tabLayout.setTabTextColors(getResources().getColor(R.color.colorWhite50),getResources().getColor(R.color.colorPurple));
 
     }
 
     private void initData() {
 
         imgView_back.setOnClickListener(this);
-        pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new DayAndMonthPagerAdapter(getSupportFragmentManager());
         main_viewPager.setAdapter(pagerAdapter);
         main_tabLayout.setupWithViewPager(main_viewPager);
 

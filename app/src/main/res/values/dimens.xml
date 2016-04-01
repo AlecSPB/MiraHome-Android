@@ -7,5 +7,21 @@
     <dimen name="text_dimen_14">14sp</dimen>
     <dimen name="text_dimen_16">16sp</dimen>
     <dimen name="text_dimen_18">18sp</dimen>
+    <dimen name="text_dimen_24">24sp</dimen>
     <dimen name="text_dimen_28">28sp</dimen>
+    <dimen name="text_dimen_36">36sp</dimen>
+
+
+    <!--WheelPicker通用尺寸-->
+    <!--item之间间距-->
+    <dimen name="WheelItemSpace">8dp</dimen>
+    <!--WheelPicker的padding-->
+    <dimen name="WheelPadding">8dp</dimen>
+    <!--公用TextSize-->
+    <dimen name="WheelTextSize">20sp</dimen>
+    <!--标志  例如"年"的TextSize-->
+    <dimen name="WheelLabelTextSize">12sp</dimen>
+
+    <dimen name="TextSizeLarge">28sp</dimen>
+    <dimen name="ItemSpaceLarge">30dp</dimen>
 </resources>

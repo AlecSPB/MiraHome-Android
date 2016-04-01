@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_common_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/colorDeepBlue" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <TextView
+                android:id="@+id/tv_verify_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="186 0000 0000"
+                android:textColor="@color/colorPurple"
+                android:textSize="@dimen/text_dimen_36" />
+
+            <EditText
+                android:id="@+id/edit_verify_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Verification code"
+                android:inputType="phone|textEmailAddress"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/tv_wait_times"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="Please wait 48s"
+                    android:textColor="@color/colorWhite50"
+                    android:textSize="@dimen/text_dimen_18"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_verify_send"
+                    style="@style/text_send_verify"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:text="Send" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_verify_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_confirm_phone"
+                android:layout_marginTop="50dp"
+                android:background="@color/colorPurple"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Confirm"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_24"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_verify_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center_horizontal"
+                android:text="verify fail"
+                android:textColor="@color/colorOrange"
+                android:textSize="@dimen/text_dimen_16"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <include layout="@layout/common_text_mirahome" />
+    </RelativeLayout>
+</LinearLayout>

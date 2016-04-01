@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="Average Sleep efficiency"
+                android:text="Average Sleep efficiency:"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_18" />
 
@@ -78,7 +78,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="Deep Sleep"
+                android:layout_marginTop="20dp"
+                android:text="Best Sleep efficiency:"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_18" />
 
@@ -86,11 +87,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="Deep Sleep"
+                android:text="2015 11 11"
                 android:textColor="@color/colorPurple"
                 android:textSize="@dimen/text_dimen_18" />
-
-
         </LinearLayout>
 
     </LinearLayout>

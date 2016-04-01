@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_common_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/colorDeepBlue" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/edit_confirm_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="50dp"
+                android:hint="Phone number/Email"
+                android:inputType="phone|textEmailAddress"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50" />
+
+            <TextView
+                android:id="@+id/tv_confirm_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="50dp"
+                android:background="@color/colorPurple"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Next"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_24"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_confirm_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="30dp"
+                android:gravity="center_horizontal"
+                android:text="Please use the phone number or E-mail login"
+                android:textColor="@color/colorOrange"
+                android:textSize="@dimen/text_dimen_16"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <include layout="@layout/common_text_mirahome" />
+
+    </RelativeLayout>
+</LinearLayout>

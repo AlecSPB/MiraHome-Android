@@ -1,6 +1,7 @@
 package com.mooring.mh.fragment;
 
 import android.view.View;
+import android.widget.ImageView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.views.other.GiftRainView;
@@ -13,6 +14,7 @@ public class ParameterFragment extends BaseFragment {
     private GiftRainView giftRainView;
     private boolean isStart;
 
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_parameter;
@@ -23,7 +25,7 @@ public class ParameterFragment extends BaseFragment {
         giftRainView = (GiftRainView) rootView.findViewById(R.id.giftRainView);
 
 
-        giftRainView.setImages(R.mipmap.ico_gold_money,R.mipmap.ico_money,R.mipmap.ic_launcher);
+        giftRainView.setImages(R.mipmap.ico_gold_money, R.mipmap.ico_money, R.mipmap.ic_launcher);
 
         giftRainView.startRain();
         isStart = true;
@@ -40,6 +42,8 @@ public class ParameterFragment extends BaseFragment {
                 }
             }
         });
+
+
     }
 
 

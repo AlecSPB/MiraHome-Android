@@ -32,7 +32,6 @@ public class InitApplicationHelper {
         sp = app.getSharedPreferences("mooring", Context.MODE_PRIVATE);
         x.Ext.init(app);
         x.Ext.setDebug(true);//发布版本时要设置false
-
     }
 
 }

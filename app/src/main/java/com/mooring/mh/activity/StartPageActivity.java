@@ -4,10 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
+
+import org.xutils.common.util.LogUtil;
 
 /**
  * Created by Will on 16/3/24.
@@ -24,13 +25,15 @@ public class StartPageActivity extends AppCompatActivity {
             public void run() {
                 try {
                     Intent intent = new Intent();
-                    Log.e("111",InitApplicationHelper.sp.getBoolean("appFirstStart", true)+"");
+
+                    LogUtil.e(InitApplicationHelper.sp.getBoolean("appFirstStart", true) + "");
+
                     if (InitApplicationHelper.sp.getBoolean("appFirstStart", true)) {
                         // 引导页
                         intent.setClass(StartPageActivity.this, GuidePageActivity.class);
                     } else {
                         // 启动首页
-                        intent.setClass(StartPageActivity.this, MainActivity.class);
+                        intent.setClass(StartPageActivity.this, LoginAndSignUpActivity.class);
                     }
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
@@ -39,9 +42,8 @@ public class StartPageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        }, 300);
+        }, 1000);
     }
-
 
     @Override
     protected void onResume() {

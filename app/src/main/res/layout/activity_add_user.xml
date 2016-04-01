@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_common_title" />
+
+    <com.mooring.mh.views.CircleImageView
+        android:id="@+id/imgView_add_user"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="50dp"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_width="0dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/add_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@mipmap/ic_breath_pause"
+            android:hint="Name"
+            android:inputType="phone|textEmailAddress"
+            android:singleLine="true"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite50" />
+
+        <EditText
+            android:id="@+id/add_user_sex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@mipmap/ic_breath_pause"
+            android:hint="Male/Female"
+            android:inputType="phone|textEmailAddress"
+            android:singleLine="true"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite50" />
+
+        <EditText
+            android:id="@+id/add_user_birthday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@mipmap/ic_breath_pause"
+            android:hint="Birthday"
+            android:inputType="phone|textEmailAddress"
+            android:singleLine="true"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite50" />
+
+        <EditText
+            android:id="@+id/add_user_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@mipmap/ic_breath_pause"
+            android:hint="Height"
+            android:inputType="phone|textEmailAddress"
+            android:singleLine="true"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite50" />
+
+        <EditText
+            android:id="@+id/add_user_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@mipmap/ic_breath_pause"
+            android:hint="Weight"
+            android:inputType="phone|textEmailAddress"
+            android:singleLine="true"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite50" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_add_user_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/colorPurple"
+        android:clickable="true"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="Confirm"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_24"
+        android:textStyle="bold" />
+
+</LinearLayout>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/sex_other_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPurple">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="Male/Female"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_18" />
+
+        <ImageView
+            android:id="@+id/imgView_chose_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/ic_arrow" />
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/sex_choose_male"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/colorMainBg"
+        android:gravity="center"
+        android:text="@string/male"
+        android:textColor="@color/colorWhite50"
+        android:textSize="@dimen/text_dimen_18" />
+
+    <TextView
+        android:id="@+id/sex_choose_female"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/colorMainBg"
+        android:gravity="center"
+        android:text="@string/female"
+        android:textColor="@color/colorWhite50"
+        android:textSize="@dimen/text_dimen_18" />
+
+</LinearLayout>

@@ -144,5 +144,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

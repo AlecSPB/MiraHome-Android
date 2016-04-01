@@ -5,4 +5,10 @@
 
     <string name="guide_four_start">Start</string>
 
+    <string name="male">Male</string>
+
+    <string name="female">Female</string>
+
+    <string name="cancel">cancel</string>
+
 </resources>

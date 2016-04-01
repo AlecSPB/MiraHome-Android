@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mooring.mh">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".app.InitApplication"
         android:allowBackup="true"
@@ -10,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.StartPageActivity"
+            android:name=".activity.AddUserActivity"
             android:theme="@style/StartAndGuideTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +29,16 @@
         <activity android:name=".activity.MainActivity" />
 
         <activity android:name=".activity.MoreActivity" />
+
+        <activity android:name=".activity.LoginAndSignUpActivity" />
+
+        <activity android:name=".activity.ConfirmationPswActivity" />
+
+        <activity android:name=".activity.CommonSuccessActivity" />
+
+        <activity android:name=".activity.VerifyPhoneActivity" />
+
+        <!--<activity android:name=".activity.AddUserActivity" />-->
     </application>
 
 </manifest>

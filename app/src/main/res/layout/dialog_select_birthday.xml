@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/other_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPurple"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/select_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="Birthday"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_18" />
+
+        <ImageView
+            android:id="@+id/select_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/ic_arrow" />
+    </RelativeLayout>
+
+
+    <com.mooring.mh.views.WheelPicker.WheelDatePicker
+        android:id="@+id/wheel_date"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/colorMainBg" />
+
+
+</LinearLayout>

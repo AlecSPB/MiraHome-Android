@@ -18,7 +18,9 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        if (getLayoutId() == 0) {
+            throw new NullPointerException();
+        }
         rootView = inflater.inflate(getLayoutId(), container, false);
 
         initView();

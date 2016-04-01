@@ -13,6 +13,14 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.GuideViewPagerAdapter;
 import com.mooring.mh.app.InitApplicationHelper;
+import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MConstants;
+
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.common.util.LogUtil;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.util.ArrayList;
 
@@ -45,9 +53,42 @@ public class GuidePageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_guidepage);
 
+        if ("".equals(CommonUtils.getSP("token"))) {
+            getToken();
+        }
+
         initView();
 
         initData();
+    }
+
+    private void getToken() {
+        RequestParams params = new RequestParams(MConstants.SERVICE_URL + MConstants.TOKEN);
+        x.http().post(params, new Callback.CommonCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                if (result != null) {
+                    JSONObject data = result.optJSONObject("data");
+                    String token = data.optString("token");
+                    CommonUtils.addSP("token", token);
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                LogUtil.e(ex.getMessage(), ex);
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                LogUtil.e(cex.getMessage(), cex);
+            }
+
+            @Override
+            public void onFinished() {
+                LogUtil.e("onFinished");
+            }
+        });
     }
 
     private void initView() {
@@ -139,7 +180,7 @@ public class GuidePageActivity extends AppCompatActivity {
         edit.putBoolean("appFirstStart", false);
         edit.commit();
         Intent intent = new Intent();
-        intent.setClass(GuidePageActivity.this, MainActivity.class);
+        intent.setClass(GuidePageActivity.this, LoginAndSignUpActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         this.finish();

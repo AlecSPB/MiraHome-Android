@@ -4,14 +4,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.mooring.mh.fragment.DayFragment;
-import com.mooring.mh.fragment.MonthFragment;
+import com.mooring.mh.fragment.LoginFragment;
+import com.mooring.mh.fragment.SignUpFragment;
 
 /**
- * Created by Will on 16/3/28.
+ * Created by Will on 16/3/30.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
-    public SectionsPagerAdapter(FragmentManager fm) {
+public class LoginAndSignUpPagerAdapter extends FragmentPagerAdapter {
+    public LoginAndSignUpPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -20,10 +20,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0: {
-                return new DayFragment();
+                return new LoginFragment();
             }
             case 1: {
-                return new MonthFragment();
+                return new SignUpFragment();
             }
         }
         return null;
@@ -35,15 +35,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     }
 
 
-
-
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Day";
+                return "Login";
             case 1:
-                return "Month";
+                return "Sign Up";
         }
         return null;
     }
