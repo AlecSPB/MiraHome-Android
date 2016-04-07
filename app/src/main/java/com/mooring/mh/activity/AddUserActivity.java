@@ -9,21 +9,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.views.CircleImageView;
+import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
-import com.mooring.mh.views.WheelPicker.WheelDatePicker;
+import com.mooring.mh.views.WheelPicker.widget.WheelDatePicker;
+import com.mooring.mh.views.WheelPicker.widget.WheelHeightSelectPicker;
+import com.mooring.mh.views.WheelPicker.widget.WheelWeightSelectPicker;
 
 /**
+ * 添加用户Activity
+ * <p/>
  * Created by Will on 16/3/31.
  */
 public class AddUserActivity extends BaseActivity implements View.OnClickListener {
 
     private CircleImageView imgView_add_user;
     private EditText add_user_name;
-    private EditText add_user_sex;
-    private EditText add_user_birthday;
-    private EditText add_user_height;
-    private EditText add_user_weight;
+    private TextView add_user_sex;
+    private TextView add_user_birthday;
+    private TextView add_user_height;
+    private TextView add_user_weight;
     private TextView tv_add_user_confirm;
 
     private Dialog dialog_choose_sex;
@@ -54,10 +58,10 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
     private void initView() {
         imgView_add_user = (CircleImageView) findViewById(R.id.imgView_add_user);
         add_user_name = (EditText) findViewById(R.id.add_user_name);
-        add_user_sex = (EditText) findViewById(R.id.add_user_sex);
-        add_user_birthday = (EditText) findViewById(R.id.add_user_birthday);
-        add_user_height = (EditText) findViewById(R.id.add_user_height);
-        add_user_weight = (EditText) findViewById(R.id.add_user_weight);
+        add_user_sex = (TextView) findViewById(R.id.add_user_sex);
+        add_user_birthday = (TextView) findViewById(R.id.add_user_birthday);
+        add_user_height = (TextView) findViewById(R.id.add_user_height);
+        add_user_weight = (TextView) findViewById(R.id.add_user_weight);
         tv_add_user_confirm = (TextView) findViewById(R.id.tv_add_user_confirm);
 
         imgView_add_user.setOnClickListener(this);
@@ -88,10 +92,10 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
                 SelectBirthday();
                 break;
             case R.id.add_user_height:
-
+                SelectHeight();
                 break;
             case R.id.add_user_weight:
-
+                SelectWeight();
                 break;
             case R.id.tv_add_user_confirm:
 
@@ -218,7 +222,58 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
      * 选择身高
      */
     private void SelectHeight() {
+        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog_select_height);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.findViewById(R.id.other_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        select_confirm = (ImageView) dialog.findViewById(R.id.select_confirm);
+        select_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //提交
+                add_user_height.setText(date);
+                dialog.cancel();
+            }
+        });
 
+        padding = getResources().getDimensionPixelSize(R.dimen.WheelPadding);
+        textSize = getResources().getDimensionPixelSize(R.dimen.TextSizeLarge);
+        itemSpace = getResources().getDimensionPixelSize(R.dimen.ItemSpaceLarge);
+        WheelHeightSelectPicker dataPicker = (WheelHeightSelectPicker) dialog.findViewById(R.id.wheel_data_height);
+        dataPicker.setPadding(0, 0, 0, 0);
+        dataPicker.setTextColor(getResources().getColor(R.color.colorWhite50));
+        dataPicker.setCurrentTextColor(getResources().getColor(R.color.colorPurple));
+        dataPicker.setTextSize(textSize);
+        dataPicker.setItemSpace(itemSpace);
+        dataPicker.setCurrentData(170, "cm");
+        dataPicker.setOnWheelChangeListener(new AbstractWheelPicker.OnWheelChangeListener() {
+            @Override
+            public void onWheelScrolling(float deltaX, float deltaY) {
+
+            }
+
+            @Override
+            public void onWheelSelected(View view, int index, String data) {
+                date = data;
+            }
+
+            @Override
+            public void onWheelScrollStateChanged(int state) {
+                if (state != AbstractWheelPicker.SCROLL_STATE_IDLE) {
+                    select_confirm.setEnabled(false);
+                } else {
+                    select_confirm.setEnabled(true);
+                }
+            }
+        });
+
+        dialog.show();
+        setDialogFullScreen(dialog);
 
     }
 
@@ -226,7 +281,58 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
      * 选择重量
      */
     private void SelectWeight() {
+        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog_select_weight);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.findViewById(R.id.other_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        select_confirm = (ImageView) dialog.findViewById(R.id.select_confirm);
+        select_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //提交
+                add_user_weight.setText(date);
+                dialog.cancel();
+            }
+        });
 
+        padding = getResources().getDimensionPixelSize(R.dimen.WheelPadding);
+        textSize = getResources().getDimensionPixelSize(R.dimen.TextSizeLarge);
+        itemSpace = getResources().getDimensionPixelSize(R.dimen.ItemSpaceLarge);
+        WheelWeightSelectPicker dataPicker = (WheelWeightSelectPicker) dialog.findViewById(R.id.wheel_data_weight);
+        dataPicker.setPadding(0, 0, 0, 0);
+        dataPicker.setTextColor(getResources().getColor(R.color.colorWhite50));
+        dataPicker.setCurrentTextColor(getResources().getColor(R.color.colorPurple));
+        dataPicker.setTextSize(textSize);
+        dataPicker.setItemSpace(itemSpace);
+        dataPicker.setCurrentData("70", "kg");
+        dataPicker.setOnWheelChangeListener(new AbstractWheelPicker.OnWheelChangeListener() {
+            @Override
+            public void onWheelScrolling(float deltaX, float deltaY) {
+
+            }
+
+            @Override
+            public void onWheelSelected(View view, int index, String data) {
+                date = data;
+            }
+
+            @Override
+            public void onWheelScrollStateChanged(int state) {
+                if (state != AbstractWheelPicker.SCROLL_STATE_IDLE) {
+                    select_confirm.setEnabled(false);
+                } else {
+                    select_confirm.setEnabled(true);
+                }
+            }
+        });
+
+        dialog.show();
+        setDialogFullScreen(dialog);
 
     }
 

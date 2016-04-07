@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.AddUserActivity"
+            android:name=".activity.StartPageActivity"
             android:theme="@style/StartAndGuideTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +38,9 @@
 
         <activity android:name=".activity.VerifyPhoneActivity" />
 
-        <!--<activity android:name=".activity.AddUserActivity" />-->
+        <activity android:name=".activity.AddUserActivity" />
+
+        <activity android:name=".activity.MenuActivity" />
     </application>
 
 </manifest>

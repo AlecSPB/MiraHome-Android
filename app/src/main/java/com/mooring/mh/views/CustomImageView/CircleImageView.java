@@ -1,4 +1,4 @@
-package com.mooring.mh.views;
+package com.mooring.mh.views.CustomImageView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -25,7 +25,7 @@ import com.mooring.mh.R;
 
 /**
  * 圆形头像
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class CircleImageView extends ImageView {
@@ -282,7 +282,6 @@ public class CircleImageView extends ImageView {
 
         if (mBitmap == null) {
             invalidate();
-            return;
         }
 
         mBitmapShader = new BitmapShader(mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
@@ -335,5 +334,4 @@ public class CircleImageView extends ImageView {
 
         mBitmapShader.setLocalMatrix(mShaderMatrix);
     }
-
 }

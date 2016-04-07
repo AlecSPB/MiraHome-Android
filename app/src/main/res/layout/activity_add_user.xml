@@ -8,7 +8,7 @@
 
     <include layout="@layout/activity_common_title" />
 
-    <com.mooring.mh.views.CircleImageView
+    <com.mooring.mh.views.CustomImageView.CircleImageView
         android:id="@+id/imgView_add_user"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -31,54 +31,111 @@
             android:layout_height="wrap_content"
             android:drawableRight="@mipmap/ic_breath_pause"
             android:hint="Name"
-            android:inputType="phone|textEmailAddress"
             android:singleLine="true"
             android:textColor="@color/colorWhite"
-            android:textColorHint="@color/colorWhite50" />
+            android:textColorHint="@color/colorWhite50"
+            android:textSize="@dimen/text_dimen_24" />
 
-        <EditText
-            android:id="@+id/add_user_sex"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableRight="@mipmap/ic_breath_pause"
-            android:hint="Male/Female"
-            android:inputType="phone|textEmailAddress"
-            android:singleLine="true"
-            android:textColor="@color/colorWhite"
-            android:textColorHint="@color/colorWhite50" />
+            android:orientation="vertical"
+            android:padding="5dp">
 
-        <EditText
-            android:id="@+id/add_user_birthday"
+            <TextView
+                android:id="@+id/add_user_sex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableRight="@mipmap/ic_breath_pause"
+                android:gravity="center_vertical"
+                android:hint="Male/Female"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_24" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorPurple" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableRight="@mipmap/ic_breath_pause"
-            android:hint="Birthday"
-            android:inputType="phone|textEmailAddress"
-            android:singleLine="true"
-            android:textColor="@color/colorWhite"
-            android:textColorHint="@color/colorWhite50" />
+            android:orientation="vertical"
+            android:padding="5dp">
 
-        <EditText
-            android:id="@+id/add_user_height"
+            <TextView
+                android:id="@+id/add_user_birthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableRight="@mipmap/ic_breath_pause"
+                android:gravity="center_vertical"
+                android:hint="Birthday"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_24" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorPurple" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableRight="@mipmap/ic_breath_pause"
-            android:hint="Height"
-            android:inputType="phone|textEmailAddress"
-            android:singleLine="true"
-            android:textColor="@color/colorWhite"
-            android:textColorHint="@color/colorWhite50" />
+            android:orientation="vertical"
+            android:padding="5dp">
 
-        <EditText
-            android:id="@+id/add_user_weight"
+            <TextView
+                android:id="@+id/add_user_height"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableRight="@mipmap/ic_breath_pause"
+                android:gravity="center_vertical"
+                android:hint="Height"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_24" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorPurple" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableRight="@mipmap/ic_breath_pause"
-            android:hint="Weight"
-            android:inputType="phone|textEmailAddress"
-            android:singleLine="true"
-            android:textColor="@color/colorWhite"
-            android:textColorHint="@color/colorWhite50" />
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/add_user_weight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableRight="@mipmap/ic_breath_pause"
+                android:gravity="center_vertical"
+                android:hint="Weight"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_24" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorPurple" />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -36,8 +36,11 @@
         <attr name="wheel_text_color_current" format="color" />
     </declare-styleable>
 
-
-
+    <!--自定义圆形可缩放图片-->
+    <declare-styleable name="ZoomCircleView">
+        <attr name="img_src" format="reference" />
+        <attr name="img_zoom_out" format="boolean" />
+    </declare-styleable>
 
 
     <!--测试使用-->
@@ -115,4 +118,5 @@
         <attr name="donutProgressStyle" format="reference" />
         <attr name="arcProgressStyle" format="reference" />
     </declare-styleable>
+
 </resources>

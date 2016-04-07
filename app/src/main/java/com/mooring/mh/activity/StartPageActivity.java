@@ -33,7 +33,7 @@ public class StartPageActivity extends AppCompatActivity {
                         intent.setClass(StartPageActivity.this, GuidePageActivity.class);
                     } else {
                         // 启动首页
-                        intent.setClass(StartPageActivity.this, LoginAndSignUpActivity.class);
+                        intent.setClass(StartPageActivity.this, MainActivity.class);
                     }
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);

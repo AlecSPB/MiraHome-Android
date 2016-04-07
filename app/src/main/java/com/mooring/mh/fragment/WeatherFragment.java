@@ -3,13 +3,10 @@ package com.mooring.mh.fragment;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
-import com.mooring.mh.views.CircleImageView;
 import com.mooring.mh.views.other.CircleDisplay;
 
 /**
@@ -27,9 +24,7 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
     private View layout_show;
     private View layout_data_fail;
 
-    private ImageView imgView_title_menu;
-    private CircleImageView circleImg_left;
-    private CircleImageView circleImg_right;
+
 
 
     @Override
@@ -39,13 +34,6 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
 
     @Override
     protected void initView() {
-
-        circleImg_left = (CircleImageView) rootView.findViewById(R.id.circleImg_left);
-        circleImg_right = (CircleImageView) rootView.findViewById(R.id.circleImg_right);
-
-
-        circleImg_left.setOnClickListener(this);
-        circleImg_right.setOnClickListener(this);
 
         circle_progress_1 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_1);
         circle_progress_2 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_2);
@@ -89,11 +77,6 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
                 Intent it = new Intent();
                 it.setClass(getActivity(), MoreActivity.class);
                 getActivity().startActivity(it);
-                break;
-            case R.id.circleImg_left:
-                break;
-            case R.id.circleImg_right:
-
                 break;
         }
     }

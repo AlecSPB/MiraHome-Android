@@ -1,7 +1,10 @@
-package com.mooring.mh.views.WheelPicker;
+package com.mooring.mh.views.WheelPicker.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+
+import com.mooring.mh.views.WheelPicker.WheelCurvedPicker;
+import com.mooring.mh.views.WheelPicker.WheelStraightPicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,13 +13,10 @@ import java.util.List;
 /**
  * 基于WheelPicker的年份选择控件
  * YearPicker base on WheelPicker
- *
- * @author AigeStudio 2015-12-03
- * @author AigeStudio 2015-12-08
- * @author AigeStudio 2015-12-12
- * @version 1.0.0 beta
+ * <p/>
+ * Created by Will on 16/3/31.
  */
-public class WheelYearPicker extends WheelStraightPicker {
+public class WheelYearPicker extends WheelCurvedPicker {
     private static final List<String> YEARS = new ArrayList<>();
     private static final int FROM = 1900, TO = 2100;
 

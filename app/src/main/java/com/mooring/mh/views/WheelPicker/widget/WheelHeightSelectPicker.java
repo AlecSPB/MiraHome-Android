@@ -1,6 +1,7 @@
-package com.mooring.mh.views;
+package com.mooring.mh.views.WheelPicker.widget;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -11,56 +12,53 @@ import com.mooring.mh.views.WheelPicker.AbstractWheelDecor;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.IWheelPicker;
 import com.mooring.mh.views.WheelPicker.WheelCrossPicker;
-import com.mooring.mh.views.WheelPicker.WheelDayPicker;
-import com.mooring.mh.views.WheelPicker.WheelMonthPicker;
-import com.mooring.mh.views.WheelPicker.WheelStraightPicker;
-import com.mooring.mh.views.WheelPicker.WheelYearPicker;
 
 import java.util.List;
 
 /**
- * 公共dialog选择器
+ * 身高和对应单位选择器
  * <p/>
  * Created by Will on 16/4/1.
  */
-public class ShowSelectDialog extends LinearLayout implements IWheelPicker {
+public class WheelHeightSelectPicker extends LinearLayout implements IWheelPicker {
 
-    private WheelStraightPicker heightPicker;//身高
-    private WheelStraightPicker unitPicker;//单位
+    private WheelHeightPicker heightPicker;//身高
+    private WheelHeightUnitPicker unitPicker;//单位
     protected AbstractWheelPicker.OnWheelChangeListener listener;
-    private String height = "";
-    private String unit = "";
+    private String height, unit;
+    public static final int HEIGHT = 0;
+    public static final int UNIT = 1;
 
-    public ShowSelectDialog(Context context) {
+    public WheelHeightSelectPicker(Context context) {
         super(context);
         init();
     }
 
-    public ShowSelectDialog(Context context, AttributeSet attrs) {
+    public WheelHeightSelectPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
     private void init() {
+
         setGravity(Gravity.CENTER);
         setOrientation(HORIZONTAL);
 
         int padding = getResources().getDimensionPixelSize(R.dimen.WheelPadding);
-        int padding2x = padding * 3;
-
+        int padding2x = padding * 5;
 
         LayoutParams llParams = new LayoutParams(-2, -2);
 
-        heightPicker = new WheelStraightPicker(getContext());
-        unitPicker = new WheelStraightPicker(getContext());
-        heightPicker.setPadding(padding2x, 0, padding2x, 0);
-        unitPicker.setPadding(padding2x, 0, padding2x, 0);
+        heightPicker = new WheelHeightPicker(getContext());
+        unitPicker = new WheelHeightUnitPicker(getContext());
+        heightPicker.setPadding(padding, 0, padding2x, 0);
+        unitPicker.setPadding(padding, 0, padding2x, 0);
 
         addView(heightPicker, llParams);
         addView(unitPicker, llParams);
 
-        initListener(heightPicker, 0);
-        initListener(unitPicker, 1);
+        initListener(heightPicker, HEIGHT);
+        initListener(unitPicker, UNIT);
     }
 
 
@@ -73,38 +71,40 @@ public class ShowSelectDialog extends LinearLayout implements IWheelPicker {
 
             @Override
             public void onWheelSelected(View view, int index, String data) {
-                if (type == 0) {
+                if (type == HEIGHT) {
                     height = data;
                 }
-                if (type == 1) {
+                if (type == UNIT) {
                     unit = data;
                 }
-                if (isValidDate()) {
-                    if (type == 0 || type == 1)
-                        pickerDay.setCurrentYearAndMonth(Integer.valueOf(year),
-                                Integer.valueOf(month));
-                    if (null != listener)
-                        listener.onWheelSelected(view, -1, year + "-" + month + "-" + day);
+                if (!TextUtils.isEmpty(height) && !TextUtils.isEmpty(unit)) {
+                    listener.onWheelSelected(view, -1, height + " " + unit);
                 }
             }
 
             @Override
             public void onWheelScrollStateChanged(int state) {
-                if (type == 0) stateYear = state;
-                if (type == 1) stateMonth = state;
-                if (null != listener) checkState(listener);
+                if (null != listener) {
+                    listener.onWheelScrollStateChanged(state);
+                }
             }
         });
     }
 
-    public void setCurrentHeight(int height, int unit) {
-        heightPicker.setCurrentYear(height);
-        unitPicker.setCurrentMonth(unit);
+    /**
+     * 设置当前身高数据
+     *
+     * @param height
+     * @param unit
+     */
+    public void setCurrentData(int height, String unit) {
+        heightPicker.setCurrentData(height);
+        unitPicker.setCurrentUnit(unit);
     }
 
     @Override
     public void setData(List<String> data) {
-
+        throw new RuntimeException("Set data will not allow here!");
     }
 
     @Override
@@ -114,41 +114,49 @@ public class ShowSelectDialog extends LinearLayout implements IWheelPicker {
 
     @Override
     public void setItemIndex(int index) {
-
+        heightPicker.setItemIndex(index);
+        unitPicker.setItemIndex(index);
     }
 
     @Override
     public void setItemSpace(int space) {
-
+        heightPicker.setItemSpace(space);
+        unitPicker.setItemSpace(space);
     }
 
     @Override
     public void setItemCount(int count) {
-
+        heightPicker.setItemCount(count);
+        unitPicker.setItemCount(count);
     }
 
     @Override
     public void setTextColor(int color) {
-
+        heightPicker.setTextColor(color);
+        unitPicker.setTextColor(color);
     }
 
     @Override
     public void setTextSize(int size) {
-
+        heightPicker.setTextSize(size);
+        unitPicker.setTextSize(size);
     }
 
     @Override
     public void clearCache() {
-
+        heightPicker.clearCache();
+        unitPicker.clearCache();
     }
 
     @Override
     public void setCurrentTextColor(int color) {
-
+        heightPicker.setCurrentTextColor(color);
+        unitPicker.setCurrentTextColor(color);
     }
 
     @Override
     public void setWheelDecor(boolean ignorePadding, AbstractWheelDecor decor) {
-
+        heightPicker.setWheelDecor(ignorePadding, decor);
+        unitPicker.setWheelDecor(ignorePadding, decor);
     }
 }

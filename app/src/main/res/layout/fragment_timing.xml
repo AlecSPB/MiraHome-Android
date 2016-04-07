@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/ic_launcher"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="?attr/actionBarSize">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -118,9 +119,9 @@
                 android:layout_marginLeft="50dp"
                 android:background="@android:color/transparent"
                 custom:arc_bottom_text="MEMORY"
-                custom:arc_text_color="@color/colorWhite"
                 custom:arc_finished_color="@color/colorOrange"
                 custom:arc_progress="10"
+                custom:arc_text_color="@color/colorWhite"
                 custom:arc_unfinished_color="@android:color/transparent" />
 
             <com.mooring.mh.views.CircleProgress.ArcProgress

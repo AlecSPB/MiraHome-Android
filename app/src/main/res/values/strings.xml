@@ -11,4 +11,6 @@
 
     <string name="cancel">cancel</string>
 
+    <string name="connect_mooring_tip">Please connect MOORING</string>
+
 </resources>
