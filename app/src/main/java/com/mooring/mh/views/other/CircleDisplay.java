@@ -38,7 +38,7 @@ public class CircleDisplay extends View {
     /**
      * The width of the ring
      */
-    private float mStrokeWidth = 20f;
+    private float mStrokeWidth = 10f;
     /**
      * angle that represents the displayed value
      */
@@ -127,13 +127,13 @@ public class CircleDisplay extends View {
         finishedPaint.setColor(finishedStrokeColor);
         finishedPaint.setStyle(Paint.Style.STROKE);
         finishedPaint.setAntiAlias(true);
-        finishedPaint.setStrokeWidth(20);
+        finishedPaint.setStrokeWidth(mStrokeWidth);
 
         unfinishedPaint = new Paint();
         unfinishedPaint.setColor(unfinishedStrokeColor);
         unfinishedPaint.setStyle(Paint.Style.STROKE);
         unfinishedPaint.setAntiAlias(true);
-        unfinishedPaint.setStrokeWidth(20);
+        unfinishedPaint.setStrokeWidth(mStrokeWidth);
 
         mTextPaint = new TextPaint();
         mTextPaint.setStyle(Style.STROKE);
