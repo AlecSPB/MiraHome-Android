@@ -3,12 +3,12 @@ package com.mooring.mh.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.mooring.mh.adapter.DataAdapter;
+import com.mooring.mh.adapter.HorizontalDataAdapter;
 
 /**
  * Created by Will on 16/4/7.
  */
-public class ImageData implements DataAdapter.AdapterData, Parcelable {
+public class ImageData implements HorizontalDataAdapter.AdapterData, Parcelable {
     private String title;
     private String thumbnailUrl;
 

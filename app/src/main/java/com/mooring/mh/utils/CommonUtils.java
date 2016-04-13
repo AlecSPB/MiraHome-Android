@@ -1,9 +1,13 @@
 package com.mooring.mh.utils;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.mooring.mh.app.InitApplicationHelper;
@@ -23,28 +27,50 @@ public class CommonUtils {
     /**
      * dp转换成px单位
      *
-     * @param r
+     * @param context
      * @param dp
      * @return
      */
-    public static float dp2px(Resources r, float dp) {
-        DisplayMetrics metrics = r.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
+    public static int dp2px(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
     }
 
     /**
-     * sp转换成px单位
+     * px2dp
      *
-     * @param resources
-     * @param sp
+     * @param context
+     * @param pxValue
      * @return
      */
-    public static float sp2px(Resources resources, float sp) {
-        final float scale = resources.getDisplayMetrics().scaledDensity;
-        return sp * scale;
+    public static int px2dp(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
     }
 
+    /**
+     * 将sp值转换为px值，保证文字大小不变
+     *
+     * @param spValue
+     * @param spValue （DisplayMetrics类中属性scaledDensity）
+     * @return
+     */
+    public static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /**
+     * 将px值转换为sp值，保证文字大小不变
+     *
+     * @param context
+     * @param pxValue
+     * @return
+     */
+    public static int px2sp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
 
     /**
      * 判别邮箱 包含aa@qq.vip.com，aa@qq.com
@@ -160,5 +186,19 @@ public class CommonUtils {
         RequestParams params = new RequestParams(MConstants.SERVICE_URL + uri);
         params.addBodyParameter("token", getSP("token"));
         return params;
+    }
+
+    /**
+     * 设置dialog的内容全屏展示
+     *
+     * @param act
+     * @param dialog
+     */
+    public static void setDialogFullScreen(Activity act, Dialog dialog) {
+        WindowManager windowManager = act.getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+        lp.width = display.getWidth(); //设置宽度
+        dialog.getWindow().setAttributes(lp);
     }
 }

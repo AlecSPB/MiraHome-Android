@@ -99,7 +99,7 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <com.mooring.mh.views.other.CircleDisplay
+                    <com.mooring.mh.views.CircleProgress.CircleDisplay
                         android:id="@+id/circle_progress_1"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
@@ -127,7 +127,7 @@
                         android:layout_alignParentLeft="true"
                         android:orientation="vertical">
 
-                        <com.mooring.mh.views.other.CircleDisplay
+                        <com.mooring.mh.views.CircleProgress.CircleDisplay
                             android:id="@+id/circle_progress_2"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
@@ -151,7 +151,7 @@
                         android:layout_alignParentRight="true"
                         android:orientation="vertical">
 
-                        <com.mooring.mh.views.other.CircleDisplay
+                        <com.mooring.mh.views.CircleProgress.CircleDisplay
                             android:id="@+id/circle_progress_3"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
@@ -176,7 +176,7 @@
                     android:layout_alignParentRight="true"
                     android:orientation="vertical">
 
-                    <com.mooring.mh.views.other.CircleDisplay
+                    <com.mooring.mh.views.CircleProgress.CircleDisplay
                         android:id="@+id/circle_progress_4"
                         android:layout_width="60dp"
                         android:layout_height="60dp"

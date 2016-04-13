@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mooring.mh.R;
-import com.mooring.mh.adapter.DataAdapter;
+import com.mooring.mh.adapter.HorizontalDataAdapter;
 import com.mooring.mh.model.ImageData;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CustomImageView.ZoomCircleView;
@@ -44,7 +44,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
     private RecyclerView.LayoutManager layoutManager;
     private List<ImageData> dataList;
-    private DataAdapter<ImageData> adapter;
+    private HorizontalDataAdapter<ImageData> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +93,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             ImageData d = new ImageData("Alex", Environment.getExternalStorageDirectory().getPath() + "/feidieshuo/Cache/Userface/userheads/11223.jpg");
             dataList.add(d);
         }
-        adapter = new DataAdapter<ImageData>(this, dataList, R.layout.horizontal_scroll_item, R.id.imgView_horizontal_item,
+        adapter = new HorizontalDataAdapter<ImageData>(this, dataList, R.layout.horizontal_scroll_item, R.id.imgView_horizontal_item,
                 R.id.tv_horizontal_item, getResources());
-        adapter.setOnClickListener(new DataAdapter.OnClickListener<ImageData>() {
+        adapter.setOnClickListener(new HorizontalDataAdapter.OnClickListener<ImageData>() {
             @Override
             public void onClick(ImageData data) {
                 Toast.makeText(MenuActivity.this, data.getTitle(), Toast.LENGTH_SHORT).show();

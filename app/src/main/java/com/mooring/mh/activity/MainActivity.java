@@ -9,12 +9,21 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.mooring.mh.R;
+import com.mooring.mh.db.DbXUtils;
+import com.mooring.mh.db.User;
 import com.mooring.mh.fragment.ControlFragment;
 import com.mooring.mh.fragment.ParameterFragment;
 import com.mooring.mh.fragment.TimingFragment;
 import com.mooring.mh.fragment.WeatherFragment;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.CustomImageView.ZoomCircleView;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
+import org.xutils.x;
+
+import java.util.List;
 
 /**
  * 主界面MainActivity
@@ -29,20 +38,25 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ImageView imgView_title_menu;
     private ZoomCircleView circleImg_left;
     private ZoomCircleView circleImg_right;
+    private CircleImageView circleImg_middle;
+    private View layout_two_user;
     private View title_layout;
 
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    private WeatherFragment weatherFragment;
-    private ControlFragment controlFragment;
-    private ParameterFragment parameterFragment;
-    private TimingFragment timingFragment;
+    private WeatherFragment weatherFragment;  //fragment 1
+    private ControlFragment controlFragment;  //fragment 2
+    private ParameterFragment parameterFragment;  //fragment 3
+    private TimingFragment timingFragment;  //fragment 4
 
     public final int WEATHER = 1;
     public final int CONTROL = 2;
     public final int PARAMETER = 3;
     public final int TIMING = 4;
-    public int currentUser = MConstants.LEFT_USER;
+    private int currLocation = MConstants.LEFT_USER;//当前用户的位置
+    private User currUser;//当前展示User
+    private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
+    private DbManager dbManager;
 
 
     @Override
@@ -55,7 +69,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         fragmentManager = getSupportFragmentManager();
 
-        setTabSelection(WEATHER);
+        setTabSelection(CONTROL);
+
+        DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
+        dbManager = x.getDb(dao);
 
     }
 
@@ -68,6 +85,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         circleImg_left = (ZoomCircleView) findViewById(R.id.circleImg_left);
         circleImg_right = (ZoomCircleView) findViewById(R.id.circleImg_right);
+        circleImg_middle = (CircleImageView) findViewById(R.id.circleImg_middle);
+        layout_two_user = findViewById(R.id.layout_two_user);
         imgView_title_menu = (ImageView) findViewById(R.id.imgView_title_menu);
 
         imgView_title_menu.setOnClickListener(this);
@@ -79,8 +98,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         imgView_parameter.setOnClickListener(this);
         imgView_timing.setOnClickListener(this);
 
-    }
+        if (computeCurrentUsers() == 2) {
+            circleImg_middle.setVisibility(View.GONE);
+            layout_two_user.setVisibility(View.VISIBLE);
+            circleImg_left.setOnClickListener(this);
+            circleImg_right.setOnClickListener(this);
+        } else {
+            circleImg_middle.setVisibility(View.VISIBLE);
+            layout_two_user.setVisibility(View.GONE);
+        }
 
+    }
 
     /**
      * @param index
@@ -94,37 +122,34 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 if (weatherFragment == null) {
                     weatherFragment = new WeatherFragment();
                     fragmentTransaction.add(R.id.main_container, weatherFragment, "WeatherFragment");
-                } else {
-                    fragmentTransaction.show(weatherFragment);
                 }
+                fragmentTransaction.show(weatherFragment);
                 break;
             case CONTROL:
                 if (controlFragment == null) {
                     controlFragment = new ControlFragment();
                     fragmentTransaction.add(R.id.main_container, controlFragment, "ControlFragment");
-                } else {
-                    fragmentTransaction.show(controlFragment);
                 }
+                fragmentTransaction.show(controlFragment);
                 break;
             case PARAMETER:
                 if (parameterFragment == null) {
                     parameterFragment = new ParameterFragment();
                     fragmentTransaction.add(R.id.main_container, parameterFragment, "ParameterFragment");
-                } else {
-                    fragmentTransaction.show(parameterFragment);
                 }
+                fragmentTransaction.show(parameterFragment);
                 break;
             case TIMING:
                 if (timingFragment == null) {
                     timingFragment = new TimingFragment();
                     fragmentTransaction.add(R.id.main_container, timingFragment, "TimingFragment");
-                } else {
-                    fragmentTransaction.show(timingFragment);
                 }
+                fragmentTransaction.show(timingFragment);
                 break;
         }
         fragmentTransaction.commit();
     }
+
 
     /**
      * 隐藏所有fragment
@@ -132,6 +157,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      * @param transaction
      */
     private void hideFragments(FragmentTransaction transaction) {
+
         if (weatherFragment != null) {
             transaction.hide(weatherFragment);
         }
@@ -179,6 +205,36 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    /**
+     * 根据设备的类型{单人垫,双人垫},以及现在所拥有的用户个数
+     * <p/>
+     * 计算当前用户个数
+     */
+    public int computeCurrentUsers() {
+
+//        try {
+//            currentUsers = dbManager.selector(User.class).where("_location", "in", new int[]{1, 2, 3}).findAll();
+//        } catch (DbException e) {
+//            e.printStackTrace();
+//        }
+
+        //单人垫默认发送一个人
+
+        //双人垫发送当前支持的用户
+
+        return 2;
+    }
+
+    /**
+     * 获取当前用户
+     *
+     * @return
+     */
+    public User getCurrentUser() {
+        return this.currUser;
+    }
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -197,14 +253,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.circleImg_left:
                 circleImg_left.executeScale(2f);
                 circleImg_right.executeScale(0.5f);
-                if (currentUser == MConstants.RIGHT_USER) {
+                if (currLocation == MConstants.RIGHT_USER) {
                     switchUser(MConstants.LEFT_USER);
                 }
                 break;
             case R.id.circleImg_right:
                 circleImg_right.executeScale(2f);
                 circleImg_left.executeScale(0.5f);
-                if (currentUser == MConstants.LEFT_USER) {
+                if (currLocation == MConstants.LEFT_USER) {
                     switchUser(MConstants.RIGHT_USER);
                 }
                 break;

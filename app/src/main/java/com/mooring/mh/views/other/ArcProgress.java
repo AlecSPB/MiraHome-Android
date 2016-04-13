@@ -1,4 +1,4 @@
-package com.mooring.mh.views.CircleProgress;
+package com.mooring.mh.views.other;
 
 import android.content.Context;
 import android.content.res.TypedArray;

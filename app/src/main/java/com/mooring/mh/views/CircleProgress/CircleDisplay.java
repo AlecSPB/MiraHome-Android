@@ -1,4 +1,4 @@
-package com.mooring.mh.views.other;
+package com.mooring.mh.views.CircleProgress;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -17,12 +17,13 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
-import com.mooring.mh.views.CircleProgress.Utils;
+import com.mooring.mh.views.other.Utils;
 
 import java.text.DecimalFormat;
 
 /**
  * 自定义圆形进度条
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class CircleDisplay extends View {
@@ -296,7 +297,7 @@ public class CircleDisplay extends View {
      * @param size
      */
     public void setTextSize(float size) {
-        mTextPaint.setTextSize(CommonUtils.dp2px(getResources(), size));
+        mTextPaint.setTextSize(CommonUtils.dp2px(this.getContext(), size));
     }
 
     /**

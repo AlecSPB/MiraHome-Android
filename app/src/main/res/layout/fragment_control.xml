@@ -11,19 +11,20 @@
         android:background="@color/colorMainBg" />
 
     <LinearLayout
+        android:id="@+id/layout_heating"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="5dp"
         android:layout_weight="1"
-        android:background="@color/colorPurple"
-        android:gravity="center"
+        android:background="@mipmap/img_heating"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_heating" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,21 +37,20 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_drying"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:background="@color/colorOrange"
-        android:gravity="center"
+        android:background="@mipmap/img_drying"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_drying" />
 
         <TextView
             android:layout_width="wrap_content"

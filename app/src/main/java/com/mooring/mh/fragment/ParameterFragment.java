@@ -1,35 +1,38 @@
 package com.mooring.mh.fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.content.Intent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.views.CustomImageView.CircleImageView;
-import com.mooring.mh.views.CustomImageView.ZoomCircleView;
+import com.mooring.mh.activity.ParameterDetailActivity;
 import com.mooring.mh.views.other.GiftRainView;
 
 /**
  * Created by Will on 16/3/24.
  */
-public class ParameterFragment extends BaseFragment {
+public class ParameterFragment extends BaseFragment implements View.OnClickListener {
 
     private GiftRainView giftRainView;
     private boolean isStart;
-    private ZoomCircleView zoomCircleView;
-    private ZoomCircleView zoomCircleView1;
 
-    private ImageView imgView111;
-    private ImageView imgView222;
+    private View layout_heart_rate;
+    private View layout_breathing_rate;
+    private View layout_body_movement;
+    private View layout_humidity;
+    private View layout_temperature;
+    private View layout_bed_temperature;
+    private View layout_light;
+    private View layout_noise;
+
+    private TextView tv_heart_rate;
+    private TextView tv_breathing_rate;
+    private TextView tv_body_movement;
+    private TextView tv_humidity;
+    private TextView tv_temperature;
+    private TextView tv_bed_temperature;
+    private TextView tv_light;
+    private TextView tv_noise;
 
 
     @Override
@@ -60,121 +63,91 @@ public class ParameterFragment extends BaseFragment {
 //            }
 //        });
 
-        zoomCircleView = (ZoomCircleView) rootView.findViewById(R.id.circleView);
-        zoomCircleView.setZoomInOrOut(true, false);
+        layout_heart_rate = rootView.findViewById(R.id.layout_heart_rate);
+        layout_breathing_rate = rootView.findViewById(R.id.layout_breathing_rate);
+        layout_body_movement = rootView.findViewById(R.id.layout_body_movement);
+        layout_humidity = rootView.findViewById(R.id.layout_humidity);
+        layout_temperature = rootView.findViewById(R.id.layout_temperature);
+        layout_bed_temperature = rootView.findViewById(R.id.layout_bed_temperature);
+        layout_light = rootView.findViewById(R.id.layout_light);
+        layout_noise = rootView.findViewById(R.id.layout_noise);
 
-        zoomCircleView1 = (ZoomCircleView) rootView.findViewById(R.id.circleView1);
-        zoomCircleView1.setZoomInOrOut(false, true);
-        zoomCircleView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                zoomCircleView.setImageResource(R.mipmap.ee_2);
-                zoomCircleView.executeScale(0.5f);
-                zoomCircleView1.executeScale(2f);
-            }
-        });
-        zoomCircleView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                zoomCircleView.setImageResource(R.mipmap.ee_1);
-                zoomCircleView.executeScale(2f);
-                zoomCircleView1.executeScale(0.5f);
-            }
-        });
+        layout_heart_rate.setOnClickListener(this);
+        layout_breathing_rate.setOnClickListener(this);
+        layout_body_movement.setOnClickListener(this);
+        layout_humidity.setOnClickListener(this);
+        layout_temperature.setOnClickListener(this);
+        layout_bed_temperature.setOnClickListener(this);
+        layout_light.setOnClickListener(this);
+        layout_noise.setOnClickListener(this);
 
-
-        imgView111 = (ImageView) rootView.findViewById(R.id.imgView111);
-        imgView222 = (ImageView) rootView.findViewById(R.id.imgView222);
-
-        imgView111.setImageBitmap(toRoundBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ee_1)));
-        imgView222.setImageBitmap(toRoundBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ee_2)));
-
-        imgView111.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScaleAnimation animation = new ScaleAnimation(0.0f, 1.4f, 0.0f, 1.4f,
-                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                animation.setDuration(2000);//设置动画持续时间
-                imgView111.setAnimation(animation);
-            }
-        });
-
-
-        imgView222.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScaleAnimation animation = new ScaleAnimation(0.0f, 1.4f, 0.0f, 1.4f,
-                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                animation.setDuration(2000);//设置动画持续时间
-                imgView222.setAnimation(animation);
-            }
-        });
+        tv_heart_rate = (TextView) rootView.findViewById(R.id.tv_heart_rate);
+        tv_breathing_rate = (TextView) rootView.findViewById(R.id.tv_breathing_rate);
+        tv_body_movement = (TextView) rootView.findViewById(R.id.tv_body_movement);
+        tv_humidity = (TextView) rootView.findViewById(R.id.tv_humidity);
+        tv_temperature = (TextView) rootView.findViewById(R.id.tv_temperature);
+        tv_bed_temperature = (TextView) rootView.findViewById(R.id.tv_bed_temperature);
+        tv_light = (TextView) rootView.findViewById(R.id.tv_light);
+        tv_noise = (TextView) rootView.findViewById(R.id.tv_noise);
 
 
     }
 
-    /**
-     * 绘制圆形图片
-     *
-     * @param bitmap
-     * @return
-     */
-    public Bitmap toRoundBitmap(Bitmap bitmap) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        float roundPx;
-        float left, top, right, bottom, dst_left, dst_top, dst_right, dst_bottom;
-        if (width <= height) {
-            roundPx = width / 2;
-            left = 0;
-            top = 0;
-            right = width;
-            bottom = width;
-            height = width;
-            dst_left = 0;
-            dst_top = 0;
-            dst_right = width;
-            dst_bottom = width;
-        } else {
-            roundPx = height / 2;
-            float clip = (width - height) / 2;
-            left = clip;
-            right = width - clip;
-            top = 0;
-            bottom = height;
-            width = height;
-            dst_left = 0;
-            dst_top = 0;
-            dst_right = height;
-            dst_bottom = height;
-        }
-
-        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect src = new Rect((int) left, (int) top, (int) right, (int) bottom);
-        final Rect dst = new Rect((int) dst_left, (int) dst_top, (int) dst_right, (int) dst_bottom);
-        final RectF rectF = new RectF(dst);
-
-        paint.setAntiAlias(true);// 设置画笔无锯齿
-
-        canvas.drawARGB(0, 0, 0, 0); // 填充整个Canvas
-        paint.setColor(color);
-
-        // 以下有两种方法画圆,drawRounRect和drawCircle
-        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);// 画圆角矩形，第一个参数为图形显示区域，第二个参数和第三个参数分别是水平圆角半径和垂直圆角半径。
-        canvas.drawCircle(roundPx, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));// 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
-        canvas.drawBitmap(bitmap, src, dst, paint); //以Mode.SRC_IN模式合并bitmap和已经draw了的Circle
-
-        return output;
-    }
 
     @Override
     protected void lazyLoad() {
 
+        //判断用户是否以切换
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent it = new Intent();
+        it.setClass(getActivity(), ParameterDetailActivity.class);
+        switch (v.getId()) {
+            case R.id.layout_heart_rate:
+                it.putExtra("number", 0);
+                it.putExtra("param", "88");
+                it.putExtra("title", "Heart rate");
+                break;
+            case R.id.layout_breathing_rate:
+                it.putExtra("number", 1);
+                it.putExtra("param", "88");
+                it.putExtra("title", "Breathing rate");
+                break;
+            case R.id.layout_body_movement:
+                it.putExtra("number", 2);
+                it.putExtra("param", "88");
+                it.putExtra("title", "Body movement");
+                break;
+            case R.id.layout_humidity:
+                it.putExtra("number", 3);
+                it.putExtra("param", "88");
+                it.putExtra("title", "Humidity");
+                break;
+            case R.id.layout_temperature:
+                it.putExtra("number", 4);
+                it.putExtra("param", "88");
+                it.putExtra("title", "Temperature");
+                break;
+            case R.id.layout_bed_temperature:
+                it.putExtra("number", 5);
+                it.putExtra("param", "88");
+                it.putExtra("title", "Bed temperature");
+                break;
+            case R.id.layout_light:
+                it.putExtra("number", 6);
+                it.putExtra("param", "LOW");
+                it.putExtra("title", "Light");
+                break;
+            case R.id.layout_noise:
+                it.putExtra("number", 7);
+                it.putExtra("param", "LOW");
+                it.putExtra("title", "Noise");
+                break;
+        }
+        getActivity().startActivity(it);
     }
 }

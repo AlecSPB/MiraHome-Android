@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
-import com.mooring.mh.views.other.CircleDisplay;
+import com.mooring.mh.views.CircleProgress.CircleDisplay;
 
 /**
  * Created by Will on 16/3/24.
@@ -25,8 +25,6 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
     private View layout_data_fail;
 
 
-
-
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_weather;
@@ -34,6 +32,7 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
 
     @Override
     protected void initView() {
+
 
         circle_progress_1 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_1);
         circle_progress_2 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_2);
@@ -63,6 +62,8 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
     @Override
     protected void lazyLoad() {
 
+        //检测当前用户是否更改
+
     }
 
     @Override
@@ -80,5 +81,4 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
                 break;
         }
     }
-
 }

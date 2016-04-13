@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.mooring.mh.views.CircleProgress.DonutProgress
+            <com.mooring.mh.views.other.DonutProgress
                 android:id="@+id/donut_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 custom:donut_unfinished_color="@android:color/transparent"
                 custom:donut_unfinished_stroke_width="10dp" />
 
-            <com.mooring.mh.views.CircleProgress.DonutProgress
+            <com.mooring.mh.views.other.DonutProgress
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
 
-            <com.mooring.mh.views.CircleProgress.DonutProgress
+            <com.mooring.mh.views.other.DonutProgress
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
@@ -97,7 +97,7 @@
                 custom:donut_progress="20"
                 custom:donut_unfinished_color="@color/colorOrange" />
 
-            <com.mooring.mh.views.CircleProgress.DonutProgress
+            <com.mooring.mh.views.other.DonutProgress
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
 
-            <com.mooring.mh.views.CircleProgress.ArcProgress
+            <com.mooring.mh.views.other.ArcProgress
                 android:id="@+id/arc_progress"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -124,7 +124,7 @@
                 custom:arc_text_color="@color/colorWhite"
                 custom:arc_unfinished_color="@android:color/transparent" />
 
-            <com.mooring.mh.views.CircleProgress.ArcProgress
+            <com.mooring.mh.views.other.ArcProgress
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginLeft="50dp"
@@ -142,14 +142,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
 
-            <com.mooring.mh.views.CircleProgress.CircleProgress
+            <com.mooring.mh.views.other.CircleProgress
                 android:id="@+id/circle_progress"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginLeft="50dp"
                 custom:circle_progress="10" />
 
-            <com.mooring.mh.views.CircleProgress.CircleProgress
+            <com.mooring.mh.views.other.CircleProgress
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginLeft="50dp"

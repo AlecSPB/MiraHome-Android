@@ -45,5 +45,22 @@
         <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
     </style>
 
+    <!--通用text style-->
+    <style name="text_common">
+
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">28sp</item>
+
+    </style>
+
+    <!-- 通用dialog主题 -->
+    <style name="CommonDialogStyle">
+        <item name="android:windowBackground">@color/transparent_6</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
 
 </resources>

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelDatePicker;
@@ -147,7 +148,7 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
                     }
                 });
         dialog_choose_sex.show();
-        setDialogFullScreen(dialog_choose_sex);
+        CommonUtils.setDialogFullScreen(this, dialog_choose_sex);
     }
 
 
@@ -215,7 +216,7 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
         });
 
         dialog.show();
-        setDialogFullScreen(dialog);
+        CommonUtils.setDialogFullScreen(this, dialog);
     }
 
     /**
@@ -273,7 +274,7 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
         });
 
         dialog.show();
-        setDialogFullScreen(dialog);
+        CommonUtils.setDialogFullScreen(this, dialog);
 
     }
 
@@ -332,20 +333,9 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
         });
 
         dialog.show();
-        setDialogFullScreen(dialog);
+        CommonUtils.setDialogFullScreen(this, dialog);
 
     }
 
-    /**
-     * 设置dialog全屏充满
-     *
-     * @param dialog
-     */
-    private void setDialogFullScreen(Dialog dialog) {
-        WindowManager windowManager = getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-        lp.width = (int) (display.getWidth()); //设置宽度
-        dialog.getWindow().setAttributes(lp);
-    }
+
 }

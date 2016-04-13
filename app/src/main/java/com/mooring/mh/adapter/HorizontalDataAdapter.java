@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by Will on 16/4/7.
  */
-public class DataAdapter<T extends DataAdapter.AdapterData> extends RecyclerView.Adapter<HorizontalViewHolder> {
+public class HorizontalDataAdapter<T extends HorizontalDataAdapter.AdapterData> extends RecyclerView.Adapter<HorizontalViewHolder> {
 
     public interface AdapterData {
         String getTitle();
@@ -40,7 +40,7 @@ public class DataAdapter<T extends DataAdapter.AdapterData> extends RecyclerView
     private OnClickListener<T> listener;
     private Activity context;
 
-    public DataAdapter(Activity context, List<T> dataList, int layoutId, int imageViewId, int textViewId, Resources resources) {
+    public HorizontalDataAdapter(Activity context, List<T> dataList, int layoutId, int imageViewId, int textViewId, Resources resources) {
         this.context = context;
         this.dataList = dataList;
         this.layoutId = layoutId;

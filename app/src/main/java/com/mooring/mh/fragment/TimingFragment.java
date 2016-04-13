@@ -8,9 +8,9 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.views.CircleProgress.ArcProgress;
-import com.mooring.mh.views.CircleProgress.CircleProgress;
-import com.mooring.mh.views.CircleProgress.DonutProgress;
+import com.mooring.mh.views.other.ArcProgress;
+import com.mooring.mh.views.other.CircleProgress;
+import com.mooring.mh.views.other.DonutProgress;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -87,7 +87,7 @@ public class TimingFragment extends BaseFragment {
             }
         };
 
-        timer.schedule(timerTask,1000,100);
+        timer.schedule(timerTask, 1000, 100);
 
 
     }
@@ -120,6 +120,6 @@ public class TimingFragment extends BaseFragment {
 
     @Override
     protected void lazyLoad() {
-
+//判断用户是否以切换
     }
 }
