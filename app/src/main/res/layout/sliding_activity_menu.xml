@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorMainBg"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <FrameLayout
@@ -12,7 +10,7 @@
         android:layout_height="250dp">
 
         <LinearLayout
-            android:id="@+id/layout_connect_moooring"
+            android:id="@+id/layout_connect_mooring"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -76,7 +74,7 @@
                         android:id="@+id/zcView_left"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        app:img_src="@mipmap/ic_launcher" />
+                        app:img_src="@mipmap/ic_default_avatar" />
 
                     <ImageView
                         android:id="@+id/imgView_delete_left"
@@ -98,7 +96,7 @@
                         android:id="@+id/zcView_right"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        app:img_src="@mipmap/ic_launcher" />
+                        app:img_src="@mipmap/ic_default_avatar" />
 
                     <ImageView
                         android:id="@+id/imgView_delete_right"
@@ -132,16 +130,17 @@
         android:layout_margin="5dp"
         android:background="@color/colorPrimaryDark"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
         <RelativeLayout
             android:id="@+id/layout_device"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
 
             <TextView
-                android:id="@+id/tv_device_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -166,11 +165,9 @@
             android:id="@+id/tv_connect_health"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="Connect[Health kit]"
+            android:text="Connect[Google fit]"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_18" />
 
@@ -178,8 +175,6 @@
             android:id="@+id/tv_about_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="About"
@@ -190,8 +185,7 @@
             android:id="@+id/tv_suggestions_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
+            android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="Suggestions"
             android:textColor="@color/colorWhite"

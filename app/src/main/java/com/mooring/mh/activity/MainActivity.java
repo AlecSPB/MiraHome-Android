@@ -2,19 +2,31 @@ package com.mooring.mh.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mooring.mh.R;
+import com.mooring.mh.adapter.HorizontalDataAdapter;
+import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.fragment.ControlFragment;
 import com.mooring.mh.fragment.ParameterFragment;
 import com.mooring.mh.fragment.TimingFragment;
 import com.mooring.mh.fragment.WeatherFragment;
+import com.mooring.mh.model.ImageData;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.CustomImageView.ZoomCircleView;
@@ -23,6 +35,7 @@ import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,24 +43,24 @@ import java.util.List;
  */
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
-    private ImageView imgView_weather;
-    private ImageView imgView_control;
-    private ImageView imgView_parameter;
-    private ImageView imgView_timing;
+    private ImageView imgView_weather;//tab-天气
+    private ImageView imgView_control;//tab-控制
+    private ImageView imgView_parameter;//tab-参数
+    private ImageView imgView_timing;//tab-闹钟
 
-    private ImageView imgView_title_menu;
-    private ZoomCircleView circleImg_left;
-    private ZoomCircleView circleImg_right;
-    private CircleImageView circleImg_middle;
-    private View layout_two_user;
-    private View title_layout;
+    private ImageView imgView_title_menu;//菜单
+    private ZoomCircleView circleImg_left;//左边用户
+    private ZoomCircleView circleImg_right;//右边用户
+    private CircleImageView circleImg_middle;//单个用户
+    private View layout_two_user;//两个用户的布局
+    private View title_layout;//title布局
 
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    private WeatherFragment weatherFragment;  //fragment 1
-    private ControlFragment controlFragment;  //fragment 2
-    private ParameterFragment parameterFragment;  //fragment 3
-    private TimingFragment timingFragment;  //fragment 4
+    private WeatherFragment weatherFragment;  //WeatherFragment
+    private ControlFragment controlFragment;  //ControlFragment
+    private ParameterFragment parameterFragment;  //ParameterFragment
+    private TimingFragment timingFragment;  //TimingFragment
 
     public final int WEATHER = 1;
     public final int CONTROL = 2;
@@ -57,17 +70,40 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private User currUser;//当前展示User
     private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
     private DbManager dbManager;
+    /**
+     * ---------侧边滑动栏相关--------
+     */
+    private DrawerLayout mDrawerLayout;//侧边menu可滑动布局
+    private View activity_menu;//侧边menu整个布局,帮助消费点击事件
+    private RecyclerView menu_recyclerView;//横向滑动view
+    private ImageView imgView_switch_user;//切换用户按钮
+    private View layout_connect_mooring;//重新连接view
+    private View layout_connected_device;//一连上设备
+    private ZoomCircleView zcView_left; // 左边用户头像
+    private ImageView imgView_delete_left;//左边删除用户图标
+    private ZoomCircleView zcView_right;//右边用户头像
+    private ImageView imgView_delete_right;//右边删除用户图标
+    private View layout_device; // device设备连接状态整个布局
+    private TextView tv_not_connected;//device设备连接状态
+    private TextView tv_connect_health; // 链接Health kit
+    private TextView tv_about_text; // 关于我们
+    private TextView tv_suggestions_text;// 建议
+    private TextView tv_login_out;//退出登陆
 
+    private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
+    private List<ImageData> dataList;//用户list
+    private HorizontalDataAdapter<ImageData> adapter;//横向滑动适配器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        fragmentManager = getSupportFragmentManager();
 
         initView();
 
-        fragmentManager = getSupportFragmentManager();
+        initData();
 
         setTabSelection(CONTROL);
 
@@ -76,6 +112,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
+    /**
+     * 初始化
+     */
     private void initView() {
         imgView_weather = (ImageView) findViewById(R.id.imgView_weather);
         imgView_control = (ImageView) findViewById(R.id.imgView_control);
@@ -108,6 +147,63 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             layout_two_user.setVisibility(View.GONE);
         }
 
+        /**
+         * -----------侧边menu-------------
+         */
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.dl_left);
+        activity_menu = findViewById(R.id.activity_menu);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);//开启关闭禁止模式
+        imgView_switch_user = (ImageView) findViewById(R.id.imgView_switch_user);
+        layout_connect_mooring = findViewById(R.id.layout_connect_mooring);
+        layout_connected_device = findViewById(R.id.layout_connected_device);
+        zcView_left = (ZoomCircleView) findViewById(R.id.zcView_left);
+        imgView_delete_left = (ImageView) findViewById(R.id.imgView_delete_left);
+        zcView_right = (ZoomCircleView) findViewById(R.id.zcView_left);
+        imgView_delete_right = (ImageView) findViewById(R.id.imgView_delete_right);
+        layout_device = findViewById(R.id.layout_device);
+        tv_not_connected = (TextView) findViewById(R.id.tv_not_connected);
+        tv_connect_health = (TextView) findViewById(R.id.tv_connect_health);
+        tv_about_text = (TextView) findViewById(R.id.tv_about_text);
+        tv_suggestions_text = (TextView) findViewById(R.id.tv_suggestions_text);
+        tv_login_out = (TextView) findViewById(R.id.tv_login_out);
+
+        menu_recyclerView = (RecyclerView) findViewById(R.id.menu_recyclerView);
+        menu_recyclerView.setHasFixedSize(true);
+        layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        menu_recyclerView.setLayoutManager(layoutManager);
+
+        imgView_switch_user.setOnClickListener(this);
+        layout_connect_mooring.setOnClickListener(this);
+        imgView_delete_left.setOnClickListener(this);
+        imgView_delete_right.setOnClickListener(this);
+        tv_connect_health.setOnClickListener(this);
+        tv_about_text.setOnClickListener(this);
+        tv_suggestions_text.setOnClickListener(this);
+        tv_login_out.setOnClickListener(this);
+        activity_menu.setOnClickListener(this);
+        layout_device.setOnClickListener(this);
+
+    }
+
+
+    /**
+     * 初始化相关数据
+     */
+    private void initData() {
+        dataList = new ArrayList<ImageData>();
+        for (int i = 0; i < 4; i++) {
+            ImageData d = new ImageData("Alex", Environment.getExternalStorageDirectory().getPath() + "/feidieshuo/Cache/Userface/userheads/11223.jpg");
+            dataList.add(d);
+        }
+        adapter = new HorizontalDataAdapter<ImageData>(this, dataList, R.layout.horizontal_scroll_item, R.id.imgView_horizontal_item,
+                R.id.tv_horizontal_item, getResources());
+        adapter.setOnClickListener(new HorizontalDataAdapter.OnClickListener<ImageData>() {
+            @Override
+            public void onClick(ImageData data) {
+                Toast.makeText(MainActivity.this, data.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        menu_recyclerView.setAdapter(adapter);
     }
 
     /**
@@ -239,6 +335,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+
+        Intent it = new Intent();
+
         switch (v.getId()) {
             case R.id.imgView_weather:
                 setTabSelection(WEATHER);
@@ -268,24 +367,72 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
 
             case R.id.imgView_title_menu:
-                Intent it = new Intent();
-                it.setClass(MainActivity.this, MenuActivity.class);
-                startActivityForResult(it, MConstants.MENU_REQUEST);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+                break;
+
+            case R.id.imgView_switch_user:
+                Toast.makeText(this, "imgView_switch_user", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.layout_connect_mooring:
+                Toast.makeText(this, "layout_connect_mooring", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.imgView_delete_left:
+                Toast.makeText(this, "imgView_delete_left", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.imgView_delete_right:
+                Toast.makeText(this, "imgView_delete_right", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.tv_connect_health:
+                Toast.makeText(this, "tv_connect_health", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.tv_about_text:
+                it.setClass(MainActivity.this, AboutActivity.class);
+                startActivity(it);
+                break;
+            case R.id.tv_suggestions_text:
+                it.setClass(MainActivity.this, SuggestionsActivity.class);
+                startActivity(it);
+                break;
+            case R.id.tv_login_out:
+                Toast.makeText(this, "tv_login_out", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.layout_device:
+                Toast.makeText(this, "layout_device", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.activity_menu:
                 break;
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MConstants.MENU_REQUEST && resultCode == MConstants.MENU_RESULT) {
-            //修改当前左右两边用户
+        if (requestCode == MConstants.ADD_USER_REQUEST && resultCode == MConstants.ADD_USER_RESULT) {
+            //此时是添加用户回传
 
+            //执行列表更新
         }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                return true;
+            } else {
+                return super.onKeyDown(keyCode, event);
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
     }
+
+
 }

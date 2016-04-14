@@ -77,13 +77,15 @@ public class HorizontalDataAdapter<T extends HorizontalDataAdapter.AdapterData> 
 //            viewHolder.getImageView().setImageBitmap(bm);
 //        }
 
-        viewHolder.getTextView().setText(data.getTitle());
         Bitmap bm = null;
         if (position != dataList.size() - 1) {
+            viewHolder.getTextView().setVisibility(View.VISIBLE);
+            viewHolder.getTextView().setText(data.getTitle());
             bm = BitmapFactory.decodeFile(data.getThumbnailUrl());
         } else {
             BitmapDrawable bd = (BitmapDrawable) resources.getDrawable(R.mipmap.ic_launcher);
             bm = bd.getBitmap();
+            viewHolder.getTextView().setVisibility(View.GONE);
         }
         if (bm != null) {
             viewHolder.getImageView().setImageBitmap(bm);

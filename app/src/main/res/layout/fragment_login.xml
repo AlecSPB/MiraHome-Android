@@ -92,13 +92,13 @@
         </LinearLayout>
 
         <include
-            android:id="@+id/bottom_miarhome"
+            android:id="@+id/bottom_mirahome"
             layout="@layout/common_text_mirahome" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/bottom_miarhome"
+            android:layout_above="@id/bottom_mirahome"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@color/colorDeepBlue"
@@ -126,7 +126,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/bg_ssd_sina" />
 
                 <ImageView
                     android:id="@+id/imgView_weChart"
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/bg_ssd_weixin" />
 
                 <ImageView
                     android:id="@+id/imgView_QQ"
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/bg_ssd_qq" />
 
                 <ImageView
                     android:id="@+id/imgView_facebook"
@@ -150,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/bg_ssd_facebook" />
 
             </LinearLayout>
         </LinearLayout>

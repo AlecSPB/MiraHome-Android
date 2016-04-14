@@ -59,7 +59,7 @@
             android:id="@+id/layout_one_user"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <com.mooring.mh.views.ControlView.DragScaleView
                 android:id="@+id/dragScaleView"
@@ -75,10 +75,10 @@
         </FrameLayout>
 
         <FrameLayout
-            android:visibility="gone"
             android:id="@+id/layout_two_user"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
             <com.mooring.mh.views.ControlView.DragScaleTwoView
                 android:id="@+id/dragScaleTwoView"
@@ -94,16 +94,28 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <Switch
-                    android:id="@+id/switch_left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <Switch
-                    android:id="@+id/switch_right"
+                <ToggleButton
+                    android:id="@+id/toggle_left"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="160dp" />
+                    android:background="@android:color/transparent"
+                    android:button="@drawable/bg_toggle_button"
+                    android:checked="false"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn="" />
+
+                <ToggleButton
+                    android:id="@+id/toggle_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="80dp"
+                    android:background="@android:color/transparent"
+                    android:button="@drawable/bg_toggle_button"
+                    android:checked="false"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn="" />
             </LinearLayout>
         </FrameLayout>
 

@@ -5,17 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.mooring.mh.R;
+import com.mooring.mh.utils.CommonUtils;
 
 /**
  * 自定义双边可拖动改变图层控件
- * <p>
+ * <p/>
  * Created by Will on 16/4/11.
  */
 public class DragScaleTwoView extends View implements View.OnTouchListener {
@@ -36,7 +39,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     private int dropW = 0;//拖动小球宽度
     private int dropH = 0;//拖动小球高度
 
-    private int upperBound = 100;//温度上界
+    private int upperBound = 104;//温度上界
     private int lowerBound = 68;//温度下界
     private String bedLeftTemp = "83℉";//左边床的温度
     private String bedRightTemp = "60℉";//右边床的温度
@@ -54,6 +57,22 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     private boolean isRightDropAble = true;//是否可用且可拖动
 
     private OnDropListener listener;//拖动监听
+
+    private int roomY;//室内温度y坐标
+
+    private int roomTemp = 80;//室内温度
+
+    private int dropTop = 0;  //拖动图标顶部
+    private int lineBottom = 0; //刻度线的底部
+    private int tempTop = 0; //温度上界顶部
+    private int tempBottom = 0;  //温度下界底部
+    private int tvHeight = 0; //文字框的高度
+    private int tvWidth = 0;  //文字框的宽度
+    private int scaleRadius = 0;  //刻度点的半径
+    private int dropTvSize = 0;  //拖动文字的字体大小
+    private int tempTvSize = 0;  //温度上下界的文字字体大小
+    private int bedTvSize = 0;  //床温文字字体大小
+    private Shader mShader;  //渐变对象
 
 
     public DragScaleTwoView(Context context) {
@@ -77,7 +96,6 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     private void initScreen() {
 
         colorPaint = new Paint();
-        colorPaint.setColor(getResources().getColor(R.color.colorPurple));
         colorPaint.setStyle(Paint.Style.FILL);
 
         drop = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_adjust_temp);
@@ -87,7 +105,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         tickMarkPaint = new Paint();
         tickMarkPaint.setColor(Color.WHITE);
         tickMarkPaint.setStyle(Paint.Style.STROKE);
-        tickMarkPaint.setStrokeWidth(5);
+        tickMarkPaint.setStrokeWidth(CommonUtils.dp2px(this.getContext(), 1));
 
         scalePaint = new Paint();
         scalePaint.setColor(Color.WHITE);
@@ -95,11 +113,35 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         scalePaint.setAntiAlias(true);
 
         commonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        commonPaint.setStrokeWidth(3);
 
         maskPaint = new Paint();
         maskPaint.setStyle(Paint.Style.FILL);
         maskPaint.setColor(getResources().getColor(R.color.transparent_6));
+
+        dropTop = CommonUtils.dp2px(this.getContext(), 40);
+        lineBottom = CommonUtils.dp2px(this.getContext(), 150);
+        tempTop = CommonUtils.dp2px(this.getContext(), 20);
+        tempBottom = CommonUtils.dp2px(this.getContext(), 130);
+        tvHeight = CommonUtils.dp2px(this.getContext(), 40);
+        tvWidth = CommonUtils.dp2px(this.getContext(), 50);
+        scaleRadius = CommonUtils.dp2px(this.getContext(), 4);
+        dropTvSize = CommonUtils.sp2px(this.getContext(), 50);
+        tempTvSize = CommonUtils.sp2px(this.getContext(), 22);
+        bedTvSize = CommonUtils.sp2px(this.getContext(), 14);
+
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        viewW = w;
+        viewH = h;
+
+        oriLeft = 10;
+        oriRight = 10;
+
+        roomY = viewH / 2;
 
     }
 
@@ -108,14 +150,29 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         super.onDraw(canvas);
          /*-------- 绘制左侧 -------*/
 
-        //温度text
-        drawText(canvas, currLeftTemp, 80, (0X7FFFFFFF), 10 + oriLeft, viewW / 4);
+        mShader = new LinearGradient(0, dropTop + dropH / 2 + oriLeft, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
+        colorPaint.setShader(mShader);
 
-        //颜色变动填充层
-        canvas.drawRect(0, 120 + dropH / 2 + oriLeft, viewW / 2, viewH, colorPaint);
+        //左侧颜色变动填充层
+        canvas.drawRect(0, dropTop + dropH / 2 + oriLeft, viewW / 2, viewH, colorPaint);
+
+        mShader = new LinearGradient(0, dropTop + dropH / 2 + oriRight, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
+        colorPaint.setShader(mShader);
+        //右侧颜色变动填充层
+        canvas.drawRect(viewW / 2, dropTop + dropH / 2 + oriRight, viewW, viewH, colorPaint);
+
+        //绘制室内温度横线
+        canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
+
+        //绘制室内温度值
+        drawText(canvas, "Room" + "     " + roomTemp + "℉", bedTvSize, Color.WHITE, roomY - CommonUtils.
+                dp2px(getContext(), 30), viewW / 2 - CommonUtils.dp2px(getContext(), 5));
+
+        //温度text
+        drawText(canvas, currLeftTemp, dropTvSize, (0X7FFFFFFF), oriLeft, viewW / 4);
 
         //拖动图标
-        canvas.drawBitmap(drop, viewW / 4 - dropW / 2, 120 + oriLeft, null);
+        canvas.drawBitmap(drop, viewW / 4 - dropW / 2, dropTop + oriLeft, null);
 
         //绘制遮罩层
         if (!isLeftDropAble) {
@@ -123,18 +180,15 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //bed温度
-        drawText(canvas, "Bed " + bedLeftTemp, 40, Color.WHITE, viewH - 400, viewW / 4);
+        drawText(canvas, "Bed " + bedLeftTemp, bedTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
 
         /*-------- 绘制右侧 -------*/
 
         //温度text
-        drawText(canvas, currRightTemp, 80, (0X7FFFFFFF), 10 + oriRight, viewW * 3 / 4);
-
-        //颜色变动填充层
-        canvas.drawRect(viewW / 2, 120 + dropH / 2 + oriRight, viewW, viewH, colorPaint);
+        drawText(canvas, currRightTemp, dropTvSize, (0X7FFFFFFF), oriRight, viewW * 3 / 4);
 
         //拖动图标
-        canvas.drawBitmap(drop, viewW * 3 / 4 - dropW / 2, 120 + oriRight, null);
+        canvas.drawBitmap(drop, viewW * 3 / 4 - dropW / 2, dropTop + oriRight, null);
 
         //绘制遮罩层
         if (!isRightDropAble) {
@@ -142,23 +196,23 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //bed温度
-        drawText(canvas, "Bed " + bedRightTemp, 40, Color.WHITE, viewH - 400, viewW * 3 / 4);
+        drawText(canvas, "Bed " + bedRightTemp, bedTvSize, Color.WHITE, viewH - lineBottom, viewW * 3 / 4);
 
          /*-------- 绘制公共部分 -------*/
         //刻度直线
-        canvas.drawLine(viewW / 2, 200, viewW / 2, viewH - 450, tickMarkPaint);
+        canvas.drawLine(viewW / 2, dropTop + dropH / 2, viewW / 2, viewH - lineBottom, tickMarkPaint);
 
-        int ss = (viewH - 650) / 10;
+        int ss = (viewH - dropTop - lineBottom - dropH / 2) / 10;
         for (int i = 0; i <= 10; i++) {
             //刻度
-            canvas.drawCircle(viewW / 2, 200 + ss * i, 10, scalePaint);
+            canvas.drawCircle(viewW / 2, dropTop + dropH / 2 + ss * i, scaleRadius, scalePaint);
         }
 
         //温度上界
-        drawText(canvas, upperBound + "℉", 60, Color.WHITE, 50, viewW / 2);
+        drawText(canvas, upperBound + "℉", tempTvSize, Color.WHITE, tempTop, viewW / 2);
 
         //温度下界
-        drawText(canvas, lowerBound + "℉", 60, Color.WHITE, viewH - 400, viewW / 2);
+        drawText(canvas, lowerBound + "℉", tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 2);
 
     }
 
@@ -173,7 +227,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      * @param left      文本 left 的坐标
      */
     private void drawText(Canvas canvas, String text, int textSize, int textColor, int top, int left) {
-        targetRect = new Rect(left - 150, top, left + 150, top + 100);
+        targetRect = new Rect(left - tvWidth, top, left + tvWidth, top + tvHeight);
         commonPaint.setTextSize(textSize);
         commonPaint.setColor(Color.TRANSPARENT);
         canvas.drawRect(targetRect, commonPaint);
@@ -183,18 +237,6 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         // 下面这行是实现水平居中，drawText对应改为传入targetRect.centerX()
         commonPaint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(text, targetRect.centerX(), baseline, commonPaint);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-
-        viewW = w;
-        viewH = h;
-
-        oriLeft = 10;
-        oriRight = 10;
-
     }
 
     @Override
@@ -215,7 +257,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
                 if (dragLeft && isLeftDropAble) {
 
                     oriLeft += dy;
-                    if (oriLeft >= 0 && oriLeft <= viewH - 650) {
+                    if (oriLeft >= 0 && oriLeft <= viewH - dropTop - lineBottom - dropH / 2) {
                         currLeftTemp = computeTemp(oriLeft) + "℉";
                         invalidate();
 //                        listener.onDrop(currLeftTemp, 0);
@@ -224,7 +266,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
 
                 if (dragRight && isRightDropAble) {
                     oriRight += dy;
-                    if (oriRight >= 0 && oriRight <= viewH - 650) {
+                    if (oriRight >= 0 && oriRight <= viewH - dropTop - lineBottom - dropH / 2) {
                         currRightTemp = computeTemp(oriRight) + "℉";
                         invalidate();
 //                        listener.onDrop(currRightTemp, 1);
@@ -243,8 +285,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
                     currLeftTemp = computeTemp(oriLeft) + "℉";
                     invalidate();
                 }
-                if (oriLeft > viewH - 650) {
-                    oriLeft = viewH - 650;
+                if (oriLeft > viewH - dropTop - lineBottom - dropH / 2) {
+                    oriLeft = viewH - dropTop - lineBottom - dropH / 2;
                     currLeftTemp = computeTemp(oriLeft) + "℉";
                     invalidate();
                 }
@@ -259,8 +301,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
                     currRightTemp = computeTemp(oriRight) + "℉";
                     invalidate();
                 }
-                if (oriRight > viewH - 650) {
-                    oriRight = viewH - 650;
+                if (oriRight > viewH - dropTop - lineBottom - dropH / 2) {
+                    oriRight = viewH - dropTop - lineBottom - dropH / 2;
                     currRightTemp = computeTemp(oriRight) + "℉";
                     invalidate();
                 }
@@ -275,12 +317,28 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     }
 
     /**
+     * 设置当前的室内温度
+     *
+     * @param roomTemp
+     */
+    public void setRoomY(int roomTemp) {
+
+        this.roomTemp = roomTemp;
+
+        this.roomY = (upperBound - roomTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
+                (upperBound - lowerBound) + dropTop + dropH / 2;
+
+        invalidate();
+
+    }
+
+    /**
      * 计算当前温度
      *
      * @return 当前温度
      */
     private int computeTemp(int currDrop) {
-        return upperBound - (upperBound - lowerBound) * currDrop / (viewH - 650);
+        return upperBound - currDrop * (upperBound - lowerBound) / (viewH - dropTop - lineBottom - dropH / 2);
     }
 
     /**
@@ -292,13 +350,13 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      */
     protected void getDirection(int x, int y) {
 
-        if (y > 120 + oriLeft && y < 120 + oriLeft + dropH) {
+        if (y > dropTop + oriLeft && y < dropTop + oriLeft + dropH) {
             if (x > viewW / 4 - dropW / 2 && x < viewW / 4 + dropW / 2) {
                 dragLeft = true;
             }
         }
 
-        if (y > 120 + oriRight && y < 120 + oriRight + dropH) {
+        if (y > dropTop + oriRight && y < dropTop + oriRight + dropH) {
             if (x > viewW * 3 / 4 - dropW / 2 && x < viewW * 3 / 4 + dropW / 2) {
                 dragRight = true;
             }
@@ -361,7 +419,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     public void setCurrLeftTemp(String currLeftTemp) {
         this.currLeftTemp = currLeftTemp;
         int temp = Integer.parseInt(currLeftTemp.substring(0, currLeftTemp.length() - 1));
-        oriLeft = (upperBound - temp) * (viewH - 650) / (upperBound - lowerBound);
+        oriLeft = (upperBound - temp) * (viewH - dropTop - lineBottom - dropH / 2) /
+                (upperBound - lowerBound);
 
         invalidate();
     }
@@ -373,7 +432,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      */
     public void setCurrLeftTemp(int currLeftTemp) {
         this.currLeftTemp = currLeftTemp + "℉";
-        oriLeft = (upperBound - currLeftTemp) * (viewH - 650) / (upperBound - lowerBound);
+        oriLeft = (upperBound - currLeftTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
+                (upperBound - lowerBound);
         invalidate();
     }
 
@@ -385,7 +445,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     public void setCurrRightTemp(String currRightTemp) {
         this.currRightTemp = currRightTemp;
         int temp = Integer.parseInt(currRightTemp.substring(0, currRightTemp.length() - 1));
-        oriRight = (upperBound - temp) * (viewH - 650) / (upperBound - lowerBound);
+        oriRight = (upperBound - temp) * (viewH - dropTop - lineBottom - dropH / 2) /
+                (upperBound - lowerBound);
         invalidate();
     }
 
@@ -396,7 +457,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      */
     public void setCurrRightTemp(int currRightTemp) {
         this.currRightTemp = currRightTemp + "℉";
-        oriRight = (upperBound - currRightTemp) * (viewH - 650) / (upperBound - lowerBound);
+        oriRight = (upperBound - currRightTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
+                (upperBound - lowerBound);
         invalidate();
     }
 

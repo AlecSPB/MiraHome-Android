@@ -12,5 +12,11 @@
     <string name="cancel">cancel</string>
 
     <string name="connect_mooring_tip">Please connect MOORING</string>
+    <string name="app_about_1">MIRAHOME 1.0.1</string>
+    <string name="app_about_2">绵眠(上海)智能科技有限公司 版权所有</string>
+    <string name="app_about_3">Copyright @ 2015 All right reserved</string>
+
+    <string name="act_suggestions_hint">请输入意见内容</string>
+
 
 </resources>

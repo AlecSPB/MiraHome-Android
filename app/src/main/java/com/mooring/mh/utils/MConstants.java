@@ -282,15 +282,4 @@ public class MConstants {
      */
     public static final int ADD_USER_RESULT = 0X66;
 
-    /**
-     * 跳转菜单标识
-     */
-    public static final int MENU_REQUEST = 0X77;
-
-    /**
-     * 菜单finish标识
-     */
-    public static final int MENU_RESULT = 0X88;
-
-
 }

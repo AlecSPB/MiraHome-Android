@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
@@ -36,13 +37,13 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
 
     private View layout_two_user;
     private DragScaleTwoView dragScaleTwoView;
-    private Switch switch_left;
-    private Switch switch_right;
+    private ToggleButton toggle_left;
+    private ToggleButton toggle_right;
 
     /**
      * 当前用户的个数
      */
-    private int currUsers = 1;
+    private int currUsers = 2;
 
 
     @Override
@@ -68,8 +69,8 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
 
         layout_two_user = findViewById(R.id.layout_two_user);
         dragScaleTwoView = (DragScaleTwoView) findViewById(R.id.dragScaleTwoView);
-        switch_left = (Switch) findViewById(R.id.switch_left);
-        switch_right = (Switch) findViewById(R.id.switch_right);
+        toggle_left = (ToggleButton) findViewById(R.id.toggle_left);
+        toggle_right = (ToggleButton) findViewById(R.id.toggle_right);
 
 
     }
@@ -116,8 +117,8 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
             layout_two_user.setVisibility(View.VISIBLE);
             layout_two_header.setVisibility(View.VISIBLE);
 
-            switch_left.setOnCheckedChangeListener(this);
-            switch_right.setOnCheckedChangeListener(this);
+            toggle_left.setOnCheckedChangeListener(this);
+            toggle_right.setOnCheckedChangeListener(this);
 
             dragScaleTwoView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.
                     OnGlobalLayoutListener() {
@@ -151,7 +152,7 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
                 }
                 break;
 
-            case R.id.switch_left:
+            case R.id.toggle_left:
                 if (isChecked) {
                     dragScaleTwoView.setIsLeftDropAble(true);
                 } else {
@@ -159,7 +160,7 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
                 }
                 break;
 
-            case R.id.switch_right:
+            case R.id.toggle_right:
                 if (isChecked) {
                     dragScaleTwoView.setIsRightDropAble(true);
                 } else {

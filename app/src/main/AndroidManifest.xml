@@ -40,13 +40,15 @@
 
         <activity android:name=".activity.AddUserActivity" />
 
-        <activity android:name=".activity.MenuActivity" />
-
         <activity android:name=".activity.HeatingControlActivity" />
 
         <activity android:name=".activity.DryingControlActivity" />
 
         <activity android:name=".activity.ParameterDetailActivity" />
+
+        <activity android:name=".activity.AboutActivity" />
+
+        <activity android:name=".activity.SuggestionsActivity" />
     </application>
 
 </manifest>

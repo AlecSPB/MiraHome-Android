@@ -3,18 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorMainBg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="?attr/actionBarSize">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-56dp"
             android:contentDescription="@string/app_name"
             android:src="@mipmap/img_no_device_connect" />
 
@@ -42,9 +44,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?attr/actionBarSize"
         android:scrollbars="none"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,7 +79,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Heart rate"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -129,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Breathing rate"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <TextView
                         android:id="@+id/tv_breathing_rate"
@@ -168,7 +169,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Body movement"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <TextView
                         android:id="@+id/tv_body_movement"
@@ -207,7 +208,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Humidity"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -258,7 +259,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Temperature"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -309,7 +310,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Bed Temperature"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -360,7 +361,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Light"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <TextView
                         android:id="@+id/tv_light"
@@ -398,7 +399,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Noise"
-                        android:textSize="@dimen/text_dimen_24" />
+                        android:textSize="@dimen/text_dimen_22" />
 
                     <TextView
                         android:id="@+id/tv_noise"
