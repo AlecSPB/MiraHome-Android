@@ -115,7 +115,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      */
     private void setTabSelection(int index) {
         fragmentTransaction = fragmentManager.beginTransaction();
-        setTabSelectStatu(index);
+
         hideFragments(fragmentTransaction);
         switch (index) {
             case WEATHER:
@@ -148,6 +148,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
         }
         fragmentTransaction.commit();
+
+        setTabSelectStatu(index);
     }
 
 
