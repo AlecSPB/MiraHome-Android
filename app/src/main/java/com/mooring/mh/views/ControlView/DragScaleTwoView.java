@@ -143,23 +143,27 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
 
         roomY = viewH / 2;
 
+        mShader = new LinearGradient(0, 0, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        //绘制渐变背景
+        colorPaint.setShader(mShader);
+        canvas.drawRect(0, 0, viewW, viewH, colorPaint);
+
+        //重新 设置colorPaint
+        colorPaint.setShader(null);
+        colorPaint.setColor(getResources().getColor(R.color.colorMainBg));
          /*-------- 绘制左侧 -------*/
 
-        mShader = new LinearGradient(0, dropTop + dropH / 2 + oriLeft, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
-        colorPaint.setShader(mShader);
-
         //左侧颜色变动填充层
-        canvas.drawRect(0, dropTop + dropH / 2 + oriLeft, viewW / 2, viewH, colorPaint);
+        canvas.drawRect(0, 0, viewW / 2, dropTop + dropH / 2 + oriLeft, colorPaint);
 
-        mShader = new LinearGradient(0, dropTop + dropH / 2 + oriRight, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
-        colorPaint.setShader(mShader);
         //右侧颜色变动填充层
-        canvas.drawRect(viewW / 2, dropTop + dropH / 2 + oriRight, viewW, viewH, colorPaint);
+        canvas.drawRect(viewW / 2, 0, viewW, dropTop + dropH / 2 + oriRight, colorPaint);
 
         //绘制室内温度横线
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);

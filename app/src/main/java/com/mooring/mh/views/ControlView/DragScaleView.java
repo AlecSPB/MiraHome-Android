@@ -26,7 +26,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
     private int oriTop;//拖动变量
     private boolean dragDirection;//是否符合拖动位置
 
-    private Paint colorPaint;//上层颜色画笔
+    private Paint colorPaint;//可改变高度View画笔
     private Bitmap drop;//拖动图标
     private Paint tickMarkPaint;//刻度线画笔
     private Paint scalePaint;//刻度圆圈
@@ -89,7 +89,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
     private void initScreen() {
 
         colorPaint = new Paint();
-        colorPaint.setColor(getResources().getColor(R.color.colorPurple));
         colorPaint.setStyle(Paint.Style.FILL);
 
         drop = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_adjust_temp);
@@ -137,6 +136,8 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
         roomY = viewH / 2;
 
+        mShader = new LinearGradient(0, 0, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
+
     }
 
 
@@ -144,11 +145,14 @@ public class DragScaleView extends View implements View.OnTouchListener {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        mShader = new LinearGradient(0, dropTop + dropH / 2 + oriTop, 0, viewH, new int[]{0XFF7d55ff, 0XFF6900ff}, null, Shader.TileMode.REPEAT);
+        //绘制渐变背景
         colorPaint.setShader(mShader);
+        canvas.drawRect(0, 0, viewW, viewH, colorPaint);
 
-        //颜色变动填充层
-        canvas.drawRect(0, dropTop + dropH / 2 + oriTop, viewW, viewH, colorPaint);
+        //变动填充层
+        colorPaint.setShader(null);
+        colorPaint.setColor(getResources().getColor(R.color.colorMainBg));
+        canvas.drawRect(0, 0, viewW, dropTop + dropH / 2 + oriTop, colorPaint);
 
         //绘制室内温度横线
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
