@@ -1,6 +1,7 @@
 package com.mooring.mh.views.WeatherView;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -16,7 +17,7 @@ public class SnowView extends View {
     private static final int NUM_SNOWFLAKES = 150;//雪花数量
     private static final int DELAY = 50;//延迟时间
     private SnowFlake[] mSnowFlakes; // 雪花
-
+    Bitmap bitmap;
 
     public SnowView(Context context) {
         super(context);
@@ -39,23 +40,25 @@ public class SnowView extends View {
     }
 
     private void initSnow(int width, int height) {
+
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG); // 抗锯齿
         paint.setColor(getResources().getColor(R.color.colorPurple)); // 白色雪花
         paint.setStyle(Paint.Style.FILL); // 填充;
         mSnowFlakes = new SnowFlake[NUM_SNOWFLAKES];
         //mSnowFlakes所有的雪花都生成放到这里面
         for (int i = 0; i < NUM_SNOWFLAKES; ++i) {
-            mSnowFlakes[i] = SnowFlake.create(width, height, paint);
+            mSnowFlakes[i] = SnowFlake.create(width, height,8);
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         //for返回SnowFlake
         for (SnowFlake s : mSnowFlakes) {
             //然后进行绘制
-            s.draw(canvas);
+            s.draw(canvas, bitmap);
         }
         // 隔一段时间重绘一次, 动画效果
         getHandler().postDelayed(runnable, DELAY);

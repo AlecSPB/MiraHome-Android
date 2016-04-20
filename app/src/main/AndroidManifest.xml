@@ -22,33 +22,49 @@
             </intent-filter>
         </activity>
 
+        <!--导航界面-->
         <activity
             android:name=".activity.GuidePageActivity"
             android:theme="@style/StartAndGuideTheme" />
 
+        <!--MainActivity-->
         <activity android:name=".activity.MainActivity" />
 
+        <!--展示更多-->
         <activity android:name=".activity.MoreActivity" />
 
+        <!--登录和注册-->
         <activity android:name=".activity.LoginAndSignUpActivity" />
 
+        <!--修改密码-->
         <activity android:name=".activity.ConfirmationPswActivity" />
 
+        <!--通用展示成功和失败页面-->
         <activity android:name=".activity.CommonSuccessActivity" />
 
+        <!--获取手机验证码-->
         <activity android:name=".activity.VerifyPhoneActivity" />
 
+        <!--添加用户-->
         <activity android:name=".activity.AddUserActivity" />
 
+        <!--展示和控制加热-->
         <activity android:name=".activity.HeatingControlActivity" />
 
+        <!--展示和控制烘干-->
         <activity android:name=".activity.DryingControlActivity" />
 
+        <!--展示各种数据详情-->
         <activity android:name=".activity.ParameterDetailActivity" />
 
+        <!--关于-->
         <activity android:name=".activity.AboutActivity" />
 
+        <!--建议-->
         <activity android:name=".activity.SuggestionsActivity" />
+
+        <!--用户详情-->
+        <activity android:name=".activity.UserInfoActivity" />
     </application>
 
 </manifest>

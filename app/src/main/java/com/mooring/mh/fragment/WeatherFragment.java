@@ -1,18 +1,18 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
+import com.mooring.mh.views.other.WeatherView;
 
 /**
  * Created by Will on 16/3/24.
  */
-public class WeatherFragment extends BaseFragment implements CircleDisplay.SelectionListener, View.OnClickListener {
+public class WeatherFragment extends BaseFragment implements View.OnClickListener {
 
     private CircleDisplay circle_progress_1;
     private CircleDisplay circle_progress_2;
@@ -32,6 +32,9 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
 
     @Override
     protected void initView() {
+
+        WeatherView weather_view = (WeatherView) rootView.findViewById(R.id.weather_view);
+        weather_view.startRain();
 
 
         circle_progress_1 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_1);
@@ -53,7 +56,6 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
     private void setmCircleDisplay(CircleDisplay c, float value) {
         c.setFormatDigits(0);
         c.setAnimDuration(3000);
-        c.setSelectionListener(this);
         c.setUnit("%");
         c.showValue(value, 100f, true);
 
@@ -64,11 +66,6 @@ public class WeatherFragment extends BaseFragment implements CircleDisplay.Selec
 
         //检测当前用户是否更改
 
-    }
-
-    @Override
-    public void onValueUpdate(float value, float maxValue) {
-        Log.e("onValueUpdate", "value  " + value + "  maxValue  " + value);
     }
 
     @Override

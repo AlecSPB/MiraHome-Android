@@ -6,14 +6,14 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.activity.ParameterDetailActivity;
-import com.mooring.mh.views.other.GiftRainView;
+import com.mooring.mh.views.other.WeatherView;
 
 /**
  * Created by Will on 16/3/24.
  */
 public class ParameterFragment extends BaseFragment implements View.OnClickListener {
 
-    private GiftRainView giftRainView;
+    private WeatherView giftRainView;
     private boolean isStart;
 
     private View layout_heart_rate;

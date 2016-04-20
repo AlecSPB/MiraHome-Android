@@ -7,7 +7,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp">
+        android:layout_height="230dp">
 
         <LinearLayout
             android:id="@+id/layout_connect_mooring"
@@ -51,62 +51,73 @@
                 android:id="@+id/imgView_switch_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="15dp"
                 android:contentDescription="@string/app_name"
-                android:src="@mipmap/ic_arrow" />
+                android:src="@drawable/bg_change_location" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="20dp"
-                android:background="@mipmap/ee_2"
-                android:gravity="center"
-                android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-                <LinearLayout
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <com.mooring.mh.views.CustomImageView.ZoomCircleView
-                        android:id="@+id/zcView_left"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        app:img_src="@mipmap/ic_default_avatar" />
-
-                    <ImageView
-                        android:id="@+id/imgView_delete_left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:contentDescription="@string/app_name"
-                        android:src="@mipmap/ic_arrow" />
-                </LinearLayout>
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/app_name"
+                    android:src="@mipmap/img_bed" />
 
                 <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                    <com.mooring.mh.views.CustomImageView.ZoomCircleView
-                        android:id="@+id/zcView_right"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        app:img_src="@mipmap/ic_default_avatar" />
-
-                    <ImageView
-                        android:id="@+id/imgView_delete_right"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:contentDescription="@string/app_name"
-                        android:src="@mipmap/ic_arrow" />
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <com.mooring.mh.views.CustomImageView.ZoomCircleView
+                            android:id="@+id/zcView_left"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            app:img_src="@mipmap/ic_default_avatar" />
+
+                        <ImageView
+                            android:id="@+id/imgView_delete_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/bg_delete_user" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <com.mooring.mh.views.CustomImageView.ZoomCircleView
+                            android:id="@+id/zcView_right"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            app:img_src="@mipmap/ic_default_avatar" />
+
+                        <ImageView
+                            android:id="@+id/imgView_delete_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/bg_delete_user" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
     </FrameLayout>
 
@@ -117,7 +128,6 @@
         android:layout_height="100dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
         android:background="@color/colorPrimaryDark"
         android:scrollbars="none"
         android:visibility="visible">

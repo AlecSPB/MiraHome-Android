@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 
 /**
+ * 展示各种数据详情
+ * <p/>
  * Created by Will on 16/4/12.
  */
 public class ParameterDetailActivity extends AppCompatActivity {

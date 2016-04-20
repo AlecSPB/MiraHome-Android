@@ -8,8 +8,9 @@
 
     <color name="colorMainBg">#22222C</color>
     <color name="colorOrange">#FF9A86</color>
+    <color name="colorOrangePress">#6900FF</color>
     <color name="colorPurple">#7D55FF</color>
-    <color name="colorPurple50">#7f7D55FF</color>
+    <color name="colorPurple50">#7F7D55FF</color>
 
     <color name="transparent_6">#60000000</color>
     <color name="transparent_4">#40000000</color>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.mooring.mh.R;
@@ -39,6 +40,8 @@ public class RainView extends View {
     }
 
     private void initSnow(int width, int height) {
+
+        Log.e("initSnow", "  width  "+width+"  height  "+height);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG); // 抗锯齿
         paint.setColor(getResources().getColor(R.color.colorOrange)); // 设置雨滴的颜色
         paint.setStyle(Paint.Style.FILL); // 填充

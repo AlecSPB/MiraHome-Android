@@ -5,6 +5,7 @@
     android:background="@color/colorMainBg"
     android:orientation="vertical">
 
+    <include layout="@layout/activity_common_title" />
 
     <com.mooring.mh.views.CircleProgress.DryingCircleView
         android:id="@+id/drying"
@@ -18,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:text="00:00:00"
         android:textColor="@color/colorWhite"
         android:textSize="30sp" />
@@ -26,7 +27,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="67dp"
+        android:layout_marginTop="30dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 

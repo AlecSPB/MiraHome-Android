@@ -21,7 +21,7 @@ public class RainFlake {
 
     private final float mIncrement; // 雨滴大小
     private final float mFlakeSize; // 下落速度
-    private final Paint mPaint; // 余地画笔
+    private final Paint mPaint; // 雨滴画笔
 
     private Line mLine; // 雨滴
 

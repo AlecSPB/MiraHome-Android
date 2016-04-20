@@ -20,7 +20,7 @@ import java.util.TimerTask;
 /**
  * Created by Will on 16/4/12.
  */
-public class DryingControlActivity extends AppCompatActivity {
+public class DryingControlActivity extends BaseActivity {
 
     private DryingCircleView drying;
     private Button button;
@@ -35,9 +35,17 @@ public class DryingControlActivity extends AppCompatActivity {
     private long times = 30 * 60 * 1000;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drying);
+    protected int getLayoutId() {
+        return R.layout.activity_drying;
+    }
+
+    @Override
+    protected String getTitleName() {
+        return "Drying";
+    }
+
+    @Override
+    protected void initActivity() {
 
         drying = (DryingCircleView) findViewById(R.id.drying);
         button = (Button) findViewById(R.id.button);
@@ -65,6 +73,7 @@ public class DryingControlActivity extends AppCompatActivity {
 //        tv_drying_times.setText();
 
         initTimer();
+
     }
 
     private void Countdown() {

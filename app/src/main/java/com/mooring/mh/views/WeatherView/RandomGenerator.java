@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class RandomGenerator {
 
-    private static final java.util.Random RANDOM = new java.util.Random();
+    public static final java.util.Random RANDOM = new java.util.Random();
 
 
     /**
@@ -21,6 +21,22 @@ public class RandomGenerator {
         float min = Math.min(lower, upper);
         float max = Math.max(lower, upper);
         return getRandom(max - min) + min;
+    }
+
+    public float getSizeRandom(float lower, float upper) {
+        float temp = getRandom(upper - lower) + lower;
+        if (temp <= 11) {
+            return 1f;
+        } else if (temp <= 21) {
+            return 2f;
+        } else if (temp <= 31) {
+            return 3f;
+        } else if (temp <= 41) {
+            return 4f;
+        } else if (temp <= 51) {
+            return 5f;
+        }
+        return 6f;
     }
 
     /**

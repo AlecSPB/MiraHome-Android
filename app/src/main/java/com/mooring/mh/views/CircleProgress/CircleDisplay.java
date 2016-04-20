@@ -11,7 +11,6 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
@@ -77,24 +76,15 @@ public class CircleDisplay extends View {
      */
     private Paint finishedPaint;
     /**
-     * the paint of blank
-     */
-    private Paint unfinishedPaint;
-    /**
      * the RectF of progress
      */
     private RectF finishedOuterRect = new RectF();
-    /**
-     * the RectF of blank
-     */
-    private RectF unfinishedOuterRect = new RectF();
     /**
      * object animator for doing the drawing animations
      */
     private ObjectAnimator mDrawAnimator;
 
-    private int finishedStrokeColor = Color.rgb(125, 85, 255);
-    private int unfinishedStrokeColor = Color.TRANSPARENT;
+    private int finishedStrokeColor = Color.rgb(125, 85, 255); //colorPurple
     private int textColor = Color.WHITE;
 
     public CircleDisplay(Context context) {
@@ -111,7 +101,6 @@ public class CircleDisplay extends View {
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.AutoProgress, defStyleAttr, 0);
         textColor = attributes.getColor(R.styleable.AutoProgress_pre_textColor, Color.WHITE);
         finishedStrokeColor = attributes.getColor(R.styleable.AutoProgress_pre_finishColor, Color.rgb(125, 85, 255));
-        unfinishedStrokeColor = attributes.getColor(R.styleable.AutoProgress_pre_unFinishColor, Color.TRANSPARENT);
 
         attributes.recycle();
         initPaint();
@@ -129,12 +118,6 @@ public class CircleDisplay extends View {
         finishedPaint.setStyle(Paint.Style.STROKE);
         finishedPaint.setAntiAlias(true);
         finishedPaint.setStrokeWidth(mStrokeWidth);
-
-        unfinishedPaint = new Paint();
-        unfinishedPaint.setColor(unfinishedStrokeColor);
-        unfinishedPaint.setStyle(Paint.Style.STROKE);
-        unfinishedPaint.setAntiAlias(true);
-        unfinishedPaint.setStrokeWidth(mStrokeWidth);
 
         mTextPaint = new TextPaint();
         mTextPaint.setStyle(Style.STROKE);
@@ -157,16 +140,10 @@ public class CircleDisplay extends View {
                 delta,
                 getWidth() - delta,
                 getHeight() - delta);
-        unfinishedOuterRect.set(delta,
-                delta,
-                getWidth() - delta,
-                getHeight() - delta);
 
         float innerCircleRadius = (getWidth() - mStrokeWidth) / 2f;
         canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, innerCircleRadius, mInnerCirclePaint);
         canvas.drawArc(finishedOuterRect, mStartAngle, getProgressAngle(), false, finishedPaint);
-        canvas.drawArc(unfinishedOuterRect, mStartAngle + getProgressAngle(), 360 - getProgressAngle(), false, unfinishedPaint);
-
 
         if (mDrawText) {
             drawText(canvas);
@@ -183,7 +160,6 @@ public class CircleDisplay extends View {
      * @return
      */
     private float getProgressAngle() {
-        Log.e("getProgressAngle", "getProgressAngle  " + mAngle + "    " + mPhase + "   " + mDrawAnimator.getAnimatedValue());
         return mAngle * mPhase;
     }
 

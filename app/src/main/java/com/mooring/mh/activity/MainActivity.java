@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.HorizontalDataAdapter;
-import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.fragment.ControlFragment;
@@ -32,7 +30,6 @@ import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.CustomImageView.ZoomCircleView;
 
 import org.xutils.DbManager;
-import org.xutils.ex.DbException;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -92,7 +89,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
     private List<ImageData> dataList;//用户list
-    private HorizontalDataAdapter<ImageData> adapter;//横向滑动适配器
+    private HorizontalDataAdapter adapter;//横向滑动适配器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,15 +189,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void initData() {
         dataList = new ArrayList<ImageData>();
         for (int i = 0; i < 4; i++) {
-            ImageData d = new ImageData("Alex", Environment.getExternalStorageDirectory().getPath() + "/feidieshuo/Cache/Userface/userheads/11223.jpg");
+            ImageData d = new ImageData("Alex", Environment.getExternalStorageDirectory().getPath()
+                    + "/Download/11223.jpg");
             dataList.add(d);
         }
-        adapter = new HorizontalDataAdapter<ImageData>(this, dataList, R.layout.horizontal_scroll_item, R.id.imgView_horizontal_item,
-                R.id.tv_horizontal_item, getResources());
+        adapter = new HorizontalDataAdapter(this, dataList);
         adapter.setOnClickListener(new HorizontalDataAdapter.OnClickListener<ImageData>() {
             @Override
-            public void onClick(ImageData data) {
-                Toast.makeText(MainActivity.this, data.getTitle(), Toast.LENGTH_SHORT).show();
+            public void onClick(ImageData data, int position) {
+                Intent it = new Intent();
+                if (position != dataList.size() - 1) {
+                    it.setClass(MainActivity.this, UserInfoActivity.class);
+                    startActivityForResult(it, MConstants.USER_INFO_REQUEST);
+                } else {
+                    //添加用户
+                    it.setClass(MainActivity.this, AddUserActivity.class);
+                    startActivityForResult(it, MConstants.ADD_USER_REQUEST);
+                }
             }
         });
         menu_recyclerView.setAdapter(adapter);
@@ -409,12 +414,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MConstants.ADD_USER_REQUEST && resultCode == MConstants.ADD_USER_RESULT) {
-            //此时是添加用户回传
+            //此时是添加用户回调
 
             //执行列表更新
         }
+
+        if (requestCode == MConstants.USER_INFO_REQUEST && resultCode == MConstants.USER_INFO_RESULT) {
+
+            //此时为修改用户完成后的回调
+
+            //修改用户展示头像
+        }
     }
 
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK

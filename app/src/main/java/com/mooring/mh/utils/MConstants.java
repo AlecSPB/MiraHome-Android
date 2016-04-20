@@ -281,5 +281,14 @@ public class MConstants {
      * 添加用户finish标识
      */
     public static final int ADD_USER_RESULT = 0X66;
+    /**
+     * 跳转添加用户
+     */
+    public static final int USER_INFO_REQUEST = 0X55;
+
+    /**
+     * 添加用户finish标识
+     */
+    public static final int USER_INFO_RESULT = 0X66;
 
 }

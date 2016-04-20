@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorMainBg"
     android:orientation="vertical">
 
+    <include layout="@layout/activity_common_title" />
 
-    <EditText
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="225dp"
-        android:layout_margin="10dp"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="top"
-        android:hint="@string/act_suggestions_hint"
-        android:padding="10dp"
-        android:textColor="@color/colorWhite"
-        android:textColorHint="@color/colorWhite50"
-        android:textSize="@dimen/text_dimen_24" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_suggestions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@color/colorPurple"
-        android:clickable="true"
-        android:gravity="center"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="Send"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24"
-        android:textStyle="bold" />
-</RelativeLayout>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="225dp"
+            android:layout_margin="10dp"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="top"
+            android:hint="@string/act_suggestions_hint"
+            android:padding="10dp"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite50"
+            android:textSize="@dimen/text_dimen_24" />
+
+        <TextView
+            android:id="@+id/tv_suggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/colorPurple"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Send"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_24"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</LinearLayout>

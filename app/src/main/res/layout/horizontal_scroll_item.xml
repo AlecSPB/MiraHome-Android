@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="100dp"
+    android:layout_width="70dp"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <com.mooring.mh.views.CustomImageView.ZoomCircleView
-        android:id="@+id/imgView_horizontal_item"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        app:img_src="@mipmap/ic_launcher" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <com.mooring.mh.views.CustomImageView.CircleImageView
+            android:id="@+id/imgView_horizontal_header"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/ic_default_avatar" />
+
+        <ImageView
+            android:id="@+id/imgView_horizontal_add"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/bg_add_user"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <TextView
-        android:id="@+id/tv_horizontal_item"
+        android:id="@+id/tv_horizontal_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
