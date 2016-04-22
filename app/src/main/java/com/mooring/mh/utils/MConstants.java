@@ -2,7 +2,7 @@ package com.mooring.mh.utils;
 
 /**
  * 网络请求地址
- * <p>
+ * <p/>
  * Created by Will on 16/3/31.
  */
 public class MConstants {
@@ -19,21 +19,21 @@ public class MConstants {
 
     /**
      * 获取短信验证码
-     * <p>
+     * <p/>
      * mobile_phone: '手机号码'
      */
     public static final String SMS_CODE = "sms_code";
 
     /**
      * 获取邮件验证码
-     * <p>
+     * <p/>
      * email: 'mail@mirahome.me'
      */
     public static final String VERIFY_CODE = "verify_code";
 
     /**
      * 用手机号码注册用户
-     * <p>
+     * <p/>
      * password: '',
      * mobile_phone: '',
      * sms_code: '短信验证码',
@@ -43,21 +43,21 @@ public class MConstants {
 
     /**
      * 检查手机号码是否已经被注册
-     * <p>
+     * <p/>
      * mobile_phone: '18600001111'
      */
     public static final String IS_MOBILE_PHONE_USED = "is_mobile_phone_used";
 
     /**
      * 检查email是否已经被注册
-     * <p>
+     * <p/>
      * email: ''
      */
     public static final String IS_EMAIL_USED = "is_email_used";
 
     /**
      * 使用Email注册用户
-     * <p>
+     * <p/>
      * email: '',
      * password: '',
      * verify_code: '', //验证码
@@ -67,14 +67,14 @@ public class MConstants {
 
     /**
      * 发送重置密码邮件
-     * <p>
+     * <p/>
      * email: ''
      */
     public static final String SEND_RESET_PASSWORD_EMAIL = "send_reset_password_email";
 
     /**
      * 使用邮件验证码重置密码
-     * <p>
+     * <p/>
      * verify_code: '123456',
      * new_password: '12345678',
      * email: 'suyuan@mirahome.me'
@@ -83,14 +83,14 @@ public class MConstants {
 
     /**
      * 发送重置密码手机验证码
-     * <p>
+     * <p/>
      * mobile_phone: '18600001111'
      */
     public static final String SEND_RESET_PASSWORD_SMS_CODE = "send_reset_password_sms_code";
 
     /**
      * 使用手机验证码重置密码
-     * <p>
+     * <p/>
      * verify_code: '123456',
      * new_password: '12345678',
      * mobile_phone: '18616120000'
@@ -99,7 +99,7 @@ public class MConstants {
 
     /**
      * 手机号登录
-     * <p>
+     * <p/>
      * mobile_phone: '手机号码',
      * password: ''
      */
@@ -107,7 +107,7 @@ public class MConstants {
 
     /**
      * 使用email登录
-     * <p>
+     * <p/>
      * email: '',
      * password: ''
      */
@@ -115,7 +115,7 @@ public class MConstants {
 
     /**
      * 使用weixin登录
-     * <p>
+     * <p/>
      * access_token: 'miratoken',
      * open_id: '
      */
@@ -123,7 +123,7 @@ public class MConstants {
 
     /**
      * 使用weibo登录
-     * <p>
+     * <p/>
      * access_token: 'miratoken',
      * weibo_id: ''
      */
@@ -131,7 +131,7 @@ public class MConstants {
 
     /**
      * 使用facebook登录
-     * <p>
+     * <p/>
      * access_token: 'miratoken',
      * facebook_id: ''
      */
@@ -139,7 +139,7 @@ public class MConstants {
 
     /**
      * 使用qq登录
-     * <p>
+     * <p/>
      * access_token: 'miratoken',
      * qq_id: ''
      */
@@ -147,14 +147,14 @@ public class MConstants {
 
     /**
      * 退出登陆
-     * <p>
+     * <p/>
      * apikey: ''
      */
     public static final String LOGOUT = "logout";
 
     /**
      * 修改密码
-     * <p>
+     * <p/>
      * old_password: '',
      * new_password: '',
      * apikey: '' //登录成功以后从服务器返回
@@ -163,7 +163,7 @@ public class MConstants {
 
     /**
      * 添加成员
-     * <p>
+     * <p/>
      * member_name: '',
      * member_image: '',
      * gender: 1, //1 男， 2 女
@@ -176,7 +176,7 @@ public class MConstants {
     /**
      * 更新或删除成员
      * 删除时没有参数
-     * <p>
+     * <p/>
      * member_name: '',
      * member_image: '成员头像url',
      * gender: '1',//1 男， 2 女
@@ -193,7 +193,7 @@ public class MConstants {
     public static final String GET_MEMBER_BY_USER_ID = "get_member_by_user_id";
     /**
      * 设置闹钟
-     * <p>
+     * <p/>
      * week_day: 1, //星期几 1-7
      * hour: 10,
      * minute: 10,
@@ -203,7 +203,7 @@ public class MConstants {
 
     /**
      * 上传文件
-     * <p>
+     * <p/>
      * Filedata: ''
      */
     public static final String UPLOAD = "upload";
@@ -211,7 +211,7 @@ public class MConstants {
     /*设备相关*/
     /**
      * 绑定用户到设备
-     * <p>
+     * <p/>
      * device_id: 1,
      */
     public static final String BIND_DEVICE = "bind_device";
@@ -225,7 +225,7 @@ public class MConstants {
 
     /**
      * 设置成员到设备
-     * <p>
+     * <p/>
      * device_side: 1, //1或2
      * member_id: 1
      */
@@ -238,7 +238,7 @@ public class MConstants {
 
     /**
      * 获取日报告
-     * <p>
+     * <p/>
      * member_id: 1
      * year_month: '2010-08'  //月份必须为两位数字
      */
@@ -246,11 +246,21 @@ public class MConstants {
 
     /**
      * 获取月报告
-     * <p>
+     * <p/>
      * member_id: 1
      * year_month: '2010-08'  //月份必须为两位数字
      */
     public static final String MONTHLY_REPORT = "monthly_report";
+
+    /**
+     * open weather map 服务器地址
+     */
+    public static final String WEATHER_SERVER = "http://api.openweathermap.org/data/2.5/weather";
+
+    /**
+     * open weather map 的appId
+     */
+    public static final String OPEN_WEATHER_ID = "a6c9476969cc87a5e3ba40bd69d25e3b";
 
     /**
      * 注册成功

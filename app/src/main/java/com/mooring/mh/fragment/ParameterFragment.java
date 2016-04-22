@@ -13,9 +13,6 @@ import com.mooring.mh.views.other.WeatherView;
  */
 public class ParameterFragment extends BaseFragment implements View.OnClickListener {
 
-    private WeatherView giftRainView;
-    private boolean isStart;
-
     private View layout_heart_rate;
     private View layout_breathing_rate;
     private View layout_body_movement;
@@ -42,26 +39,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     protected void initView() {
-//        giftRainView = (GiftRainView) rootView.findViewById(R.id.giftRainView);
-//
-//
-//        giftRainView.setImages(R.mipmap.ico_gold_money, R.mipmap.ico_money, R.mipmap.ic_launcher);
-//
-//        giftRainView.startRain();
-//        isStart = true;
-//
-//        giftRainView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (isStart) {
-//                    giftRainView.startRain();
-//                    isStart = true;
-//                } else {
-//                    giftRainView.stopRainDely();
-//                    isStart = false;
-//                }
-//            }
-//        });
+
 
         layout_heart_rate = rootView.findViewById(R.id.layout_heart_rate);
         layout_breathing_rate = rootView.findViewById(R.id.layout_breathing_rate);

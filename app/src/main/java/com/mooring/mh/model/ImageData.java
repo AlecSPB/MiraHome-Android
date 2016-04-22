@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import com.mooring.mh.adapter.HorizontalDataAdapter;
 
 /**
+ * 用于menu中横向滑动用户的model
+ * <p/>
  * Created by Will on 16/4/7.
  */
 public class ImageData implements HorizontalDataAdapter.AdapterData, Parcelable {

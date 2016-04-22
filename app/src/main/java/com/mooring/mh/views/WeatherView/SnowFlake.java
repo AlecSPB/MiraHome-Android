@@ -57,8 +57,10 @@ public class SnowFlake {
         float flakeSize;
         if (kind == WeatherView.LIGHT_SNOW || kind == WeatherView.HEAVY_SNOW) {
             increment = random.getRandom(INCREMENT_LOWER, INCREMENT_UPPER);
+        } else if (kind == WeatherView.MIST || kind == WeatherView.DUST_WHIRLS) {
+            increment = random.getRandom(INCREMENT_LOWER / 2, INCREMENT_UPPER / 2);
         } else {
-            increment = random.getRandom(INCREMENT_LOWER * 10, INCREMENT_UPPER * 10);
+            increment = random.getRandom(INCREMENT_LOWER * 20, INCREMENT_UPPER * 20);
         }
         if (kind == WeatherView.HEAVY_SNOW || kind == WeatherView.FREEZING_RAIN || kind == WeatherView.SLEET) {
             flakeSize = random.getSizeRandom(FLAKE_SIZE_LOWER, FLAKE_SIZE_UPPER);
@@ -74,7 +76,6 @@ public class SnowFlake {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
         move(width, height);
-//        canvas.drawCircle(mPosition.x, mPosition.y, mFlakeSize, mPaint);
         canvas.drawBitmap(bitmap, mPosition.x, mPosition.y, null);
     }
 
@@ -87,12 +88,16 @@ public class SnowFlake {
             x = mPosition.x + (mIncrement * Math.cos(mAngle));
             //y是竖直方向，就是下落
             y = mPosition.y + (mIncrement * Math.sin(mAngle));
+        } else if (mKind == WeatherView.MIST || mKind == WeatherView.DUST_WHIRLS) {
+            x = mPosition.x + (mIncrement * Math.cos(mAngle)) * mRandom.getRandom(1f);
+            //y是竖直方向，就是下落
+            y = mPosition.y + (mIncrement * Math.sin(mAngle)) * mRandom.getRandom(1f);
         } else {
 
             x = mPosition.x;
             //y是竖直方向，就是下落
             t++;
-            y = mPosition.y + mIncrement+0.01*t*t;
+            y = mPosition.y + mIncrement + 0.5 * t * t;
 
         }
 
@@ -119,7 +124,7 @@ public class SnowFlake {
 
     // 重置雪花
     private void reset(int width) {
-        t= 0;
+        t = 0;
         mPosition.x = mRandom.getRandom(width);
         mPosition.y = -bitmap.getHeight() - 1; // 最上面
         mAngle = mRandom.getRandom(ANGLE_SEED) / ANGLE_SEED * ANGLE_RANGE + HALF_PI - HALF_ANGLE_RANGE;

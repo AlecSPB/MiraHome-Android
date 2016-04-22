@@ -1,6 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    signingConfigs {
+        /**
+         * 设置你的keystore相关
+         * demo中只是一个示例，使用时请根据实际情况进行配置
+         */
+        debug {
+            //keystore中key的别名
+            keyAlias 'mirahome'
+            //keystore中key的密码
+            keyPassword 'SH@mirahome'
+            //keystore的文件路径，可以使绝对路径也可以是相对路径
+            storeFile file('/Users/Will/Desktop/temp/mirahome.jks')
+            //keystore的密码
+            storePassword 'SH@mirahome'
+        }
+    }
+
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
@@ -20,9 +38,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
-    compile 'org.xutils:xutils:3.3.26'
+    compile 'org.xutils:xutils:3.3.32'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
+//    compile files('libs/AMap_Location_V2.4.1_20160414.jar')
 }

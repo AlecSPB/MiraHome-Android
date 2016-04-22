@@ -1,25 +1,23 @@
 package com.mooring.mh.views.other;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
 import com.mooring.mh.R;
+import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.views.WeatherView.RandomGenerator;
 import com.mooring.mh.views.WeatherView.SnowFlake;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 /**
@@ -50,37 +48,23 @@ public class WeatherView extends View {
     public static final int COLD = 16;//冷
     public static final int HOT = 17;//热
 
-    private int duration;
-
-    private int kind = LIGHT_RAIN;//天气类型
-    private int count;//下落物总数
-    private int speed;//下落速度
-    private float maxSize;
-    private float minSize;
-
-
-    private List<Pieces> piecesList;
-    private Matrix m = new Matrix();
-    private ValueAnimator animator;//The default duration is 300 milliseconds
-    private long startTime;
-    public static SparseArray<Bitmap> bitmapArray;
-
-    //是否停止绘制下落物
-    private boolean isDelyStop = false;
-
-    private int[] piecesImgs = {R.mipmap.ic_rain_1, R.mipmap.ic_rain_2, R.mipmap.ic_rain_3,
-            R.mipmap.ic_rain_4};
-
-    private Bitmap bg_img;
 
     /**
-     * ------------雪花--------------
+     * ------------公用--------------
+     */
+    private Paint bgPaint = new Paint();
+    private int viewW;//当前view宽度
+    private int viewH;//当前View高度
+    private int kind = LIGHT_RAIN;//天气类型
+    private boolean isRuning = true;
+
+    /**
+     * ------------下落物--------------
      */
     private static int NUM_SNOWFLAKES = 30;//雪花数量
     private static final int DELAY = 10;//延迟时间
-    private List<SnowFlake> mSnowFlakes = new ArrayList<>(); // 雪花
-    private List<Bitmap> snows = new ArrayList<>();
-
+    private List<SnowFlake> mSnowFlakes = null; // 碎片
+    private List<Bitmap> snows = null;//存放不同碎片
     /**
      * ------------雷电--------------
      */
@@ -88,7 +72,20 @@ public class WeatherView extends View {
     private Bitmap light_left;//左边雷电
     private Bitmap light_right;//右边雷电
     private int light_alpha = 0;
-
+    private int light_location = 1;
+    /**
+     * ------------风车--------------
+     */
+    private Bitmap pillar_big;//大风车柱子
+    private Bitmap blade_big;//大风车扇叶
+    private Bitmap pillar_small;//小风车柱子
+    private Bitmap blade_small;//小风车扇叶
+    private float windScale = 0.0f;
+    private int windBig_x = CommonUtils.dp2px(getContext(), 150);
+    private int windBig_y = CommonUtils.dp2px(getContext(), 100);
+    private int windSma_x = CommonUtils.dp2px(getContext(), 30);
+    private int windSma_y = CommonUtils.dp2px(getContext(), 200);
+    private Matrix matrixWind;
 
     public WeatherView(Context context) {
         this(context, null);
@@ -100,17 +97,6 @@ public class WeatherView extends View {
         if (isInEditMode())
             return;
 
-        if (null == attrs) {
-            throw new IllegalArgumentException("Attributes should be provided to this view,");
-        }
-
-        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.WeatherStyle);
-        count = typedArray.getInt(R.styleable.WeatherStyle_pieces_count, 50);
-        speed = typedArray.getInt(R.styleable.WeatherStyle_pieces_speed, 500);
-        minSize = typedArray.getFloat(R.styleable.WeatherStyle_pieces_min_size, 0.5f);
-        maxSize = typedArray.getFloat(R.styleable.WeatherStyle_pieces_max_size, 1.2f);
-        kind = typedArray.getInt(R.styleable.WeatherStyle_weather_kind, LIGHT_SNOW);
-        typedArray.recycle();
         init();
     }
 
@@ -118,86 +104,106 @@ public class WeatherView extends View {
      * 初始化
      */
     private void init() {
+        mSnowFlakes = new ArrayList<>();
+        snows = new ArrayList<>();
 
-        bg_img = BitmapFactory.decodeResource(getResources(), R.mipmap.img_weather_bg_night);
-        bg_img = BitmapFactory.decodeResource(getResources(), R.mipmap.img_weather_bg_night);
-        light_left = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_lightning_1);
-        light_right = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_lightning_2);
+        matrixWind = new Matrix();
 
-        bitmapArray = new SparseArray<>();
-        piecesList = new ArrayList<>();
-//        animator = ValueAnimator.ofFloat(0, 1);
+        light_left = createBitmap(R.mipmap.ic_lightning_1);
+        light_right = createBitmap(R.mipmap.ic_lightning_2);
+
+        pillar_small = createBitmap(R.mipmap.ic_windmill_pillar_small);
+        blade_small = createBitmap(R.mipmap.ic_windmill_blade_small);
+        pillar_big = createBitmap(R.mipmap.ic_windmill_pillar_big);
+        blade_big = createBitmap(R.mipmap.ic_windmill_blade_big);
+
         //设置当前view为单层,不覆盖
         setLayerType(View.LAYER_TYPE_NONE, null);
 
-        //设置动画循环监听
-//        setAnimator();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        piecesList.clear();
-        setPiecesCount(count);
-        startTime = System.currentTimeMillis();
 
-        initSnow(w, h);
+        viewW = w;
+        viewH = h;
+
+        if (w != oldw || h != oldh) {
+            initSnow(w, h);
+        }
     }
 
-    long start = System.currentTimeMillis();
-    long stop = System.currentTimeMillis();
-
-    int loca = 1;
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (isRuning) {
 
-//        if (kind == HAIL) {
-//        }
-
-//        if (kind == HEAVY_RAIN) {
-//            for (int i = 0; i < piecesList.size(); ++i) {
-//                Pieces pieces = piecesList.get(i);
-//                m.setTranslate(-pieces.width / 2, -pieces.height / 2);
-//                m.postTranslate(pieces.width / 2 + pieces.x, pieces.height / 2
-//                        + pieces.y);
-//                canvas.drawBitmap(pieces.bitmap, m, null);
-//            }
-//        }
-
-        canvas.drawBitmap(bg_img, 0, 0, null);
-
-
-        //带有雷电
-        if (kind == SHOWER_RAIN || kind == FREEZING_RAIN) {
-            //255全不透
-
-            light_alpha += RandomGenerator.RANDOM.nextFloat() * 5;
-            if (light_alpha >= 255) {
-                light_alpha = 0;
-                loca = (int) (RandomGenerator.RANDOM.nextFloat() * 2);
+            bgPaint.setAntiAlias(true);
+            bgPaint.setFilterBitmap(true);
+            /**
+             * 绘制带有雷电
+             */
+            if (kind == SHOWER_RAIN || kind == FREEZING_RAIN) {
+                light_alpha += RandomGenerator.RANDOM.nextFloat() * 10;
+                if (light_alpha >= 255) {
+                    light_alpha = 0;
+                    light_location = (int) (RandomGenerator.RANDOM.nextFloat() * 2);
+                }
+                paintLeft.setAlpha(255 - light_alpha);
+                canvas.drawBitmap(light_location == 1 ? light_left : light_right, 0, 0, paintLeft);
             }
-            paintLeft.setAlpha(255 - light_alpha);
-            canvas.drawBitmap(loca == 1 ? light_left : light_right, 0, 0, paintLeft);
+            /**
+             * 绘制---小雨,大雨,小雪,大雪,雷雨,冰雹,雨夹雪,雷雨加冰雹
+             */
+            if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == MIST ||
+                    kind == LIGHT_SNOW || kind == HEAVY_SNOW || kind == SHOWER_RAIN ||
+                    kind == DUST_WHIRLS || kind == HAIL || kind == SLEET || kind == FREEZING_RAIN) {
 
-        }
-
-        /**
-         * 小雨,大雨,小雪,大雪,雷雨,冰雹,雨夹雪,雷雨加冰雹
-         */
-        if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == LIGHT_SNOW || kind == HEAVY_SNOW
-                || kind == SHOWER_RAIN || kind == HAIL || kind == SLEET || kind == FREEZING_RAIN) {
-            for (SnowFlake s : mSnowFlakes) {
-                //然后进行绘制
-                s.draw(canvas, snows.get((int) s.mFlakeSize - 1));
+                for (SnowFlake s : mSnowFlakes) {
+                    //然后进行绘制
+                    if (snows.size() > 0) {
+                        s.draw(canvas, snows.get((int) s.mFlakeSize - 1));
+                    }
+                }
             }
-            // 隔一段时间重绘一次, 动画效果
+            /**
+             * 绘制---晴天,阴天,多云
+             */
+            if (kind == CALM || kind == CLOUDY_DAY || kind == FEW_CLOUDS) {
+
+            }
+            /**
+             * 绘制---微风,大风,龙卷风
+             */
+            if (kind == LIGHT_BREEZE || kind == HIGH_WIND || kind == TORNADO) {
+                canvas.drawBitmap(pillar_small, windSma_x + (blade_small.getWidth() -
+                        pillar_small.getWidth()) / 2, windSma_y + blade_small.getHeight() / 2 - 20, bgPaint);
+
+                canvas.drawBitmap(pillar_big, windBig_x + (blade_big.getWidth() -
+                        pillar_big.getWidth()) / 2, windBig_y + blade_big.getHeight() / 2 - 20, bgPaint);
+
+                matrixWind.reset();
+                matrixWind.postRotate((windScale -= 1) % 360f, blade_small.getWidth() / 2,
+                        blade_small.getHeight() / 2);
+                matrixWind.postTranslate(windSma_x, windSma_y);
+                canvas.drawBitmap(blade_small, matrixWind, bgPaint);
+
+                matrixWind.reset();
+                matrixWind.postRotate((windScale) % 360f, blade_big.getWidth() / 2,
+                        blade_big.getHeight() / 2);
+                matrixWind.postTranslate(windBig_x, windBig_y);
+                canvas.drawBitmap(blade_big, matrixWind, bgPaint);
+            }
+
             getHandler().postDelayed(runnable, DELAY);
         }
     }
 
-    // 重绘线程
+    /**
+     * 重绘线程
+     */
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -206,144 +212,66 @@ public class WeatherView extends View {
         }
     };
 
+    /**
+     * 设置是否运行
+     *
+     * @param runing
+     */
+    public void setRuning(boolean runing) {
+        this.isRuning = runing;
+        if (isRuning) {
+            invalidate();
+        }
+    }
+
+    public boolean getRuning() {
+        return isRuning;
+    }
+
     private void initSnow(int width, int height) {
         snows.clear();
         if (kind == LIGHT_SNOW || kind == HEAVY_SNOW || kind == SLEET) {
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_snow_2));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_snow_3));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_snow_5));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_snow_6));
+            snows.add(createBitmap(R.mipmap.ic_snow_2));
+            snows.add(createBitmap(R.mipmap.ic_snow_3));
+            snows.add(createBitmap(R.mipmap.ic_snow_5));
+            snows.add(createBitmap(R.mipmap.ic_snow_6));
             if (kind == HEAVY_SNOW) {
-                snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_snow_1));
-                snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_snow_4));
+                snows.add(createBitmap(R.mipmap.ic_snow_1));
+                snows.add(createBitmap(R.mipmap.ic_snow_4));
             }
             if (kind == SLEET) {
-                snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rain_2));
-                snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rain_4));
+                snows.add(createBitmap(R.mipmap.ic_rain_2));
+                snows.add(createBitmap(R.mipmap.ic_rain_4));
             }
         }
         if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == SHOWER_RAIN || kind == FREEZING_RAIN) {
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rain_1));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rain_2));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rain_3));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rain_4));
+            snows.add(createBitmap(R.mipmap.ic_rain_1));
+            snows.add(createBitmap(R.mipmap.ic_rain_2));
+            snows.add(createBitmap(R.mipmap.ic_rain_3));
+            snows.add(createBitmap(R.mipmap.ic_rain_4));
         }
         if (kind == HAIL) {
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_hail_1));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_hail_3));
+            snows.add(createBitmap(R.mipmap.ic_hail_1));
+            snows.add(createBitmap(R.mipmap.ic_hail_3));
         }
         if (kind == HAIL || kind == FREEZING_RAIN) {
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_hail_2));
-            snows.add(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_hail_4));
+            snows.add(createBitmap(R.mipmap.ic_hail_2));
+            snows.add(createBitmap(R.mipmap.ic_hail_4));
         }
-
+        if (kind == MIST || kind == DUST_WHIRLS) {
+            snows.add(createBitmap(R.mipmap.ic_mist_2));
+            snows.add(createBitmap(R.mipmap.ic_mist_2));
+            snows.add(createBitmap(R.mipmap.ic_mist_2));
+            snows.add(createBitmap(R.mipmap.ic_mist_2));
+        }
+        if (kind == DUST_WHIRLS) {
+            snows.add(createBitmap(R.mipmap.ic_mist_1));
+            snows.add(createBitmap(R.mipmap.ic_mist_1));
+        }
         mSnowFlakes.clear();
         //mSnowFlakes所有的雪花都生成放到这里面
         for (int i = 0; i < NUM_SNOWFLAKES; ++i) {
             mSnowFlakes.add(SnowFlake.create(width, height, kind));
-        }
-    }
-
-    /**
-     * 添加动画加载监听
-     */
-    private void setAnimator() {
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                long nowTime = System.currentTimeMillis();
-                float secs = (float) (nowTime - startTime) / 1000f;
-                startTime = nowTime;
-                for (int i = 0; i < piecesList.size(); ++i) {
-
-                    Pieces pieces = piecesList.get(i);
-
-                    pieces.y += (pieces.speed * secs);
-
-                    if (pieces.y > getHeight()) {
-                        if (isDelyStop) {
-                            piecesList.remove(i);
-                        } else {
-                            pieces.y = 0 - pieces.height;
-                        }
-                    }
-                }
-                invalidate();
-            }
-        });
-        animator.setRepeatCount(ValueAnimator.INFINITE);//无限重复动画
-        animator.setDuration(300);//执行时间
-    }
-
-
-    /**
-     * 设置下落物总数量
-     *
-     * @param quantity
-     */
-    public void setPiecesCount(int quantity) {
-        if (piecesImgs == null || piecesImgs.length == 0)
-            return;
-        int leftCount = Math.abs(quantity - piecesList.size());
-        for (int i = 0; i < leftCount; ++i) {
-            Bitmap originalBitmap = BitmapFactory
-                    .decodeResource(getResources(), piecesImgs[i % piecesImgs.length]);
-            Pieces pieces = new Pieces(getWidth(), originalBitmap, speed);
-            pieces.bitmap = bitmapArray.get(pieces.width);
-            if (pieces.bitmap == null) {
-                pieces.bitmap = originalBitmap;
-                bitmapArray.put(pieces.width, pieces.bitmap);
-            }
-            piecesList.add(pieces);
-        }
-    }
-
-    /**
-     * 将屏幕中的动画显示完成后，
-     */
-    public void stopRainDely() {
-        this.isDelyStop = true;
-    }
-
-    /**
-     * 停止绘制和动画
-     */
-    public void stopRainNow() {
-        isDelyStop = true;
-        piecesList.clear();
-        invalidate();
-        animator.cancel();
-    }
-
-
-    /**
-     * 重新开始显示动画
-     */
-    public void startRain() {
-        this.isDelyStop = false;
-        setPiecesCount(count);
-        animator.start();
-    }
-
-    /**
-     * 设置下落物
-     *
-     * @param pieces
-     */
-    private void setPieces(int... pieces) {
-        this.piecesImgs = pieces;
-        piecesList.clear();
-        this.setPiecesCount(count);
-    }
-
-    /**
-     * 设置下降速度
-     *
-     * @param speed
-     */
-    public void setSpeed(int speed) {
-        for (Pieces pieces : piecesList) {
-            pieces.setSpeed(speed);
         }
     }
 
@@ -358,6 +286,36 @@ public class WeatherView extends View {
         initSnow(getWidth(), getHeight());
     }
 
+    /**
+     * 判别当前时间是否在白天
+     *
+     * @return true:白天 false:黑夜
+     */
+//    private boolean judgeCurrTime() {
+//        int currTime = cal.get(Calendar.HOUR_OF_DAY);
+//        if (currTime >= sunRise && currTime <= sunSet) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+    /**
+     * 创建Bitmap
+     *
+     * @param id id
+     * @return
+     */
+    private Bitmap createBitmap(int id) {
+        Bitmap bitmap = null;
+        if (id != 0) {
+            bitmap = BitmapFactory.decodeResource(getResources(), id);
+        }
+        return bitmap;
+    }
+
+    /**
+     * @param kind
+     */
     public void switchWeather(int kind) {
         this.kind = kind;
         switch (kind) {
@@ -367,7 +325,6 @@ public class WeatherView extends View {
                 break;
             case FEW_CLOUDS:
                 break;
-
             case LIGHT_SNOW:
                 switchPieces(30);
                 break;
@@ -399,8 +356,10 @@ public class WeatherView extends View {
             case TORNADO:
                 break;
             case MIST:
+                switchPieces(50);
                 break;
             case DUST_WHIRLS:
+                switchPieces(100);
                 break;
             case COLD:
                 break;
@@ -408,33 +367,5 @@ public class WeatherView extends View {
                 break;
         }
         invalidate();
-    }
-
-
-    /**
-     * 碎片类
-     */
-    public class Pieces {
-        private float x, y;//xy坐标
-        private float speed;//速度
-        private int width, height;
-        private Bitmap bitmap;
-
-        public Pieces(float xRange, Bitmap originalBitmap, int speed) {
-            double widthRandom = Math.random();
-            if (widthRandom < minSize || widthRandom > maxSize) {
-                widthRandom = maxSize;
-            }
-            width = (int) (originalBitmap.getWidth() * widthRandom);
-            float hwRatio = originalBitmap.getHeight() * 1.0f / originalBitmap.getWidth();
-            height = (int) (width * hwRatio);
-            x = (float) Math.random() * (xRange - width);
-            y = 0 - (height + (float) Math.random() * height);
-            this.speed = speed + (float) Math.random() * 1000;
-        }
-
-        public void setSpeed(float speed) {
-            this.speed = speed;
-        }
     }
 }
