@@ -91,7 +91,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
         colorPaint = new Paint();
         colorPaint.setStyle(Paint.Style.FILL);
 
-        drop = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_adjust_temp);
+        drop = BitmapFactory.decodeResource(getResources(), R.drawable.ic_adjust_temp);
         dropW = drop.getWidth();
         dropH = drop.getHeight();
 

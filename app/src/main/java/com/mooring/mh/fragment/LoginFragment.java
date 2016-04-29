@@ -1,26 +1,26 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.ConfirmationPswActivity;
+import com.mooring.mh.activity.MainActivity;
+import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.utils.CommonUtils;
-import com.mooring.mh.utils.MConstants;
 
-import org.json.JSONObject;
 import org.xutils.DbManager;
-import org.xutils.common.Callback;
-import org.xutils.common.util.LogUtil;
-import org.xutils.db.DbManagerImpl;
 import org.xutils.ex.DbException;
-import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * 登陆
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class LoginFragment extends BaseFragment implements View.OnClickListener {
@@ -48,6 +48,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     private String phone;//手机号码
     private String psw;//密码
     private DbManager dbManager;
+
+    MyYuulinkSDKListener listener;
 
 
     @Override
@@ -77,6 +79,51 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         imgView_QQ.setOnClickListener(this);
         imgView_facebook.setOnClickListener(this);
 
+        listener = new MyYuulinkSDKListener();
+
+        MachtalkSDK.getInstance().startSDK(getContext(), null);
+        MachtalkSDK.getInstance().setSdkListener(listener);
+
+
+    }
+
+    class MyYuulinkSDKListener extends MachtalkSDKListener {
+
+        @Override
+        public void onUserLogin(Result result, String user) {
+
+            Log.e("onUserLogin", "onUserLogin  " + user + "  " + result.getErrorCode() + "  " + result.getSuccess());
+
+            int success = Result.FAILED;
+            String errmesg = null;
+            if (result != null) {
+                success = result.getSuccess();
+                errmesg = result.getErrorMessage();
+            }
+//            closeDialog();
+            if (success == Result.SUCCESS) {
+//                editor.putString(Constant.SP_KEY_USERNAME, telephone);
+//                editor.putString(Constant.SP_KEY_PASSWORD, password);
+//                editor.commit();
+//                Log.i(TAG, "store username: " + telephone + " password: " + password);
+//                DemoGlobal.instance().setUserName(telephone);
+//                DemoGlobal.instance().setPassword(password);
+//
+//                Intent it = new Intent(UserLogin.this, Main.class);
+//                startActivity(it);
+//                UserLogin.this.finish();
+
+                SharedPreferences.Editor edit = InitApplicationHelper.sp.edit();
+                edit.putBoolean("appFirstStart", false);
+                edit.commit();
+
+                getActivity().startActivity(new Intent(getActivity(), MainActivity.class));
+                getActivity().finish();
+            } else {
+            }
+        }
+
+
     }
 
     @Override
@@ -89,7 +136,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      */
     private void login() {
 
-        RequestParams params = CommonUtils.getBaseParams(MConstants.LOGIN_BY_MOBILE_PHONE);
+
+//        MachtalkSDK.getInstance().userLogin("13661498824", "123456", 1);
+
+        MachtalkSDK.getInstance().userLogin("mirahome", "n935rq", 1);
+
+        /*RequestParams params = CommonUtils.getBaseParams(MConstants.LOGIN_BY_MOBILE_PHONE);
         params.addParameter("mobile_phone", phone);
         params.addParameter("password", psw);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
@@ -117,7 +169,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             public void onFinished() {
                 LogUtil.e("onFinished");
             }
-        });
+        });*/
 
     }
 
@@ -187,9 +239,15 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             case R.id.tv_login_btn:
                 phone = edit_phone.getText().toString().trim();
                 psw = edit_psw.getText().toString().trim();
-                if (checkLogin()) {
+
+
+                /*if (checkLogin()) {
                     login();
-                }
+                }*/
+
+                login();
+
+
                 break;
             case R.id.imgView_sina:
                 SSO();
@@ -204,5 +262,25 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 SSO();
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MachtalkSDK.getInstance().stopSDK();
+        MachtalkSDK.getInstance().removeSdkListener(listener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MachtalkSDK.getInstance().setContext(getContext());
+        MachtalkSDK.getInstance().setSdkListener(listener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MachtalkSDK.getInstance().removeSdkListener(listener);
     }
 }

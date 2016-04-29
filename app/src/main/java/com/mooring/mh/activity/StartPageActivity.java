@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import com.machtalk.sdk.connect.MachtalkSDK;
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
 
@@ -54,4 +55,6 @@ public class StartPageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
     }
+
+
 }

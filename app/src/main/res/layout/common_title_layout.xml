@@ -27,7 +27,7 @@
             android:id="@+id/circleImg_left"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:img_src="@mipmap/ic_default_avatar"
+            app:img_src="@drawable/ic_default_avatar"
             app:img_zoom_out="false" />
 
         <View
@@ -38,7 +38,7 @@
             android:id="@+id/circleImg_right"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            app:img_src="@mipmap/ic_default_avatar"
+            app:img_src="@drawable/ic_default_avatar"
             app:img_zoom_out="true" />
 
     </LinearLayout>

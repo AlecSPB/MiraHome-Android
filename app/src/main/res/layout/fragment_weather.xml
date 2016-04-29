@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:background="@mipmap/img_weather_bg_night"
+        android:background="@drawable/img_weather_bg_night"
         android:visibility="visible">
 
         <ImageView
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_day_cloud_1" />
+            android:src="@drawable/ic_day_cloud_1" />
 
         <ImageView
             android:id="@+id/imgView_cloud_2"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_day_cloud_2" />
+            android:src="@drawable/ic_day_cloud_2" />
 
         <ImageView
             android:id="@+id/imgView_cloud_3"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_day_cloud_3" />
+            android:src="@drawable/ic_day_cloud_3" />
 
         <ImageView
             android:id="@+id/imgView_cloud_4"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_day_cloud_4" />
+            android:src="@drawable/ic_day_cloud_4" />
 
         <ImageView
             android:id="@+id/imgView_cloud_5"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_day_cloud_5" />
+            android:src="@drawable/ic_day_cloud_5" />
 
         <com.mooring.mh.views.other.WeatherView
             android:id="@+id/weather_view"
@@ -100,7 +100,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:contentDescription="@string/app_name"
-                                android:src="@mipmap/img_total_points" />
+                                android:src="@drawable/img_total_points" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -325,7 +325,7 @@
                             android:id="@+id/tv_curr_temp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:drawableLeft="@mipmap/ic_sun"
+                            android:drawableLeft="@drawable/ic_sun"
                             android:drawablePadding="5dp"
                             android:gravity="center_vertical"
                             android:text="27℃"
@@ -342,7 +342,7 @@
                                 android:id="@+id/tv_wind_speed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:drawableLeft="@mipmap/ic_wind"
+                                android:drawableLeft="@drawable/ic_wind"
                                 android:drawablePadding="5dp"
                                 android:gravity="center_vertical"
                                 android:text="3.0km/h"
@@ -354,7 +354,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
-                                android:drawableLeft="@mipmap/ic_humidity"
+                                android:drawableLeft="@drawable/ic_humidity"
                                 android:drawablePadding="5dp"
                                 android:gravity="center_vertical"
                                 android:text="20%"

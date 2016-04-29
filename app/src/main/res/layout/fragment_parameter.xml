@@ -18,20 +18,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="-56dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/img_no_device_connect" />
+            android:src="@drawable/img_no_device_connect" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_arrow" />
+            android:src="@drawable/ic_arrow" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/img_device_not_connect" />
+            android:src="@drawable/img_device_not_connect" />
 
         <TextView
             style="@style/text_common"
@@ -57,7 +57,7 @@
                 android:id="@+id/layout_heart_rate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_heart_rate"
+                android:background="@drawable/img_heart_rate"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_heart_rate" />
+                    android:src="@drawable/ic_heart_rate" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -108,7 +108,7 @@
                 android:id="@+id/layout_breathing_rate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_breathing_rate"
+                android:background="@drawable/img_breathing_rate"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -117,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_breathing_rate" />
+                    android:src="@drawable/ic_breathing_rate" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -147,7 +147,7 @@
                 android:id="@+id/layout_body_movement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_body_movement"
+                android:background="@drawable/img_body_movement"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -156,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_body_movement" />
+                    android:src="@drawable/ic_body_movement" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -186,7 +186,7 @@
                 android:id="@+id/layout_humidity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_humidity"
+                android:background="@drawable/img_humidity"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_humidity_icon" />
+                    android:src="@drawable/ic_humidity_icon" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -237,7 +237,7 @@
                 android:id="@+id/layout_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_temperature"
+                android:background="@drawable/img_temperature"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -246,7 +246,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_temperature" />
+                    android:src="@drawable/ic_temperature" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -288,7 +288,7 @@
                 android:id="@+id/layout_bed_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_bed_temperature"
+                android:background="@drawable/img_bed_temperature"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -297,7 +297,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_bed_temperature" />
+                    android:src="@drawable/ic_bed_temperature" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -339,7 +339,7 @@
                 android:id="@+id/layout_light"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_light"
+                android:background="@drawable/img_light"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -348,7 +348,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_light" />
+                    android:src="@drawable/ic_light" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -377,7 +377,7 @@
                 android:id="@+id/layout_noise"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/img_noise"
+                android:background="@drawable/img_noise"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -386,7 +386,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_noise" />
+                    android:src="@drawable/ic_noise" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

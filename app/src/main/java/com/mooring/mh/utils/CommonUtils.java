@@ -5,12 +5,16 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.mooring.mh.app.InitApplicationHelper;
+import com.mooring.mh.utils.MConstants;
 
 import org.xutils.http.RequestParams;
 
@@ -200,5 +204,30 @@ public class CommonUtils {
         WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
         lp.width = display.getWidth(); //设置宽度
         dialog.getWindow().setAttributes(lp);
+    }
+
+    /**
+     * 创建指定大小的Bitmap
+     *
+     * @param bgimage
+     * @param newWidth
+     * @param newHeight
+     * @return
+     */
+    public static Bitmap zoomImage(Bitmap bgimage, double newWidth,
+                                   double newHeight) {
+        // 获取这个图片的宽和高
+        float width = bgimage.getWidth();
+        float height = bgimage.getHeight();
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 计算宽高缩放率
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 缩放图片动作
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) newWidth,
+                (int) newHeight, matrix, true);
+        return bitmap;
     }
 }

@@ -71,10 +71,10 @@ public class MyRainView extends View {
 
     private void initSnow(int width, int height) {
         rainList = new ArrayList<>();
-        rainList.add(getBitmap(R.mipmap.ic_rain_1));
-        rainList.add(getBitmap(R.mipmap.ic_rain_2));
-        rainList.add(getBitmap(R.mipmap.ic_rain_3));
-        rainList.add(getBitmap(R.mipmap.ic_rain_4));
+        rainList.add(getBitmap(R.drawable.ic_rain_1));
+        rainList.add(getBitmap(R.drawable.ic_rain_2));
+        rainList.add(getBitmap(R.drawable.ic_rain_3));
+        rainList.add(getBitmap(R.drawable.ic_rain_4));
 
     }
 

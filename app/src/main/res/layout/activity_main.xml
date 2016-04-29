@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/app_name"
                 android:gravity="center"
-                android:src="@mipmap/btn_weather_select" />
+                android:src="@drawable/btn_weather_select" />
 
             <ImageView
                 android:id="@+id/imgView_control"
@@ -48,7 +48,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/app_name"
                 android:gravity="center"
-                android:src="@mipmap/btn_control_normal" />
+                android:src="@drawable/btn_control_normal" />
 
             <ImageView
                 android:id="@+id/imgView_parameter"
@@ -57,7 +57,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/app_name"
                 android:gravity="center"
-                android:src="@mipmap/btn_parameter_normal" />
+                android:src="@drawable/btn_parameter_normal" />
 
             <ImageView
                 android:id="@+id/imgView_timing"
@@ -66,7 +66,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/app_name"
                 android:gravity="center"
-                android:src="@mipmap/btn_timing_normal" />
+                android:src="@drawable/btn_timing_normal" />
 
         </LinearLayout>
     </LinearLayout>

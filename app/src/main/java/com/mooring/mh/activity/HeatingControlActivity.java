@@ -1,20 +1,16 @@
 package com.mooring.mh.activity;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.views.ControlView.DragScaleTwoView;
 import com.mooring.mh.views.ControlView.DragScaleView;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
@@ -176,7 +172,7 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
     private void showDialog() {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
         builder.setMessage("stop drying?");
-        builder.setLogo(R.mipmap.img_close_heating);
+        builder.setLogo(R.drawable.img_close_heating);
         builder.setCanceledOnTouchOtherPlace(false);
         builder.setPositiveButton(true, new DialogInterface.OnClickListener() {
             @Override

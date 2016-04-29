@@ -1,9 +1,7 @@
 package com.mooring.mh.activity;
 
 import android.app.Dialog;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;

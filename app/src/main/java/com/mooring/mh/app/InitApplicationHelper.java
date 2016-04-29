@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.amap.api.location.AMapLocationClient;
+import com.machtalk.sdk.connect.MachtalkSDK;
 
 import org.xutils.x;
 
@@ -35,6 +36,8 @@ public class InitApplicationHelper {
 
         x.Ext.init(app);
         x.Ext.setDebug(true);//发布版本时要设置false
+
+//        MachtalkSDK.getInstance().startSDK(mApp, null);
 
         //用来更换app key,用来覆盖AndroidManifest中
 //        AMapLocationClient.setApiKey("921d6e61c0c6b31c2772adb34bb63e43");

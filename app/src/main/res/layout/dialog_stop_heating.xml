@@ -12,7 +12,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="155dp"
         android:contentDescription="@string/app_name"
-        android:src="@mipmap/img_close_heating" />
+        android:src="@drawable/img_close_heating" />
 
     <TextView
         android:id="@+id/tv_dialog_message"

@@ -9,6 +9,8 @@ import com.mooring.mh.R;
 import com.mooring.mh.adapter.LoginAndSignUpPagerAdapter;
 
 /**
+ * 登录和注册Activity
+ * <p>
  * Created by Will on 16/3/30.
  */
 public class LoginAndSignUpActivity extends AppCompatActivity {

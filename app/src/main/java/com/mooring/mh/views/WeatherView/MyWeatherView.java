@@ -121,25 +121,25 @@ public class MyWeatherView extends SurfaceView implements SurfaceHolder.Callback
 
         cal = Calendar.getInstance();
         cloudList = new ArrayList<>();
-        cloudList.add(createBitmap(R.mipmap.ic_day_cloud_1, false));
-        cloudList.add(createBitmap(R.mipmap.ic_day_cloud_2, false));
-        cloudList.add(createBitmap(R.mipmap.ic_day_cloud_3, false));
-        cloudList.add(createBitmap(R.mipmap.ic_day_cloud_4, false));
-        cloudList.add(createBitmap(R.mipmap.ic_day_cloud_5, false));
-        cloudList.add(createBitmap(R.mipmap.ic_night_cloud_1, false));
-        cloudList.add(createBitmap(R.mipmap.ic_night_cloud_2, false));
-        cloudList.add(createBitmap(R.mipmap.ic_night_cloud_3, false));
-        cloudList.add(createBitmap(R.mipmap.ic_night_cloud_4, false));
-        cloudList.add(createBitmap(R.mipmap.ic_night_cloud_5, false));
+        cloudList.add(createBitmap(R.drawable.ic_day_cloud_1, false));
+        cloudList.add(createBitmap(R.drawable.ic_day_cloud_2, false));
+        cloudList.add(createBitmap(R.drawable.ic_day_cloud_3, false));
+        cloudList.add(createBitmap(R.drawable.ic_day_cloud_4, false));
+        cloudList.add(createBitmap(R.drawable.ic_day_cloud_5, false));
+        cloudList.add(createBitmap(R.drawable.ic_night_cloud_1, false));
+        cloudList.add(createBitmap(R.drawable.ic_night_cloud_2, false));
+        cloudList.add(createBitmap(R.drawable.ic_night_cloud_3, false));
+        cloudList.add(createBitmap(R.drawable.ic_night_cloud_4, false));
+        cloudList.add(createBitmap(R.drawable.ic_night_cloud_5, false));
 
-        bg_img = createBitmap(R.mipmap.img_weather_bg_night, false);
-        light_left = createBitmap(R.mipmap.ic_lightning_1, false);
-        light_right = createBitmap(R.mipmap.ic_lightning_2, false);
+        bg_img = createBitmap(R.drawable.img_weather_bg_night, false);
+        light_left = createBitmap(R.drawable.ic_lightning_1, false);
+        light_right = createBitmap(R.drawable.ic_lightning_2, false);
 
-        pillar_small = createBitmap(R.mipmap.ic_windmill_pillar_small, false);
-        blade_small = createBitmap(R.mipmap.ic_windmill_blade_small, false);
-        pillar_big = createBitmap(R.mipmap.ic_windmill_pillar_big, false);
-        blade_big = createBitmap(R.mipmap.ic_windmill_blade_big, false);
+        pillar_small = createBitmap(R.drawable.ic_windmill_pillar_small, false);
+        blade_small = createBitmap(R.drawable.ic_windmill_blade_small, false);
+        pillar_big = createBitmap(R.drawable.ic_windmill_pillar_big, false);
+        blade_big = createBitmap(R.drawable.ic_windmill_blade_big, false);
 
         holder = this.getHolder();
         holder.addCallback(this);
@@ -189,42 +189,42 @@ public class MyWeatherView extends SurfaceView implements SurfaceHolder.Callback
     private void initSnow(int width, int height) {
         snows.clear();
         if (kind == LIGHT_SNOW || kind == HEAVY_SNOW || kind == SLEET) {
-            snows.add(createBitmap(R.mipmap.ic_snow_2, false));
-            snows.add(createBitmap(R.mipmap.ic_snow_3, false));
-            snows.add(createBitmap(R.mipmap.ic_snow_5, false));
-            snows.add(createBitmap(R.mipmap.ic_snow_6, false));
+            snows.add(createBitmap(R.drawable.ic_snow_2, false));
+            snows.add(createBitmap(R.drawable.ic_snow_3, false));
+            snows.add(createBitmap(R.drawable.ic_snow_5, false));
+            snows.add(createBitmap(R.drawable.ic_snow_6, false));
             if (kind == HEAVY_SNOW) {
-                snows.add(createBitmap(R.mipmap.ic_snow_1, false));
-                snows.add(createBitmap(R.mipmap.ic_snow_4, false));
+                snows.add(createBitmap(R.drawable.ic_snow_1, false));
+                snows.add(createBitmap(R.drawable.ic_snow_4, false));
             }
             if (kind == SLEET) {
-                snows.add(createBitmap(R.mipmap.ic_rain_2, false));
-                snows.add(createBitmap(R.mipmap.ic_rain_4, false));
+                snows.add(createBitmap(R.drawable.ic_rain_2, false));
+                snows.add(createBitmap(R.drawable.ic_rain_4, false));
             }
         }
         if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == SHOWER_RAIN || kind == FREEZING_RAIN) {
-            snows.add(createBitmap(R.mipmap.ic_rain_1, false));
-            snows.add(createBitmap(R.mipmap.ic_rain_2, false));
-            snows.add(createBitmap(R.mipmap.ic_rain_3, false));
-            snows.add(createBitmap(R.mipmap.ic_rain_4, false));
+            snows.add(createBitmap(R.drawable.ic_rain_1, false));
+            snows.add(createBitmap(R.drawable.ic_rain_2, false));
+            snows.add(createBitmap(R.drawable.ic_rain_3, false));
+            snows.add(createBitmap(R.drawable.ic_rain_4, false));
         }
         if (kind == HAIL) {
-            snows.add(createBitmap(R.mipmap.ic_hail_1, false));
-            snows.add(createBitmap(R.mipmap.ic_hail_3, false));
+            snows.add(createBitmap(R.drawable.ic_hail_1, false));
+            snows.add(createBitmap(R.drawable.ic_hail_3, false));
         }
         if (kind == HAIL || kind == FREEZING_RAIN) {
-            snows.add(createBitmap(R.mipmap.ic_hail_2, false));
-            snows.add(createBitmap(R.mipmap.ic_hail_4, false));
+            snows.add(createBitmap(R.drawable.ic_hail_2, false));
+            snows.add(createBitmap(R.drawable.ic_hail_4, false));
         }
         if (kind == MIST || kind == DUST_WHIRLS) {
-            snows.add(createBitmap(R.mipmap.ic_mist_2, false));
-            snows.add(createBitmap(R.mipmap.ic_mist_2, false));
-            snows.add(createBitmap(R.mipmap.ic_mist_2, false));
-            snows.add(createBitmap(R.mipmap.ic_mist_2, false));
+            snows.add(createBitmap(R.drawable.ic_mist_2, false));
+            snows.add(createBitmap(R.drawable.ic_mist_2, false));
+            snows.add(createBitmap(R.drawable.ic_mist_2, false));
+            snows.add(createBitmap(R.drawable.ic_mist_2, false));
         }
         if (kind == DUST_WHIRLS) {
-            snows.add(createBitmap(R.mipmap.ic_mist_1, false));
-            snows.add(createBitmap(R.mipmap.ic_mist_1, false));
+            snows.add(createBitmap(R.drawable.ic_mist_1, false));
+            snows.add(createBitmap(R.drawable.ic_mist_1, false));
         }
         mSnowFlakes.clear();
         //mSnowFlakes所有的雪花都生成放到这里面
@@ -287,40 +287,40 @@ public class MyWeatherView extends SurfaceView implements SurfaceHolder.Callback
     private void switchBackground(int kind) {
         switch (kind) {
             case CALM:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_calm, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_calm, true);
                 break;
             case CLOUDY_DAY:
             case FEW_CLOUDS:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_cloudy_day, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_cloudy_day, true);
                 break;
             case LIGHT_SNOW:
             case HEAVY_SNOW:
             case SLEET:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_sleet, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_sleet, true);
                 break;
             case LIGHT_RAIN:
             case HEAVY_RAIN:
             case HAIL:
             case SHOWER_RAIN:
             case FREEZING_RAIN:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_and_hail, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_and_hail, true);
                 break;
             case LIGHT_BREEZE:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_light_breeze, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_light_breeze, true);
                 break;
             case HIGH_WIND:
             case TORNADO:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_tornado, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_tornado, true);
                 break;
             case MIST:
             case DUST_WHIRLS:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_mist, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_mist, true);
                 break;
             case COLD:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_cold, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_cold, true);
                 break;
             case HOT:
-                bg_img = createBitmap(R.mipmap.img_weather_bg_hot, true);
+                bg_img = createBitmap(R.drawable.img_weather_bg_hot, true);
                 break;
         }
     }

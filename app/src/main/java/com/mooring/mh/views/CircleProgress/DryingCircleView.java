@@ -118,7 +118,7 @@ public class DryingCircleView extends View {
         ratePaint.setStrokeWidth(2 * delta);
         ratePaint.setAntiAlias(true);
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_drying_center);
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_drying_center);
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
         mDrawAnimator.setInterpolator(new LinearInterpolator());

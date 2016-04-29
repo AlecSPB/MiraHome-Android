@@ -1,10 +1,6 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -21,7 +17,6 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
 import com.mooring.mh.views.other.WeatherView;
@@ -32,9 +27,6 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
-
-import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * Created by Will on 16/3/24.
@@ -191,7 +183,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     sunrise = translateTime(sys.optLong("sunrise"));
                     sunset = translateTime(sys.optLong("sunset"));
 
-                    tv_wind_speed.setText((float) (Math.round((wind_speed / 3.6) * 10)) / 10 + "km/h");
+                    tv_wind_speed.setText((float) (Math.round((wind_speed * 3.6) * 10)) / 10 + "km/h");
                     tv_humidity.setText(humidity + "%");
                     tv_curr_temp.setText((int) temp + "℃");
                     judgeWeather(weatherId);
@@ -260,98 +252,98 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private void judgeWeather(int id) {
         if (id == 951 || id == 800) {
             //晴
-            changeWeatherIcon(R.mipmap.ic_calm);
+            changeWeatherIcon(R.drawable.ic_calm);
             switchBackground(WeatherView.CALM);
             return;
         }
         if (id == 952 || id == 953 || id == 954 || id == 955 || id == 956 || id == 905) {
             //微风
-            changeWeatherIcon(R.mipmap.ic_light_breeze);
+            changeWeatherIcon(R.drawable.ic_light_breeze);
             switchBackground(WeatherView.LIGHT_BREEZE);
             return;
         }
         if (id == 957 || id == 958 || id == 959 || id == 960 || id == 961 || id == 962) {
             //大风
-            changeWeatherIcon(R.mipmap.ic_high_wind);
+            changeWeatherIcon(R.drawable.ic_high_wind);
             switchBackground(WeatherView.HIGH_WIND);
             return;
         }
         if (id == 900 || id == 901 || id == 902 || id == 781) {
             //龙卷风
-            changeWeatherIcon(R.mipmap.ic_tornado);
+            changeWeatherIcon(R.drawable.ic_tornado);
             switchBackground(WeatherView.TORNADO);
             return;
         }
         if (id == 903) {
             //冷
-            changeWeatherIcon(R.mipmap.ic_clod);
+            changeWeatherIcon(R.drawable.ic_clod);
             switchBackground(WeatherView.COLD);
             return;
         }
         if (id == 904) {
             //热
-            changeWeatherIcon(R.mipmap.ic_hot);
+            changeWeatherIcon(R.drawable.ic_hot);
             switchBackground(WeatherView.HOT);
             return;
         }
         if (id == 906) {
             //冰雹
-            changeWeatherIcon(R.mipmap.ic_hail);
+            changeWeatherIcon(R.drawable.ic_hail);
             switchBackground(WeatherView.HAIL);
             return;
         }
         if (id == 801 || id == 802 || id == 803 || id == 804) {
             //多云
-            changeWeatherIcon(R.mipmap.ic_few_clouds);
+            changeWeatherIcon(R.drawable.ic_few_clouds);
             switchBackground(WeatherView.FEW_CLOUDS);
             return;
         }
         if (id == 701 || id == 711 || id == 721) {
             //雾霾
-            changeWeatherIcon(R.mipmap.ic_mist);
+            changeWeatherIcon(R.drawable.ic_mist);
             switchBackground(WeatherView.MIST);
             return;
         }
         if (id == 731 || id == 741 || id == 751 || id == 761 || id == 762 || id == 771) {
             //沙尘暴
-            changeWeatherIcon(R.mipmap.ic_mist);
+            changeWeatherIcon(R.drawable.ic_mist);
             switchBackground(WeatherView.DUST_WHIRLS);
             return;
         }
         if (id == 600 || id == 601) {
             //小雪
-            changeWeatherIcon(R.mipmap.ic_light_snow);
+            changeWeatherIcon(R.drawable.ic_light_snow);
             switchBackground(WeatherView.LIGHT_SNOW);
             return;
         }
         if (id == 602) {
             //大雪
-            changeWeatherIcon(R.mipmap.ic_heavy_snow);
+            changeWeatherIcon(R.drawable.ic_heavy_snow);
             switchBackground(WeatherView.HEAVY_SNOW);
             return;
         }
         if (id == 611 || id == 612 || id == 615 || id == 616 || id == 620 || id == 621 || id == 622) {
             //雨夹雪
-            changeWeatherIcon(R.mipmap.ic_sleet);
+            changeWeatherIcon(R.drawable.ic_sleet);
             switchBackground(WeatherView.SLEET);
             return;
         }
         if (id == 300 || id == 301 || id == 302 || id == 310 || id == 311 || id == 312 || id == 500
                 || id == 313 || id == 314 || id == 321 || id == 501) {
             //小雨
-            changeWeatherIcon(R.mipmap.ic_light_rain);
+            changeWeatherIcon(R.drawable.ic_light_rain);
             switchBackground(WeatherView.LIGHT_RAIN);
             return;
         }
         if (id == 502 || id == 503 || id == 504) {
             //大雨
-            changeWeatherIcon(R.mipmap.ic_heavy_rain);
+            changeWeatherIcon(R.drawable.ic_heavy_rain);
             switchBackground(WeatherView.HEAVY_RAIN);
             return;
         }
         if (id == 511) {
             //雷雨伴冰雹
-            changeWeatherIcon(R.mipmap.ic_freezing_rain);
+            changeWeatherIcon(R.drawable.ic_freezing_rain);
             switchBackground(WeatherView.FREEZING_RAIN);
             return;
         }
@@ -359,7 +351,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 || id == 230 || id == 231 || id == 232 || id == 520 || id == 521 || id == 522 ||
                 id == 531) {
             //雷雨
-            changeWeatherIcon(R.mipmap.ic_shower_rain);
+            changeWeatherIcon(R.drawable.ic_shower_rain);
             switchBackground(WeatherView.SHOWER_RAIN);
             return;
         }
@@ -383,40 +375,40 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         this.weatherKind = kind;
         switch (kind) {
             case WeatherView.CALM:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_calm);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_calm);
                 break;
             case WeatherView.CLOUDY_DAY:
             case WeatherView.FEW_CLOUDS:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_cloudy_day);
+            case WeatherView.MIST:
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_cloudy_day);
                 break;
             case WeatherView.LIGHT_SNOW:
             case WeatherView.HEAVY_SNOW:
             case WeatherView.SLEET:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_sleet);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_sleet);
                 break;
             case WeatherView.LIGHT_RAIN:
             case WeatherView.HEAVY_RAIN:
             case WeatherView.HAIL:
             case WeatherView.SHOWER_RAIN:
             case WeatherView.FREEZING_RAIN:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_and_hail);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_and_hail);
                 break;
             case WeatherView.LIGHT_BREEZE:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_light_breeze);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_light_breeze);
                 break;
             case WeatherView.HIGH_WIND:
             case WeatherView.TORNADO:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_tornado);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_tornado);
                 break;
-            case WeatherView.MIST:
             case WeatherView.DUST_WHIRLS:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_mist);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_mist);
                 break;
             case WeatherView.COLD:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_cold);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_cold);
                 break;
             case WeatherView.HOT:
-                layout_weather_bg.setBackgroundResource(R.mipmap.img_weather_bg_hot);
+                layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_hot);
                 break;
         }
     }

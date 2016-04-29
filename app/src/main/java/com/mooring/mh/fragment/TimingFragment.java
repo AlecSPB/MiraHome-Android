@@ -17,12 +17,12 @@ import java.util.List;
  */
 public class TimingFragment extends BaseFragment {
 
-    private int[] bgArr = {R.mipmap.img_heart_rate, R.mipmap.img_breathing_rate,
-            R.mipmap.img_body_movement, R.mipmap.img_humidity, R.mipmap.img_temperature,
-            R.mipmap.img_bed_temperature, R.mipmap.img_light, R.mipmap.img_noise};
-    private int[] icArr = {R.mipmap.ic_heart_rate, R.mipmap.ic_breathing_rate,
-            R.mipmap.ic_body_movement, R.mipmap.ic_humidity_icon, R.mipmap.ic_temperature,
-            R.mipmap.ic_bed_temperature, R.mipmap.ic_light, R.mipmap.ic_noise};
+    private int[] bgArr = {R.drawable.img_heart_rate, R.drawable.img_breathing_rate,
+            R.drawable.img_body_movement, R.drawable.img_humidity, R.drawable.img_temperature,
+            R.drawable.img_bed_temperature, R.drawable.img_light, R.drawable.img_noise};
+    private int[] icArr = {R.drawable.ic_heart_rate, R.drawable.ic_breathing_rate,
+            R.drawable.ic_body_movement, R.drawable.ic_humidity_icon, R.drawable.ic_temperature,
+            R.drawable.ic_bed_temperature, R.drawable.ic_light, R.drawable.ic_noise};
 
     private RecyclerView param_recyclerView;
     private RecyclerView.LayoutManager layoutManager;

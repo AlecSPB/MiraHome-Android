@@ -14,7 +14,7 @@
             android:id="@+id/imgView_horizontal_header"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@mipmap/ic_default_avatar" />
+            android:src="@drawable/ic_default_avatar" />
 
         <ImageView
             android:id="@+id/imgView_horizontal_add"

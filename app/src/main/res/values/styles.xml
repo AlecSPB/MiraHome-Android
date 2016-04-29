@@ -9,7 +9,7 @@
     </style>
 
     <style name="StartAndGuideTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@mipmap/img_about_mooring</item>
+        <item name="android:windowBackground">@drawable/img_about_mooring</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -51,6 +51,22 @@
 
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">28sp</item>
+
+    </style>
+
+    <!--text style 2-->
+    <style name="text_common_while50">
+
+        <item name="android:textColor">@color/colorWhite50</item>
+        <item name="android:textSize">@dimen/text_dimen_24</item>
+
+    </style>
+
+    <!--text style 3-->
+    <style name="text_common_purple">
+
+        <item name="android:textColor">@color/colorPurple</item>
+        <item name="android:textSize">@dimen/text_dimen_36</item>
 
     </style>
 

@@ -3,17 +3,39 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
     android:orientation="vertical">
 
     <Button
         android:id="@+id/test_date_picker"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="test" />
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <com.mooring.mh.views.CircleProgress.DoubleCircleView
+        android:id="@+id/doubleCircle"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/chart_heart_rate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:visibility="gone" />
+
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.mooring.mh.views.MyChartView
+            android:id="@+id/myChartView"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:background="@color/colorOrange" />
+    </HorizontalScrollView>
 
 </LinearLayout>

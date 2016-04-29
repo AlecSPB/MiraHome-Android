@@ -2,5 +2,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/img_about_mooring"
-    android:orientation="vertical"></LinearLayout>
+    android:background="@drawable/img_about_mooring"
+    android:orientation="vertical"/>

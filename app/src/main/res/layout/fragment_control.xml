@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@mipmap/img_heating"
+        android:background="@drawable/img_heating"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_heating" />
+            android:src="@drawable/ic_heating" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@mipmap/img_drying"
+        android:background="@drawable/img_drying"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_drying" />
+            android:src="@drawable/ic_drying" />
 
         <TextView
             android:layout_width="wrap_content"

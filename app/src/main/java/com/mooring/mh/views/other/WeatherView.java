@@ -9,8 +9,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.views.WeatherView.RandomGenerator;
@@ -53,8 +51,6 @@ public class WeatherView extends View {
      * ------------公用--------------
      */
     private Paint bgPaint = new Paint();
-    private int viewW;//当前view宽度
-    private int viewH;//当前View高度
     private int kind = LIGHT_RAIN;//天气类型
     private boolean isRuning = true;
 
@@ -80,7 +76,8 @@ public class WeatherView extends View {
     private Bitmap blade_big;//大风车扇叶
     private Bitmap pillar_small;//小风车柱子
     private Bitmap blade_small;//小风车扇叶
-    private float windScale = 0.0f;
+    private float windScale = 0.0f;//风扇起始度数
+    private float windSpeed = 0.0f;//风速
     private int windBig_x = CommonUtils.dp2px(getContext(), 150);
     private int windBig_y = CommonUtils.dp2px(getContext(), 100);
     private int windSma_x = CommonUtils.dp2px(getContext(), 30);
@@ -109,15 +106,15 @@ public class WeatherView extends View {
 
         matrixWind = new Matrix();
 
-        light_left = createBitmap(R.mipmap.ic_lightning_1);
-        light_right = createBitmap(R.mipmap.ic_lightning_2);
+        light_left = createBitmap(R.drawable.ic_lightning_1);
+        light_right = createBitmap(R.drawable.ic_lightning_2);
 
-        pillar_small = createBitmap(R.mipmap.ic_windmill_pillar_small);
-        blade_small = createBitmap(R.mipmap.ic_windmill_blade_small);
-        pillar_big = createBitmap(R.mipmap.ic_windmill_pillar_big);
-        blade_big = createBitmap(R.mipmap.ic_windmill_blade_big);
+        pillar_small = createBitmap(R.drawable.ic_windmill_pillar_small);
+        blade_small = createBitmap(R.drawable.ic_windmill_blade_small);
+        pillar_big = createBitmap(R.drawable.ic_windmill_pillar_big);
+        blade_big = createBitmap(R.drawable.ic_windmill_blade_big);
 
-        //设置当前view为单层,不覆盖
+        //设置当前view为单层,不覆盖,不适用离屏缓冲
         setLayerType(View.LAYER_TYPE_NONE, null);
 
     }
@@ -125,9 +122,6 @@ public class WeatherView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
-        viewW = w;
-        viewH = h;
 
         if (w != oldw || h != oldh) {
             initSnow(w, h);
@@ -155,11 +149,11 @@ public class WeatherView extends View {
                 canvas.drawBitmap(light_location == 1 ? light_left : light_right, 0, 0, paintLeft);
             }
             /**
-             * 绘制---小雨,大雨,小雪,大雪,雷雨,冰雹,雨夹雪,雷雨加冰雹
+             * 绘制---小雨,大雨,小雪,大雪,雷雨,冰雹,雨夹雪,雷雨加冰雹,沙尘暴
              */
-            if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == MIST ||
-                    kind == LIGHT_SNOW || kind == HEAVY_SNOW || kind == SHOWER_RAIN ||
-                    kind == DUST_WHIRLS || kind == HAIL || kind == SLEET || kind == FREEZING_RAIN) {
+            if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == LIGHT_SNOW || kind == HEAVY_SNOW
+                    || kind == SHOWER_RAIN || kind == DUST_WHIRLS || kind == HAIL || kind == SLEET
+                    || kind == FREEZING_RAIN) {
 
                 for (SnowFlake s : mSnowFlakes) {
                     //然后进行绘制
@@ -167,12 +161,6 @@ public class WeatherView extends View {
                         s.draw(canvas, snows.get((int) s.mFlakeSize - 1));
                     }
                 }
-            }
-            /**
-             * 绘制---晴天,阴天,多云
-             */
-            if (kind == CALM || kind == CLOUDY_DAY || kind == FEW_CLOUDS) {
-
             }
             /**
              * 绘制---微风,大风,龙卷风
@@ -185,7 +173,7 @@ public class WeatherView extends View {
                         pillar_big.getWidth()) / 2, windBig_y + blade_big.getHeight() / 2 - 20, bgPaint);
 
                 matrixWind.reset();
-                matrixWind.postRotate((windScale -= 1) % 360f, blade_small.getWidth() / 2,
+                matrixWind.postRotate((windScale -= windSpeed) % 360f, blade_small.getWidth() / 2,
                         blade_small.getHeight() / 2);
                 matrixWind.postTranslate(windSma_x, windSma_y);
                 canvas.drawBitmap(blade_small, matrixWind, bgPaint);
@@ -196,8 +184,13 @@ public class WeatherView extends View {
                 matrixWind.postTranslate(windBig_x, windBig_y);
                 canvas.drawBitmap(blade_big, matrixWind, bgPaint);
             }
-
-            getHandler().postDelayed(runnable, DELAY);
+            /**
+             * 非晴天,阴天,多云,雾  进行持续刷新
+             */
+            if (kind != CALM || kind != CLOUDY_DAY || kind != FEW_CLOUDS || kind != MIST
+                    || kind != COLD || kind != HOT) {
+                getHandler().postDelayed(runnable, DELAY);
+            }
         }
     }
 
@@ -231,42 +224,42 @@ public class WeatherView extends View {
     private void initSnow(int width, int height) {
         snows.clear();
         if (kind == LIGHT_SNOW || kind == HEAVY_SNOW || kind == SLEET) {
-            snows.add(createBitmap(R.mipmap.ic_snow_2));
-            snows.add(createBitmap(R.mipmap.ic_snow_3));
-            snows.add(createBitmap(R.mipmap.ic_snow_5));
-            snows.add(createBitmap(R.mipmap.ic_snow_6));
+            snows.add(createBitmap(R.drawable.ic_snow_2));
+            snows.add(createBitmap(R.drawable.ic_snow_3));
+            snows.add(createBitmap(R.drawable.ic_snow_5));
+            snows.add(createBitmap(R.drawable.ic_snow_6));
             if (kind == HEAVY_SNOW) {
-                snows.add(createBitmap(R.mipmap.ic_snow_1));
-                snows.add(createBitmap(R.mipmap.ic_snow_4));
+                snows.add(createBitmap(R.drawable.ic_snow_1));
+                snows.add(createBitmap(R.drawable.ic_snow_4));
             }
             if (kind == SLEET) {
-                snows.add(createBitmap(R.mipmap.ic_rain_2));
-                snows.add(createBitmap(R.mipmap.ic_rain_4));
+                snows.add(createBitmap(R.drawable.ic_rain_2));
+                snows.add(createBitmap(R.drawable.ic_rain_4));
             }
         }
         if (kind == LIGHT_RAIN || kind == HEAVY_RAIN || kind == SHOWER_RAIN || kind == FREEZING_RAIN) {
-            snows.add(createBitmap(R.mipmap.ic_rain_1));
-            snows.add(createBitmap(R.mipmap.ic_rain_2));
-            snows.add(createBitmap(R.mipmap.ic_rain_3));
-            snows.add(createBitmap(R.mipmap.ic_rain_4));
+            snows.add(createBitmap(R.drawable.ic_rain_1));
+            snows.add(createBitmap(R.drawable.ic_rain_2));
+            snows.add(createBitmap(R.drawable.ic_rain_3));
+            snows.add(createBitmap(R.drawable.ic_rain_4));
         }
         if (kind == HAIL) {
-            snows.add(createBitmap(R.mipmap.ic_hail_1));
-            snows.add(createBitmap(R.mipmap.ic_hail_3));
+            snows.add(createBitmap(R.drawable.ic_hail_1));
+            snows.add(createBitmap(R.drawable.ic_hail_3));
         }
         if (kind == HAIL || kind == FREEZING_RAIN) {
-            snows.add(createBitmap(R.mipmap.ic_hail_2));
-            snows.add(createBitmap(R.mipmap.ic_hail_4));
-        }
-        if (kind == MIST || kind == DUST_WHIRLS) {
-            snows.add(createBitmap(R.mipmap.ic_mist_2));
-            snows.add(createBitmap(R.mipmap.ic_mist_2));
-            snows.add(createBitmap(R.mipmap.ic_mist_2));
-            snows.add(createBitmap(R.mipmap.ic_mist_2));
+            snows.add(createBitmap(R.drawable.ic_hail_2));
+            snows.add(createBitmap(R.drawable.ic_hail_4));
         }
         if (kind == DUST_WHIRLS) {
-            snows.add(createBitmap(R.mipmap.ic_mist_1));
-            snows.add(createBitmap(R.mipmap.ic_mist_1));
+            snows.add(createBitmap(R.drawable.ic_mist_2));
+            snows.add(createBitmap(R.drawable.ic_mist_2));
+            snows.add(createBitmap(R.drawable.ic_mist_2));
+            snows.add(createBitmap(R.drawable.ic_mist_2));
+        }
+        if (kind == DUST_WHIRLS) {
+            snows.add(createBitmap(R.drawable.ic_mist_1));
+            snows.add(createBitmap(R.drawable.ic_mist_1));
         }
         mSnowFlakes.clear();
         //mSnowFlakes所有的雪花都生成放到这里面
@@ -285,19 +278,6 @@ public class WeatherView extends View {
         NUM_SNOWFLAKES = numOfPieces;
         initSnow(getWidth(), getHeight());
     }
-
-    /**
-     * 判别当前时间是否在白天
-     *
-     * @return true:白天 false:黑夜
-     */
-//    private boolean judgeCurrTime() {
-//        int currTime = cal.get(Calendar.HOUR_OF_DAY);
-//        if (currTime >= sunRise && currTime <= sunSet) {
-//            return true;
-//        }
-//        return false;
-//    }
 
     /**
      * 创建Bitmap
@@ -350,13 +330,15 @@ public class WeatherView extends View {
                 switchPieces(100);
                 break;
             case LIGHT_BREEZE:
+                windSpeed = 1;
                 break;
             case HIGH_WIND:
+                windSpeed = 3;
                 break;
             case TORNADO:
+                windSpeed = 8;
                 break;
             case MIST:
-                switchPieces(50);
                 break;
             case DUST_WHIRLS:
                 switchPieces(100);

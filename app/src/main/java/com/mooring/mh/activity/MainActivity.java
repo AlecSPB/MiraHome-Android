@@ -75,6 +75,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private RecyclerView menu_recyclerView;//横向滑动view
     private ImageView imgView_switch_user;//切换用户按钮
     private View layout_connect_mooring;//重新连接view
+    private ImageView imgView_to_connect;//点击链接图片
     private View layout_connected_device;//一连上设备
     private ZoomCircleView zcView_left; // 左边用户头像
     private ImageView imgView_delete_left;//左边删除用户图标
@@ -153,6 +154,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         imgView_switch_user = (ImageView) findViewById(R.id.imgView_switch_user);
         layout_connect_mooring = findViewById(R.id.layout_connect_mooring);
         layout_connected_device = findViewById(R.id.layout_connected_device);
+        imgView_to_connect = (ImageView) findViewById(R.id.imgView_to_connect);
         zcView_left = (ZoomCircleView) findViewById(R.id.zcView_left);
         imgView_delete_left = (ImageView) findViewById(R.id.imgView_delete_left);
         zcView_right = (ZoomCircleView) findViewById(R.id.zcView_left);
@@ -170,7 +172,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         menu_recyclerView.setLayoutManager(layoutManager);
 
         imgView_switch_user.setOnClickListener(this);
-        layout_connect_mooring.setOnClickListener(this);
+        imgView_to_connect.setOnClickListener(this);
         imgView_delete_left.setOnClickListener(this);
         imgView_delete_right.setOnClickListener(this);
         tv_connect_health.setOnClickListener(this);
@@ -284,10 +286,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         //恢复状态栏为透明底色
         title_layout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-        imgView_weather.setImageResource(index != WEATHER ? R.mipmap.btn_weather_normal : R.mipmap.btn_weather_select);
-        imgView_control.setImageResource(index != CONTROL ? R.mipmap.btn_control_normal : R.mipmap.btn_control_select);
-        imgView_parameter.setImageResource(index != PARAMETER ? R.mipmap.btn_parameter_normal : R.mipmap.btn_parameter_select);
-        imgView_timing.setImageResource(index != TIMING ? R.mipmap.btn_timing_normal : R.mipmap.btn_timing_select);
+        imgView_weather.setImageResource(index != WEATHER ? R.drawable.btn_weather_normal : R.drawable.btn_weather_select);
+        imgView_control.setImageResource(index != CONTROL ? R.drawable.btn_control_normal : R.drawable.btn_control_select);
+        imgView_parameter.setImageResource(index != PARAMETER ? R.drawable.btn_parameter_normal : R.drawable.btn_parameter_select);
+        imgView_timing.setImageResource(index != TIMING ? R.drawable.btn_timing_normal : R.drawable.btn_timing_select);
 
     }
 
@@ -378,8 +380,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.imgView_switch_user:
                 Toast.makeText(this, "imgView_switch_user", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.layout_connect_mooring:
-                Toast.makeText(this, "layout_connect_mooring", Toast.LENGTH_SHORT).show();
+            case R.id.imgView_to_connect:
+//                Toast.makeText(this, "layout_connect_mooring", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, SearchDeviceActivity.class));
                 break;
             case R.id.imgView_delete_left:
                 Toast.makeText(this, "imgView_delete_left", Toast.LENGTH_SHORT).show();

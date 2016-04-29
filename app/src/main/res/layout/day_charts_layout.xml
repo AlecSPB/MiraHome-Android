@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:layout_margin="5dp"
     android:orientation="vertical">
 
-    <lecho.lib.hellocharts.view.LineChartView
+    <com.mooring.mh.views.MyLineChartView
         android:id="@+id/chart_heart_rate"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:background="@color/colorPrimary" />
 
     <lecho.lib.hellocharts.view.LineChartView

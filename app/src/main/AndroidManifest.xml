@@ -4,9 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -16,6 +17,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
 
     <application
         android:name=".app.InitApplication"
@@ -33,7 +35,7 @@
         <service android:name="com.amap.api.location.APSService"></service>
 
         <activity
-            android:name=".activity.StartPageActivity"
+            android:name=".activity.TestActivity"
             android:theme="@style/StartAndGuideTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -85,6 +87,9 @@
 
         <!--用户详情-->
         <activity android:name=".activity.UserInfoActivity" />
+
+        <!--搜索设备-->
+        <activity android:name=".activity.SearchDeviceActivity" />
     </application>
 
 </manifest>
