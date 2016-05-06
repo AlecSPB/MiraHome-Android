@@ -42,5 +42,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'org.xutils:xutils:3.3.32'
-    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
 }

@@ -14,7 +14,6 @@
             android:id="@+id/data_select"
             layout="@layout/date_select_layout" />
 
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

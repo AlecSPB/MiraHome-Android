@@ -52,7 +52,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/ic_day_cloud_5" />
 
-        <com.mooring.mh.views.other.WeatherView
+        <com.mooring.mh.views.WeatherView.WeatherView
             android:id="@+id/weather_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

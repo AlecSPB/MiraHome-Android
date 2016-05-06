@@ -4,20 +4,22 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.MConstants;
 
 import org.xutils.http.RequestParams;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -229,5 +231,122 @@ public class CommonUtils {
         Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) newWidth,
                 (int) newHeight, matrix, true);
         return bitmap;
+    }
+
+    /**
+     * 获取当天是周几
+     *
+     * @param pTime 2015-03-04
+     * @return
+     */
+    public static String getWeek(String pTime) {
+        String Week = "";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        try {
+            c.setTime(format.parse(pTime));
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+            Week += "Sun";
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 2) {
+            Week += "Mon";
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 3) {
+            Week += "Tue";
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 4) {
+            Week += "Wed";
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 5) {
+            Week += "Thu";
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 6) {
+            Week += "Fri";
+        }
+        if (c.get(Calendar.DAY_OF_WEEK) == 7) {
+            Week += "Sat";
+        }
+        return Week;
+    }
+
+    /**
+     * 获取当然系统时间
+     *
+     * @return
+     */
+    public static String getCurrDate() {
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+
+        return df.format(new Date()).toString();
+    }
+
+    /**
+     * 获取当然系统时间
+     *
+     * @return
+     */
+    public static String getCurrTime(String format) {
+
+        SimpleDateFormat df = new SimpleDateFormat(format);//设置日期格式
+
+        return df.format(new Date()).toString();
+    }
+
+    /**
+     * 判断当前时间是都在指定区间内是白天
+     *
+     * @param before
+     * @param after
+     * @return true:白天
+     */
+    public static boolean judgeTimeInterval(String before, String after) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date d1 = sdf.parse(before);
+            Date d2 = sdf.parse(after);
+            long curr = System.currentTimeMillis();
+            if (curr > d1.getTime() && curr < d2.getTime()) {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 解析时间城成08:00格式
+     *
+     * @param time
+     * @return
+     */
+    public static String ParsingTime(String time) {
+        if (time != null) {
+            String s1 = time.substring(0, 2);
+            String s2 = time.substring(2);
+            return s1 + ":" + s2;
+        }
+        return "";
+    }
+
+    /**
+     * 解析闹钟设定日期
+     *
+     * @param alarmDay
+     * @return
+     */
+    public static ArrayList<String> ParsingDay(String alarmDay) {
+        if (alarmDay == null) {
+            return null;
+        }
+        ArrayList<String> daySet = new ArrayList<>();
+        for (int i = 0; i < alarmDay.length(); i++) {
+            daySet.add(String.valueOf(alarmDay.charAt(i)));
+        }
+        return daySet;
     }
 }

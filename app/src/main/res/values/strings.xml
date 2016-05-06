@@ -18,5 +18,7 @@
 
     <string name="act_suggestions_hint">请输入意见内容</string>
 
+    <string name="clock_tip">Wake you up at the optimal time during the period you set</string>
+
 
 </resources>

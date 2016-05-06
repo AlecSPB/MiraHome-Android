@@ -1,4 +1,4 @@
-package com.mooring.mh.views.other;
+package com.mooring.mh.views.WeatherView;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,18 +7,20 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
-import com.mooring.mh.views.WeatherView.RandomGenerator;
-import com.mooring.mh.views.WeatherView.SnowFlake;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
+ * 自定义天气,使用碎片多样式
+ *
+ * @see SnowFlake
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class WeatherView extends View {
@@ -46,12 +48,11 @@ public class WeatherView extends View {
     public static final int COLD = 16;//冷
     public static final int HOT = 17;//热
 
-
     /**
      * ------------公用--------------
      */
     private Paint bgPaint = new Paint();
-    private int kind = LIGHT_RAIN;//天气类型
+    private int kind = CALM;//天气类型
     private boolean isRuning = true;
 
     /**
@@ -83,6 +84,9 @@ public class WeatherView extends View {
     private int windSma_x = CommonUtils.dp2px(getContext(), 30);
     private int windSma_y = CommonUtils.dp2px(getContext(), 200);
     private Matrix matrixWind;
+
+    private int viewW;
+    private int viewH;
 
     public WeatherView(Context context) {
         this(context, null);
@@ -124,6 +128,10 @@ public class WeatherView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         if (w != oldw || h != oldh) {
+
+            viewW = w;
+            viewH = h;
+
             initSnow(w, h);
         }
     }
@@ -264,6 +272,7 @@ public class WeatherView extends View {
         mSnowFlakes.clear();
         //mSnowFlakes所有的雪花都生成放到这里面
         for (int i = 0; i < NUM_SNOWFLAKES; ++i) {
+            Log.e("NUM_SNOWFLAKES", "width  " + width + "  height  " + height);
             mSnowFlakes.add(SnowFlake.create(width, height, kind));
         }
     }
@@ -274,9 +283,10 @@ public class WeatherView extends View {
      * @param numOfPieces
      */
     private void switchPieces(int numOfPieces) {
-        getHandler().removeCallbacks(runnable);
+        if (getHandler() != null && runnable != null)
+            getHandler().removeCallbacks(runnable);
         NUM_SNOWFLAKES = numOfPieces;
-        initSnow(getWidth(), getHeight());
+        initSnow(viewW, viewH);
     }
 
     /**

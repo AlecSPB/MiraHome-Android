@@ -1,6 +1,7 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -17,9 +18,12 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
+import com.mooring.mh.app.InitApplication;
+import com.mooring.mh.app.InitApplicationHelper;
+import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
-import com.mooring.mh.views.other.WeatherView;
+import com.mooring.mh.views.WeatherView.WeatherView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,8 +62,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private double temp;//当前温度
     private int humidity;//单位%
     private double wind_speed;//米每秒
-    private String sunrise;//日出
-    private String sunset;//日落
+    private String sunrise = CommonUtils.getCurrDate() + " 06:00:00";//日出
+    private String sunset = CommonUtils.getCurrDate() + " 18:00:00";//日落
 
     private int weatherKind = 0;
     private WeatherView weather_view;//天气
@@ -111,10 +115,26 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
 //        initCloud();
 
+        int beforeWeather = InitApplicationHelper.sp.getInt("beforeWeather", -1);
+        int beforeWeatherId = InitApplicationHelper.sp.getInt("beforeWeatherId", -1);
+        if (beforeWeatherId != -1 && beforeWeather != -1) {
+//            judgeWeather(beforeWeatherId);
+//            weather_view.switchWeather(beforeWeather);
+
+            //------------直接切换天气有问题
+        }
 
         getLatAndLon();
 
-        translateTime(1461320856);
+        System.out.printf(translateTime(1461320856));
+        if (!CommonUtils.judgeTimeInterval(sunrise, sunset)) {
+            layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_night);
+            imgView_cloud_1.setImageResource(R.drawable.ic_night_cloud_1);
+            imgView_cloud_2.setImageResource(R.drawable.ic_night_cloud_2);
+            imgView_cloud_3.setImageResource(R.drawable.ic_night_cloud_3);
+            imgView_cloud_4.setImageResource(R.drawable.ic_night_cloud_4);
+            imgView_cloud_5.setImageResource(R.drawable.ic_night_cloud_5);
+        }
 
     }
 
@@ -188,6 +208,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     tv_curr_temp.setText((int) temp + "℃");
                     judgeWeather(weatherId);
                     weather_view.switchWeather(weatherKind);
+                    SharedPreferences.Editor editor = InitApplicationHelper.sp.edit();
+                    editor.putInt("beforeWeather", weatherKind);
+                    editor.putInt("beforeWeatherId", weatherId);
+                    editor.commit();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -219,8 +243,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      * @param time
      */
     private String translateTime(long time) {
-        String date = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new
-                java.util.Date(time * 1000L));
+        String date = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(time * 1000L));
         return date;
     }
 
@@ -373,6 +396,9 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private void switchBackground(int kind) {
         this.weatherKind = kind;
+        if (!CommonUtils.judgeTimeInterval(sunrise, sunset)) {
+            return;
+        }
         switch (kind) {
             case WeatherView.CALM:
                 layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_calm);
@@ -411,6 +437,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_hot);
                 break;
         }
+
     }
 
     @Override

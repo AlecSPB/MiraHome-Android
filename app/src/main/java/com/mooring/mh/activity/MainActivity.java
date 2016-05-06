@@ -3,6 +3,7 @@ package com.mooring.mh.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,7 +25,7 @@ import com.mooring.mh.fragment.ControlFragment;
 import com.mooring.mh.fragment.ParameterFragment;
 import com.mooring.mh.fragment.TimingFragment;
 import com.mooring.mh.fragment.WeatherFragment;
-import com.mooring.mh.model.ImageData;
+import com.mooring.mh.model.UserHeadInfo;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.CustomImageView.ZoomCircleView;
@@ -49,6 +50,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ZoomCircleView circleImg_left;//左边用户
     private ZoomCircleView circleImg_right;//右边用户
     private CircleImageView circleImg_middle;//单个用户
+    public ImageView imgView_title_plus;//添加闹钟
     private View layout_two_user;//两个用户的布局
     private View title_layout;//title布局
 
@@ -89,7 +91,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private TextView tv_login_out;//退出登陆
 
     private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
-    private List<ImageData> dataList;//用户list
+    private List<UserHeadInfo> dataList;//用户list
     private HorizontalDataAdapter adapter;//横向滑动适配器
 
     @Override
@@ -123,12 +125,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         circleImg_left = (ZoomCircleView) findViewById(R.id.circleImg_left);
         circleImg_right = (ZoomCircleView) findViewById(R.id.circleImg_right);
         circleImg_middle = (CircleImageView) findViewById(R.id.circleImg_middle);
+        imgView_title_plus = (ImageView) findViewById(R.id.imgView_title_plus);
         layout_two_user = findViewById(R.id.layout_two_user);
         imgView_title_menu = (ImageView) findViewById(R.id.imgView_title_menu);
 
         imgView_title_menu.setOnClickListener(this);
         circleImg_left.setOnClickListener(this);
         circleImg_right.setOnClickListener(this);
+        imgView_title_plus.setOnClickListener(this);
 
         imgView_weather.setOnClickListener(this);
         imgView_control.setOnClickListener(this);
@@ -189,16 +193,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      * 初始化相关数据
      */
     private void initData() {
-        dataList = new ArrayList<ImageData>();
+        dataList = new ArrayList<UserHeadInfo>();
         for (int i = 0; i < 4; i++) {
-            ImageData d = new ImageData("Alex", Environment.getExternalStorageDirectory().getPath()
+            UserHeadInfo d = new UserHeadInfo("Alex", Environment.getExternalStorageDirectory().getPath()
                     + "/Download/11223.jpg");
             dataList.add(d);
         }
         adapter = new HorizontalDataAdapter(this, dataList);
-        adapter.setOnClickListener(new HorizontalDataAdapter.OnClickListener<ImageData>() {
+        adapter.setOnClickListener(new HorizontalDataAdapter.OnClickListener<UserHeadInfo>() {
             @Override
-            public void onClick(ImageData data, int position) {
+            public void onClick(UserHeadInfo data, int position) {
                 Intent it = new Intent();
                 if (position != dataList.size() - 1) {
                     it.setClass(MainActivity.this, UserInfoActivity.class);
@@ -219,6 +223,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void setTabSelection(int index) {
         fragmentTransaction = fragmentManager.beginTransaction();
 
+        //添加闹钟按钮,只在闹钟界面起作用
+        if (index == TIMING) {
+            imgView_title_plus.setVisibility(View.VISIBLE);
+        } else {
+            imgView_title_plus.setVisibility(View.GONE);
+        }
         hideFragments(fragmentTransaction);
         switch (index) {
             case WEATHER:
@@ -252,7 +262,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
         fragmentTransaction.commit();
 
-        setTabSelectStatu(index);
+        setTabSelectStatus(index);
     }
 
 
@@ -282,9 +292,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      *
      * @param index
      */
-    private void setTabSelectStatu(int index) {
+    private void setTabSelectStatus(int index) {
         //恢复状态栏为透明底色
-        title_layout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+//        title_layout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
         imgView_weather.setImageResource(index != WEATHER ? R.drawable.btn_weather_normal : R.drawable.btn_weather_select);
         imgView_control.setImageResource(index != CONTROL ? R.drawable.btn_control_normal : R.drawable.btn_control_select);
@@ -372,16 +382,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     switchUser(MConstants.RIGHT_USER);
                 }
                 break;
-
             case R.id.imgView_title_menu:
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
-
+            case R.id.imgView_title_plus:
+                it.putExtra("flag", "add");
+                it.setClass(MainActivity.this, AlarmEditActivity.class);
+                startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
+                break;
             case R.id.imgView_switch_user:
                 Toast.makeText(this, "imgView_switch_user", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imgView_to_connect:
-//                Toast.makeText(this, "layout_connect_mooring", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, SearchDeviceActivity.class));
                 break;
             case R.id.imgView_delete_left:
@@ -427,6 +439,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             //此时为修改用户完成后的回调
 
             //修改用户展示头像
+        }
+
+        if (requestCode == MConstants.ALARM_EDIT_REQUEST && resultCode == MConstants.ALARM_EDIT_RESULT) {
+            Fragment f = fragmentManager.findFragmentByTag("TimingFragment");
+            f.onActivityResult(requestCode, resultCode, data);
         }
     }
 

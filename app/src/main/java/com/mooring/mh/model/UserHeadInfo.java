@@ -10,11 +10,11 @@ import com.mooring.mh.adapter.HorizontalDataAdapter;
  * <p/>
  * Created by Will on 16/4/7.
  */
-public class ImageData implements HorizontalDataAdapter.AdapterData, Parcelable {
+public class UserHeadInfo implements HorizontalDataAdapter.AdapterData, Parcelable {
     private String title;
     private String thumbnailUrl;
 
-    public ImageData(String title, String thumbnailUrl) {
+    public UserHeadInfo(String title, String thumbnailUrl) {
         this.title = title;
         this.thumbnailUrl = thumbnailUrl;
     }
@@ -40,17 +40,17 @@ public class ImageData implements HorizontalDataAdapter.AdapterData, Parcelable 
         dest.writeString(thumbnailUrl);
     }
 
-    public static final Parcelable.Creator<ImageData> CREATOR = new Parcelable.Creator<ImageData>() {
-        public ImageData createFromParcel(Parcel in) {
-            return new ImageData(in);
+    public static final Parcelable.Creator<UserHeadInfo> CREATOR = new Parcelable.Creator<UserHeadInfo>() {
+        public UserHeadInfo createFromParcel(Parcel in) {
+            return new UserHeadInfo(in);
         }
 
-        public ImageData[] newArray(int size) {
-            return new ImageData[size];
+        public UserHeadInfo[] newArray(int size) {
+            return new UserHeadInfo[size];
         }
     };
 
-    private ImageData(Parcel in) {
+    private UserHeadInfo(Parcel in) {
         title = in.readString();
         thumbnailUrl = in.readString();
     }

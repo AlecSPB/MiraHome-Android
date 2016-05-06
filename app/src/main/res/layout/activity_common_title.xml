@@ -32,4 +32,14 @@
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_dimen_24"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imgView_act_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/bg_delete_clock"
+        android:visibility="gone" />
 </RelativeLayout>

@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.activity.ParameterDetailActivity;
-import com.mooring.mh.views.other.WeatherView;
 
 /**
  * Created by Will on 16/3/24.

@@ -10,6 +10,11 @@ import android.view.MotionEvent;
 
 import java.util.HashMap;
 
+/**
+ * 类似IOS系统的滚动选择器
+ * <p/>
+ * Created by Will on 16/5/5.
+ */
 public class WheelCurvedPicker extends WheelCrossPicker {
     private final HashMap<Integer, Integer> SPACE = new HashMap<>();
     private final HashMap<Integer, Integer> DEPTH = new HashMap<>();
@@ -124,8 +129,6 @@ public class WheelCurvedPicker extends WheelCrossPicker {
             degreeUnitDelta = 0;
         }
         degreeSingleDelta = (degreeIndex * 80) + degreeUnitDelta;
-//        Log.d("AigeStudio", degreeSingleDelta + ":" + degreeUnitDelta + ":" + degreeIndex + ":" + diSingleMoveY + ":" + radius);
-//        degreeSingleDelta = mOrientation.computeDegreeSingleDelta(diSingleMoveX, diSingleMoveY, radius);
         super.onTouchMove(event);
     }
 

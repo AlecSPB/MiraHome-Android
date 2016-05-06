@@ -7,7 +7,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * @author AigeStudio 2015-12-12
+ * 平面滑动选择器
+ * <p/>
+ * Created by Will on 16/5/5.
  */
 public class WheelStraightPicker extends WheelCrossPicker {
     public WheelStraightPicker(Context context, AttributeSet attrs) {

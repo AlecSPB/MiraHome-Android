@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.model.ImageData;
+import com.mooring.mh.model.UserHeadInfo;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
 
 import java.util.List;
@@ -35,18 +35,18 @@ public class HorizontalDataAdapter extends RecyclerView
         void onClick(ImageData obj, int position);
     }
 
-    private List<ImageData> dataList;
+    private List<UserHeadInfo> dataList;
     private Resources resources;
-    private OnClickListener<ImageData> listener;
+    private OnClickListener<UserHeadInfo> listener;
     private Activity context;
 
-    public HorizontalDataAdapter(Activity context, List<ImageData> dataList) {
+    public HorizontalDataAdapter(Activity context, List<UserHeadInfo> dataList) {
         this.context = context;
         this.dataList = dataList;
         resources = context.getResources();
     }
 
-    public void setOnClickListener(OnClickListener<ImageData> listener) {
+    public void setOnClickListener(OnClickListener<UserHeadInfo> listener) {
         this.listener = listener;
     }
 
@@ -58,7 +58,7 @@ public class HorizontalDataAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(HorizontalViewHolder viewHolder, final int position) {
-        final ImageData data = dataList.get(position);
+        final UserHeadInfo data = dataList.get(position);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

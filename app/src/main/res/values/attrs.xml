@@ -42,6 +42,16 @@
         <attr name="img_zoom_out" format="boolean" />
     </declare-styleable>
 
+    <!--自定义ChartView-->
+    <declare-styleable name="MyChartView">
+        <attr name="chart_x" format="integer" />
+        <attr name="chart_y" format="integer" />
+        <attr name="chart_area" format="boolean" />
+        <attr name="chart_circle" format="boolean" />
+        <attr name="line_color" format="color" />
+        <attr name="area_color" format="color" />
+        <attr name="y_location" format="integer" />
+    </declare-styleable>
 
     <!--测试使用-->
     <declare-styleable name="WeatherStyle">

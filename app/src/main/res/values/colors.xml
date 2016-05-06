@@ -10,6 +10,7 @@
     <color name="colorOrange">#FF9A86</color>
     <color name="colorOrangePress">#6900FF</color>
     <color name="colorPurple">#7D55FF</color>
+    <color name="colorPurpleDeep">#6900FF</color>
     <color name="colorPurple50">#7F7D55FF</color>
 
     <color name="transparent_6">#60000000</color>
@@ -23,5 +24,7 @@
     <color name="colorLightGrey">#919196</color>
 
     <color name="colorDeepBlue">#0F0F1B</color>
+
+    <color name="colorClockItem">#35353E</color>
 
 </resources>

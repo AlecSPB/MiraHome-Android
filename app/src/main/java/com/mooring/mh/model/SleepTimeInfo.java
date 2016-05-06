@@ -7,7 +7,7 @@ import com.mooring.mh.R;
  * <p>
  * Created by Will on 16/4/27.
  */
-public class SleepTime {
+public class SleepTimeInfo {
     private int type;
     private int time;
 

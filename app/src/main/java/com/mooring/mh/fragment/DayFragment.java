@@ -1,24 +1,18 @@
 package com.mooring.mh.fragment;
 
+import android.graphics.PointF;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.mooring.mh.views.ChartView.MyChartView;
+import com.mooring.mh.views.ChartView.YAxisView;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
 import com.mooring.mh.views.CircleProgress.DoubleCircleView;
-import com.mooring.mh.views.MyLineChartView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.Viewport;
-import lecho.lib.hellocharts.util.ChartUtils;
-import lecho.lib.hellocharts.view.LineChartView;
 
 /**
  * Created by Will on 16/3/28.
@@ -50,10 +44,15 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
     /**
      * 图表展示
      */
-    private MyLineChartView chart_heart_rate;
-    private LineChartView chart_breathing_rate;
-    private LineChartView chart_body_movement;
+    MyChartView myChartView1;
+    MyChartView myChartView2;
+    MyChartView myChartView3;
 
+    YAxisView allChart1;
+    YAxisView allChart2;
+    YAxisView allChart3;
+    List<String> xdata;
+    List<String> ydata;
 
     @Override
     protected int getLayoutId() {
@@ -78,9 +77,14 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
         circle_progress_3 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_3);
         circle_progress_4 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_4);
 
-        chart_heart_rate = (MyLineChartView) rootView.findViewById(R.id.chart_heart_rate);
-        chart_breathing_rate = (LineChartView) rootView.findViewById(R.id.chart_breathing_rate);
-        chart_body_movement = (LineChartView) rootView.findViewById(R.id.chart_body_movement);
+        myChartView1 = (MyChartView) rootView.findViewById(R.id.myChartView1);
+        myChartView2 = (MyChartView) rootView.findViewById(R.id.myChartView2);
+        myChartView3 = (MyChartView) rootView.findViewById(R.id.myChartView3);
+
+        allChart1 = (YAxisView) rootView.findViewById(R.id.allChart1);
+        allChart2 = (YAxisView) rootView.findViewById(R.id.allChart2);
+        allChart3 = (YAxisView) rootView.findViewById(R.id.allChart3);
+
 
         /**
          * 设置监听
@@ -93,42 +97,55 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
         initData();
     }
 
-
-    private LineChartData data;
+    private List<String> data1 = new ArrayList<>();
+    private List<String> data2 = new ArrayList<>();
+    private List<String> data3 = new ArrayList<>();
 
     private void initData() {
-        generateDefaultData();
 
-        chart_heart_rate.setLineChartData(data);
-        chart_heart_rate.setInteractive(true);
+        xdata = new ArrayList<>();
+        ydata = new ArrayList<>();
 
-        chart_heart_rate.setZoomEnabled(false);
-        chart_heart_rate.setScrollEnabled(true);
-        Viewport tempViewport = new Viewport(chart_heart_rate.getMaximumViewport());
-        float dx = tempViewport.width() / 4;
-        tempViewport.inset(dx, 0);
-        chart_heart_rate.setCurrentViewport(tempViewport);
-    }
+        ydata.add("15h");
+        ydata.add("20h");
+        ydata.add("25h");
+        ydata.add("30h");
+        ydata.add("35h");
+        ydata.add("40h");
+        ydata.add("45h");
+        ydata.add("50h");
+        ydata.add("55h");
+        ydata.add("60h");
 
-    private void generateDefaultData() {
+        PointF[] po = new PointF[]{};
 
-        int numValues = 50;
 
-        List<PointValue> values = new ArrayList<PointValue>();
-        for (int i = 0; i < numValues; ++i) {
-            values.add(new PointValue(i, (float) Math.random() * 100f));
+        for (int i = 0; i <= 24; i++) {
+            xdata.add(i + ":00");
         }
 
-        Line line = new Line(values);
-        line.setColor(ChartUtils.COLOR_GREEN).setCubic(true);
-        line.setHasPoints(false);// too many values so don't draw points.
+        float[] test1 = new float[]{15, 21, 9, 21, 24, 15, 24, 18, 13, 20, 22, 19, 7};
+        float[] test2 = new float[]{15, 13, 20, 22, 19, 21, 9, 21, 24, 15, 24, 18, 7};
+        float[] test3 = new float[]{24, 18, 13, 20, 22, 15, 21, 19, 9, 21, 24, 15, 7};
 
-        List<Line> lines = new ArrayList<Line>();
-        lines.add(line);
-        data = new LineChartData(lines);
-        data.setAxisXBottom(new Axis());
-        data.setAxisYRight(new Axis().setHasLines(false));
+        for (int i = 0; i < test1.length; i++) {
+            data1.add(test1[i] + "");
+            data2.add(test2[i] + "");
+            data3.add(test3[i] + "");
+        }
+
+        myChartView1.setMax(60);
+        myChartView1.setDatas(xdata, ydata, data1);
+        myChartView2.setMax(60);
+        myChartView2.setDatas(xdata, ydata, data2);
+        myChartView3.setMax(60);
+        myChartView3.setDatas(xdata, ydata, data3);
+
+        allChart1.setYdatas(ydata);
+        allChart2.setYdatas(ydata);
+        allChart3.setYdatas(ydata);
     }
+
 
     @Override
     protected void lazyLoad() {

@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.mooring.mh.R;
-import com.mooring.mh.model.SleepTime;
+import com.mooring.mh.model.SleepTimeInfo;
 import com.mooring.mh.utils.CommonUtils;
 
 import java.util.List;
@@ -31,8 +31,8 @@ public class DoubleCircleView extends View {
     private int viewW;
     private int viewH;
 
-    private List<SleepTime> outDatas;//外环数据
-    private List<SleepTime> innDatas;//内环数据
+    private List<SleepTimeInfo> outDatas;//外环数据
+    private List<SleepTimeInfo> innDatas;//内环数据
 
     private int keStart;//刻度起始
     private int keStop;//刻度结束
@@ -138,7 +138,7 @@ public class DoubleCircleView extends View {
      * @param innDatas
      */
 
-    public void setDatass(List<SleepTime> outDatas, List<SleepTime> innDatas) {
+    public void setDatass(List<SleepTimeInfo> outDatas, List<SleepTimeInfo> innDatas) {
         this.outDatas = outDatas;
         this.innDatas = innDatas;
         invalidate();

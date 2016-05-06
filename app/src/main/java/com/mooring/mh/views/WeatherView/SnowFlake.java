@@ -2,14 +2,11 @@ package com.mooring.mh.views.WeatherView;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-
-import com.mooring.mh.views.other.WeatherView;
 
 /**
+ * 下落物碎片
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class SnowFlake {

@@ -270,35 +270,55 @@ public class MConstants {
     /**
      * 修改密码成功
      */
-    public static final int CONFIRM_SUCCESS = 0X22;
+    public static final int CONFIRM_SUCCESS = 0X12;
 
     /**
      * 左边用户标识
      */
-    public static final int LEFT_USER = 0X33;
+    public static final int LEFT_USER = 0X13;
 
     /**
      * 右边用户标识
      */
-    public static final int RIGHT_USER = 0X44;
+    public static final int RIGHT_USER = 0X14;
 
     /**
      * 跳转添加用户
      */
-    public static final int ADD_USER_REQUEST = 0X55;
+    public static final int ADD_USER_REQUEST = 0X15;
 
     /**
      * 添加用户finish标识
      */
-    public static final int ADD_USER_RESULT = 0X66;
+    public static final int ADD_USER_RESULT = 0X16;
     /**
      * 跳转添加用户
      */
-    public static final int USER_INFO_REQUEST = 0X55;
+    public static final int USER_INFO_REQUEST = 0X15;
 
     /**
      * 添加用户finish标识
      */
-    public static final int USER_INFO_RESULT = 0X66;
+    public static final int USER_INFO_RESULT = 0X16;
+
+    /**
+     * 编辑闹钟跳转标识
+     */
+    public static final int ALARM_EDIT_REQUEST = 0X17;
+
+    /**
+     * 编辑闹钟回调标识
+     */
+    public static final int ALARM_EDIT_RESULT = 0X18;
+
+    /**
+     * 闹钟重复次数跳转标识
+     */
+    public static final int REPEAT_ALARM_REQUEST = 0X19;
+
+    /**
+     * 闹钟重复次数回调标识
+     */
+    public static final int REPEAT_ALARM_RESULT = 0X20;
 
 }
