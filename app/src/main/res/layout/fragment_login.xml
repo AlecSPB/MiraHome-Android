@@ -26,11 +26,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
-                android:hint="Phone number/Email"
+                android:hint="@string/hint_username"
                 android:inputType="phone|textEmailAddress"
                 android:singleLine="true"
                 android:textColor="@color/colorWhite"
-                android:textColorHint="@color/colorWhite50" />
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <EditText
                 android:id="@+id/edit_psw"
@@ -39,42 +40,30 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
                 android:layout_marginTop="10dp"
-                android:hint="Password"
-                android:password="true"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
                 android:singleLine="true"
                 android:textColor="@color/colorWhite"
-                android:textColorHint="@color/colorWhite50" />
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <TextView
                 android:id="@+id/tv_forget_psw"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:clickable="true"
                 android:gravity="center_vertical"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:text="Forget Password?"
+                android:text="@string/forget_password"
                 android:textColor="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_14" />
+                android:textSize="@dimen/text_dimen_28pt" />
 
             <TextView
                 android:id="@+id/tv_login_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="12dp"
-                android:background="@color/colorPurple"
-                android:clickable="true"
-                android:gravity="center"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:text="Login"
-                android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_24"
-                android:textStyle="bold" />
+                style="@style/text_button_comm"
+                android:layout_marginTop="20dp"
+                android:text="@string/title_login" />
 
             <TextView
                 android:id="@+id/tv_login_error"
@@ -84,9 +73,9 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
-                android:text="The account is not registered,please sign up"
+                android:text="@string/tip_login_error"
                 android:textColor="@color/colorOrange"
-                android:textSize="@dimen/text_dimen_16"
+                android:textSize="@dimen/text_dimen_28pt"
                 android:visibility="invisible" />
 
         </LinearLayout>
@@ -99,8 +88,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/bottom_mirahome"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@color/colorDeepBlue"
             android:gravity="center"
             android:orientation="vertical">
@@ -109,9 +98,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="or"
+                android:text="@string/tip_or"
                 android:textColor="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_18" />
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <LinearLayout
                 android:layout_width="match_parent"

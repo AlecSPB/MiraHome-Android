@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MConstants;
 
 /**
  * 自定义双边可拖动改变图层控件
@@ -23,44 +24,40 @@ import com.mooring.mh.utils.CommonUtils;
  */
 public class DragScaleTwoView extends View implements View.OnTouchListener {
 
-    private int lastY;
-    private int oriLeft;//拖动变量
-    private int oriRight;//拖动变量
-
-    private boolean dragLeft = false;//左侧是否符合拖动位置
-    private boolean dragRight = false;//右侧是否符合拖动位置
-
     private Paint colorPaint;//上层颜色画笔
     private Bitmap drop;//拖动图标
     private Paint tickMarkPaint;//刻度线画笔
     private Paint scalePaint;//刻度圆圈
     private Paint maskPaint;//遮罩层
-
-    private int dropW = 0;//拖动小球宽度
-    private int dropH = 0;//拖动小球高度
-
-    private int upperBound = 104;//温度上界
-    private int lowerBound = 68;//温度下界
-    private String bedLeftTemp = "83°";//左边床的温度
-    private String bedRightTemp = "60°";//右边床的温度
-    private String currLeftTemp = "86°";//当前温度
-    private String currRightTemp = "76°";//当前温度
-
+    private Shader mShader;  //渐变对象
     /*针对文本居中显示*/
     private Rect targetRect;
     private Paint commonPaint;
     private Paint.FontMetricsInt fontMetrics;
 
+    private int dropW = 0;//拖动小球宽度
+    private int dropH = 0;//拖动小球高度
+    private int roomY;//室内温度y坐标
+    private int roomTemp = 35;//室内温度
+    private int upperBound = 40;//温度上界
+    private int lowerBound = 20;//温度下界
+    private int bedLeftTemp = 25;//左边床的温度
+    private int bedRightTemp = 30;//右边床的温度
+    private int currLeftTemp = 30;//当前温度
+    private int currRightTemp = 36;//当前温度
+    private String unit = "";//床温,拖动温度,Room温度显示单位
+    private String currUnit = "℃";//当前系统设置的温度单位
+    private int lastY;
+    private int oriLeft;//拖动变量
+    private int oriRight;//拖动变量
+    private boolean dragLeft = false;//左侧是否符合拖动位置
+    private boolean dragRight = false;//右侧是否符合拖动位置
     private int viewW = 0;//当前View的宽度
     private int viewH = 0;//当前View的高度
     private boolean isLeftDropAble = true;//是否可用且可拖动
     private boolean isRightDropAble = true;//是否可用且可拖动
 
     private OnDropListener listener;//拖动监听
-
-    private int roomY;//室内温度y坐标
-
-    private int roomTemp = 80;//室内温度
 
     private int dropTop = 0;  //拖动图标顶部
     private int lineBottom = 0; //刻度线的底部
@@ -72,8 +69,6 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     private int dropTvSize = 0;  //拖动文字的字体大小
     private int tempTvSize = 0;  //温度上下界的文字字体大小
     private int bedTvSize = 0;  //床温文字字体大小
-    private Shader mShader;  //渐变对象
-
 
     public DragScaleTwoView(Context context) {
         this(context, null);
@@ -169,11 +164,11 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
 
         //绘制室内温度值
-        drawText(canvas, "Room" + "     " + roomTemp + "°", bedTvSize, Color.WHITE, roomY - CommonUtils.
-                dp2px(getContext(), 30), viewW / 2 - CommonUtils.dp2px(getContext(), 5));
+        drawText(canvas, "Room" + "     " + roomTemp + unit, bedTvSize, Color.WHITE, roomY -
+                CommonUtils.dp2px(getContext(), 30), viewW / 2 - CommonUtils.dp2px(getContext(), 10));
 
         //温度text
-        drawText(canvas, currLeftTemp, dropTvSize, (0X7FFFFFFF), oriLeft, viewW / 4);
+        drawText(canvas, currLeftTemp + unit, dropTvSize, (0X7FFFFFFF), oriLeft, viewW / 4);
 
         //拖动图标
         canvas.drawBitmap(drop, viewW / 4 - dropW / 2, dropTop + oriLeft, null);
@@ -184,12 +179,12 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //bed温度
-        drawText(canvas, "Bed " + bedLeftTemp, bedTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
+        drawText(canvas, "Bed " + bedLeftTemp + unit, bedTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
 
         /*-------- 绘制右侧 -------*/
 
         //温度text
-        drawText(canvas, currRightTemp, dropTvSize, (0X7FFFFFFF), oriRight, viewW * 3 / 4);
+        drawText(canvas, currRightTemp + unit, dropTvSize, (0X7FFFFFFF), oriRight, viewW * 3 / 4);
 
         //拖动图标
         canvas.drawBitmap(drop, viewW * 3 / 4 - dropW / 2, dropTop + oriRight, null);
@@ -200,7 +195,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //bed温度
-        drawText(canvas, "Bed " + bedRightTemp, bedTvSize, Color.WHITE, viewH - lineBottom, viewW * 3 / 4);
+        drawText(canvas, "Bed " + bedRightTemp + unit, bedTvSize, Color.WHITE, viewH - tempBottom, viewW * 3 / 4);
 
          /*-------- 绘制公共部分 -------*/
         //刻度直线
@@ -213,10 +208,10 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //温度上界
-        drawText(canvas, upperBound + "℉", tempTvSize, Color.WHITE, tempTop, viewW / 2);
+        drawText(canvas, upperBound + currUnit, tempTvSize, Color.WHITE, tempTop, viewW / 2);
 
         //温度下界
-        drawText(canvas, lowerBound + "℉", tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 2);
+        drawText(canvas, lowerBound + currUnit, tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 2);
 
     }
 
@@ -262,7 +257,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
 
                     oriLeft += dy;
                     if (oriLeft >= 0 && oriLeft <= viewH - dropTop - lineBottom - dropH / 2) {
-                        currLeftTemp = computeTemp(oriLeft) + "°";
+                        currLeftTemp = computeTemp(oriLeft);
                         invalidate();
 //                        listener.onDrop(currLeftTemp, 0);
                     }
@@ -271,7 +266,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
                 if (dragRight && isRightDropAble) {
                     oriRight += dy;
                     if (oriRight >= 0 && oriRight <= viewH - dropTop - lineBottom - dropH / 2) {
-                        currRightTemp = computeTemp(oriRight) + "°";
+                        currRightTemp = computeTemp(oriRight);
                         invalidate();
 //                        listener.onDrop(currRightTemp, 1);
                     }
@@ -283,57 +278,42 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
 
             case MotionEvent.ACTION_UP:
                 /*---Left---*/
-                dragLeft = false;
-                if (oriLeft < 0) {
-                    oriLeft = 0;
-                    currLeftTemp = computeTemp(oriLeft) + "°";
-                    invalidate();
-                }
-                if (oriLeft > viewH - dropTop - lineBottom - dropH / 2) {
-                    oriLeft = viewH - dropTop - lineBottom - dropH / 2;
-                    currLeftTemp = computeTemp(oriLeft) + "°";
-                    invalidate();
-                }
-
-                if (listener != null) {
-                    listener.onDrop(currLeftTemp, 0);
+                if (dragLeft) {
+                    if (oriLeft < 0) {
+                        oriLeft = 0;
+                        currLeftTemp = computeTemp(oriLeft);
+                        invalidate();
+                    }
+                    if (oriLeft > viewH - dropTop - lineBottom - dropH / 2) {
+                        oriLeft = viewH - dropTop - lineBottom - dropH / 2;
+                        currLeftTemp = computeTemp(oriLeft);
+                        invalidate();
+                    }
+                    if (listener != null) {
+                        listener.onDrop(currLeftTemp, 0);
+                    }
+                    dragLeft = false;
                 }
                 /*---Right---*/
-                dragRight = false;
-                if (oriRight < 0) {
-                    oriRight = 0;
-                    currRightTemp = computeTemp(oriRight) + "°";
-                    invalidate();
-                }
-                if (oriRight > viewH - dropTop - lineBottom - dropH / 2) {
-                    oriRight = viewH - dropTop - lineBottom - dropH / 2;
-                    currRightTemp = computeTemp(oriRight) + "°";
-                    invalidate();
-                }
-
-                if (listener != null) {
-                    listener.onDrop(currRightTemp, 1);
+                if (dragRight) {
+                    if (oriRight < 0) {
+                        oriRight = 0;
+                        currRightTemp = computeTemp(oriRight);
+                        invalidate();
+                    }
+                    if (oriRight > viewH - dropTop - lineBottom - dropH / 2) {
+                        oriRight = viewH - dropTop - lineBottom - dropH / 2;
+                        currRightTemp = computeTemp(oriRight);
+                        invalidate();
+                    }
+                    if (listener != null) {
+                        listener.onDrop(currRightTemp, 1);
+                    }
+                    dragRight = false;
                 }
                 break;
         }
-
         return false;
-    }
-
-    /**
-     * 设置当前的室内温度
-     *
-     * @param roomTemp
-     */
-    public void setRoomY(int roomTemp) {
-
-        this.roomTemp = roomTemp;
-
-        this.roomY = (upperBound - roomTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
-                (upperBound - lowerBound) + dropTop + dropH / 2;
-
-        invalidate();
-
     }
 
     /**
@@ -343,6 +323,28 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      */
     private int computeTemp(int currDrop) {
         return upperBound - currDrop * (upperBound - lowerBound) / (viewH - dropTop - lineBottom - dropH / 2);
+    }
+
+    /**
+     * 设置当前的室内温度
+     *
+     * @param roomTemp
+     */
+    public void setRoomY(String roomTemp) {
+        int temp = Integer.parseInt(roomTemp);
+        setRoomY(temp);
+    }
+
+    /**
+     * 设置当前的室内温度
+     *
+     * @param roomTemp
+     */
+    public void setRoomY(int roomTemp) {
+        this.roomTemp = roomTemp;
+        this.roomY = (upperBound - roomTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
+                (upperBound - lowerBound) + dropTop + dropH / 2;
+        invalidate();
     }
 
     /**
@@ -367,10 +369,12 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
     }
 
-
+    /**
+     * 拖动图标接口
+     */
     public interface OnDropListener {
         //location 0:left  1:right
-        void onDrop(String currTemp, int location);
+        void onDrop(int currTemp, int location);
     }
 
     /**
@@ -385,22 +389,31 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     /**
      * 设置温度的上下界
      *
-     * @param upperBound
-     * @param lowerBound
+     * @param upperBound 104
+     * @param lowerBound 68
      */
     public void setUpperAndLowerBound(int upperBound, int lowerBound) {
         this.upperBound = upperBound;
         this.lowerBound = lowerBound;
-
         invalidate();
     }
 
     /**
      * 设置左边bed温度
      *
-     * @param bedLeftTemp
+     * @param bedLeftTemp "70"
      */
     public void setBedLeftTemp(String bedLeftTemp) {
+        int temp = Integer.parseInt(bedLeftTemp);
+        setBedLeftTemp(temp);
+    }
+
+    /**
+     * 设置左边bed温度
+     *
+     * @param bedLeftTemp 70
+     */
+    public void setBedLeftTemp(int bedLeftTemp) {
         this.bedLeftTemp = bedLeftTemp;
         invalidate();
     }
@@ -408,9 +421,19 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     /**
      * 设置右边bed温度
      *
-     * @param bedRightTemp
+     * @param bedRightTemp "70"
      */
     public void setBedRightTemp(String bedRightTemp) {
+        int temp = Integer.parseInt(bedRightTemp);
+        setBedRightTemp(temp);
+    }
+
+    /**
+     * 设置右边bed温度
+     *
+     * @param bedRightTemp 70
+     */
+    public void setBedRightTemp(int bedRightTemp) {
         this.bedRightTemp = bedRightTemp;
         invalidate();
     }
@@ -418,15 +441,12 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     /**
      * 设置当前左边的温度
      *
-     * @param currLeftTemp 70°
+     * @param currLeftTemp "70"
      */
     public void setCurrLeftTemp(String currLeftTemp) {
-        this.currLeftTemp = currLeftTemp;
-        int temp = Integer.parseInt(currLeftTemp.substring(0, currLeftTemp.length() - 1));
-        oriLeft = (upperBound - temp) * (viewH - dropTop - lineBottom - dropH / 2) /
-                (upperBound - lowerBound);
-
-        invalidate();
+        int temp = Integer.parseInt(currLeftTemp);
+        this.currLeftTemp = temp;
+        setCurrLeftTemp(temp);
     }
 
     /**
@@ -435,7 +455,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      * @param currLeftTemp 70
      */
     public void setCurrLeftTemp(int currLeftTemp) {
-        this.currLeftTemp = currLeftTemp + "°";
+        this.currLeftTemp = currLeftTemp;
         oriLeft = (upperBound - currLeftTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
                 (upperBound - lowerBound);
         invalidate();
@@ -444,14 +464,12 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     /**
      * 设置当前右边温度
      *
-     * @param currRightTemp 70°
+     * @param currRightTemp "70"
      */
     public void setCurrRightTemp(String currRightTemp) {
-        this.currRightTemp = currRightTemp;
-        int temp = Integer.parseInt(currRightTemp.substring(0, currRightTemp.length() - 1));
-        oriRight = (upperBound - temp) * (viewH - dropTop - lineBottom - dropH / 2) /
-                (upperBound - lowerBound);
-        invalidate();
+        int temp = Integer.parseInt(currRightTemp);
+        this.currRightTemp = temp;
+        setCurrRightTemp(temp);
     }
 
     /**
@@ -460,7 +478,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
      * @param currRightTemp 70
      */
     public void setCurrRightTemp(int currRightTemp) {
-        this.currRightTemp = currRightTemp + "°";
+        this.currRightTemp = currRightTemp;
         oriRight = (upperBound - currRightTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
                 (upperBound - lowerBound);
         invalidate();
@@ -469,7 +487,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     /**
      * 设置左边是否可拖动
      *
-     * @param isLeftDropAble
+     * @param isLeftDropAble false
      */
     public void setIsLeftDropAble(boolean isLeftDropAble) {
         this.isLeftDropAble = isLeftDropAble;
@@ -479,11 +497,51 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     /**
      * 设置右边是否可拖动
      *
-     * @param isRightDropAble
+     * @param isRightDropAble false
      */
     public void setIsRightDropAble(boolean isRightDropAble) {
         this.isRightDropAble = isRightDropAble;
         invalidate();
     }
 
+    /**
+     * 设置  床温,拖动温度,Room温度显示单位
+     *
+     * @param unit ℃
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+        invalidate();
+    }
+
+    /**
+     * 设置当前系统设定的纬度单位,
+     * 一旦改变对应的上下架温度值也跟着改变
+     *
+     * @param unit ℃  ||  ℉
+     * @see MConstants
+     */
+    public void setCurrUnit(int unit) {
+        if (unit == MConstants.DEGREES_C) {
+            this.currUnit = getResources().getString(R.string.unit_celsius);
+            this.upperBound = 40;
+            this.lowerBound = 20;
+            roomTemp = (int) CommonUtils.F2C(roomTemp);
+            bedLeftTemp = (int) CommonUtils.F2C(bedLeftTemp);
+            bedRightTemp = (int) CommonUtils.F2C(bedRightTemp);
+            currLeftTemp = (int) CommonUtils.F2C(currLeftTemp);
+            currRightTemp = (int) CommonUtils.F2C(currRightTemp);
+        }
+        if (unit == MConstants.DEGREES_F) {
+            this.currUnit = getResources().getString(R.string.unit_fahrenheit);
+            this.upperBound = 104;
+            this.lowerBound = 68;
+            roomTemp = (int) CommonUtils.C2F(roomTemp);
+            bedLeftTemp = (int) CommonUtils.C2F(bedLeftTemp);
+            bedRightTemp = (int) CommonUtils.C2F(bedRightTemp);
+            currLeftTemp = (int) CommonUtils.C2F(currLeftTemp);
+            currRightTemp = (int) CommonUtils.C2F(currRightTemp);
+        }
+        invalidate();
+    }
 }

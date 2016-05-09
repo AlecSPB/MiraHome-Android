@@ -262,6 +262,56 @@ public class MConstants {
      */
     public static final String OPEN_WEATHER_ID = "a6c9476969cc87a5e3ba40bd69d25e3b";
 
+
+    /**
+     * sharedPreferences文件信息
+     */
+    public final static String SP_KEY_USERNAME = "username";
+    public final static String SP_KEY_CURRUSERS = "currUsers";
+    public final static String SP_KEY_PASSWORD = "password";
+    public final static String DEVICE_ID = "deviceId";
+    public final static String DRYING_START_TIME = "drying_start_time";
+    public final static String DRYING_TIMES = "drying_times";
+    public final static String DRYING_OPEN = "drying_open";
+    public final static String LEFT_TARGET_TEMP = "left_target_temp";
+    public final static String RIGHT_TARGET_TEMP = "right_target_temp";
+    public final static String FIRST_ADD_DEVICE = "first_add_device";
+    public final static String ENTRANCE_FLAG = "entrance_flag";
+
+    /**
+     * 设备属性值
+     */
+    public final static String ATTR_ENVIR_TEMPERATURE = "101";//环境温度
+    public final static String ATTR_ENVIR_HUMIDITY = "102";
+    public final static String ATTR_ENVIR_NOISE = "103";
+    public final static String ATTR_ENVIR_LIGHT = "104";
+    public final static String ATTR_LEFT_ACTUAL_TEMP = "105";
+    public final static String ATTR_LEFT_TARGET_TEMP = "106";
+    public final static String ATTR_RIGHT_ACTUAL_TEMP = "107";
+    public final static String ATTR_RIGHT_TARGET_TEMP = "108";
+    public final static String ATTR_LEFT_HEART_RATE = "109";
+    public final static String ATTR_RIGHT_HEART_RATE = "110";
+    public final static String ATTR_LEFT_RESP_RATE = "111";
+    public final static String ATTR_RIGHT_RESP_RATE = "112";
+    public final static String ATTR_LEFT_MOVEMENT = "113";
+    public final static String ATTR_RIGHT_MOVEMENT = "114";
+    public final static String ATTR_LEFT_SOMEONE = "115";
+    public final static String ATTR_RIGHT_SOMEONE = "116";
+    public final static String ATTR_DRYING_SWITCH = "117";
+    public final static String ATTR_DRYING_TIME = "118";
+    public final static String ATTR_LEFT_MODE = "119";
+    public final static String ATTR_RIGHT_MODE = "120";
+    public final static String ATTR_BLANKETS_TOWARD = "121";
+    public final static String ATTR_TIME_ZONE = "122";
+    public final static String ATTR_IS_CONNECTED = "123";
+    public final static String ATTR_SINGLE_OR_DOUBLE = "124";
+    public final static String ATTR_ALARM_LEFT = "125";
+    public final static String ATTR_Alarm_RIGHT = "126";
+    public final static String ATTR_DRYING_ON_TIME = "127";
+    public final static String ATTR_LEFT_TARGET_TEMP_SWITCH = "128";
+    public final static String ATTR_RIGHT_TARGET_TEMP_SWITCH = "129";
+    public final static String ATTR_SUMMER_SEASON = "130";
+
     /**
      * 注册成功
      */
@@ -320,5 +370,17 @@ public class MConstants {
      * 闹钟重复次数回调标识
      */
     public static final int REPEAT_ALARM_RESULT = 0X20;
+
+    /**
+     * 设备连接成功
+     */
+    public static final int CONNECTED_SUCCESS = 0X21;
+
+
+    /**
+     * 工具类常亮
+     */
+    public final static int DEGREES_C = 0X111;//摄氏度
+    public final static int DEGREES_F = 0X112;//华氏度
 
 }

@@ -17,7 +17,7 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="50dp" />
 
     <TextView
         android:id="@+id/tv_drying_times"
@@ -25,9 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
-        android:text="00:00:00"
+        android:text="@string/blank_time"
         android:textColor="@color/colorWhite"
-        android:textSize="30sp" />
+        android:textSize="@dimen/text_dimen_60pt" />
 
     <com.mooring.mh.views.CustomToggle
         android:id="@+id/toggle_drying"

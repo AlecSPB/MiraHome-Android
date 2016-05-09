@@ -1,24 +1,142 @@
 <resources>
     <string name="app_name">MiraHome</string>
-    <string name="start_tip">This is Start Page</string>
-    <string name="guide_tip">This is Guide Page</string>
-
     <string name="guide_four_start">Start</string>
-
     <string name="male">Male</string>
-
     <string name="female">Female</string>
-
     <string name="cancel">cancel</string>
 
+    <!--AboutActivity 关于页面-->
+    <string name="title_about">About</string>
     <string name="connect_mooring_tip">Please connect MOORING</string>
     <string name="app_about_1">MIRAHOME 1.0.1</string>
     <string name="app_about_2">绵眠(上海)智能科技有限公司 版权所有</string>
     <string name="app_about_3">Copyright @ 2015 All right reserved</string>
 
+    <!--SuggestionsActivity 提出建议页面-->
+    <string name="title_suggestions">Suggestions</string>
     <string name="act_suggestions_hint">请输入意见内容</string>
 
-    <string name="clock_tip">Wake you up at the optimal time during the period you set</string>
+    <!--StartPageActivity 开始页面-->
+    <string name="network_exception">网络连接异常，请检查网络连接</string>
 
+    <!--TimingFragment 闹钟部分-->
+    <string name="clock_smart_tip">Wake you up at the optimal time during the period you set</string>
+    <string name="clock_add_success">添加成功</string>
+    <string name="clock_edit_success">修改成功</string>
+    <string name="clock_delete_success">删除成功</string>
+
+    <!--DryingControlActivity 烘干页面-->
+    <string name="drying_title">Drying</string>
+    <string name="stop_drying">stop drying?</string>
+    <string name="blank_time">00:00:00</string>
+
+    <!--HeatingControlActivity 加热页面-->
+    <string name="title_heating">Heating</string>
+    <string name="stop_heating">stop heating?</string>
+
+    <!--设备相关-->
+    <string name="device_not_online">查询状态失败，请查看设备是在在线</string>
+    <string name="load_device_list_fail">获取设备列表失败</string>
+    <string name="operate_failed">操作失败,请重试</string>
+    <string name="device_connected">MOORING Connected</string>
+
+    <!--set wifi and search device连接设备-->
+    <string name="set_no_wifi">你的手机不在WIFI环境下请链接WIFI后重试</string>
+    <string name="not_find_device_1">找不到任何设备</string>
+    <string name="not_find_device_2">请检查你的设备路由器</string>
+    <string name="not_find_device_3">或将手机连接到WIFI2.4赫兹频段</string>
+    <string name="chose_existing_device">已有设备存在请选择</string>
+
+    <!--ParameterFragment 参数fragment-->
+    <string name="wait_loading">&#8230;</string>
+    <string name="unit_bmp">BPM</string>
+    <string name="unit_celsius">℃</string>
+    <string name="unit_fahrenheit">℉</string>
+    <string name="unit_percent">%</string>
+    <string name="tv_heart_rate">Heart rate</string>
+    <string name="tv_breathing_rate">Breathing rate</string>
+    <string name="tv_body_movement">Body movement</string>
+    <string name="tv_humidity">Humidity</string>
+    <string name="tv_temperature">Temperature</string>
+    <string name="tv_bed_temperature">Bed Temperature</string>
+    <string name="tv_light">Light</string>
+    <string name="tv_noise">Noise</string>
+    <string name="click_connect_device">点击连接设备</string>
+
+    <!--LoginAndSignUpActivity 登录和注册相关-->
+    <string name="title_login">Login</string>
+    <string name="title_sign_up">Sign up</string>
+    <string name="register_complete">Registration completed</string>
+    <string name="error_login_name_empty">The username can not be empty</string>
+    <string name="error_login_psw_empty">The password can not be empty</string>
+    <string name="error_with_num_email">Please using the phone number or E-mail</string>
+    <string name="tip_login_error">The account is not registered,please sign up</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="hint_username">Phone number/Email</string>
+    <string name="hint_password">Password</string>
+    <string name="tip_or">or</string>
+    <string name="tip_sign_up_error">The account is not registered,please sign up</string>
+    <string name="error_psw_format">Format of password is 8&#8211;12 letters or numbers</string>
+
+    <!--VerifyPhoneActivity 发送验证码-->
+    <string name="title_verify_phone">Verify phone number</string>
+    <string name="btn_tv_resend">Resend</string>
+    <string name="btn_tv_send">Send</string>
+    <string name="tv_confirm">Confirm</string>
+    <string name="error_verify">Verify failed, please try again</string>
+    <string name="default_phone_num">186 0000 0000</string>
+
+    <!--ConfirmationPswActivity 修改密码-->
+    <string name="modify_success">Confirmation password successfully</string>
+
+    <!--SetWifiActivity 配置无线密码,连接设别-->
+    <string name="tip_connect_wifi">设备需要连接的WIFI是:</string>
+    <string name="hint_wifi_password">Wifi Password</string>
+    <string name="tv_skip">Skip</string>
+    <string name="tip_searching">Searching&#8230;</string>
+
+    <!--UserInfoActivity 用户详情页面-->
+    <string name="tv_sleep_on_mooring">Sleep on MOORING</string>
+    <string name="title_user_info">Edit user profile</string>
+
+    <!--AddUserActivity 添加用户-->
+    <string name="title_add_user">User profile</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_sex">Male/Female</string>
+    <string name="hint_birthday">Birthday</string>
+    <string name="hint_height">Height</string>
+    <string name="hint_weight">Weight</string>
+
+    <!--AlarmEditActivity 闹钟编辑页面-->
+    <string name="title_alarm_edit">Alarm</string>
+    <string name="tv_repeat">Repeat</string>
+    <string name="tv_smart_alarm">Smart Alarm</string>
+
+    <!--ConfirmationPswActivity 修改密码页面 -->
+    <string name="title_confirmation_password">Confirmation Password</string>
+    <string name="tv_next">Next</string>
+    <string name="tv_new_password">New Password</string>
+
+    <!--RepeatAlarmActivity 闹钟日期选择页面-->
+    <string name="title_repeat_alarm">Repeat alarm</string>
+    <string name="tv_monday">Mon</string>
+    <string name="tv_tuesday">Tue</string>
+    <string name="tv_wednesday">Wed</string>
+    <string name="tv_thursday">Thu</string>
+    <string name="tv_friday">Fri</string>
+    <string name="tv_saturday">Sat</string>
+    <string name="tv_sunday">Sun</string>
+
+    <!--Menu 相关-->
+    <string name="tv_log_out">Log out</string>
+    <string name="tv_Suggestions">Suggestions</string>
+    <string name="tv_google_fit">Connect[Google fit]</string>
+    <string name="tv_device">Device</string>
+    <string name="tv_not_connected">Not connected</string>
+    <string name="tv_temperature_setting">Temperature setting</string>
+
+    <!--MoreActivity 更多页面-->
+    <string name="tv_day">Day</string>
+    <string name="tv_month">Month</string>
 
 </resources>

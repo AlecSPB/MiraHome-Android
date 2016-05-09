@@ -4,9 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.amap.api.location.AMapLocationClient;
-import com.machtalk.sdk.connect.MachtalkSDK;
-
 import org.xutils.x;
 
 /**

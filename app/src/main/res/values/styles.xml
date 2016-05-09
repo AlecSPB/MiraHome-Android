@@ -15,15 +15,6 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="text_send_verify">
-        <item name="android:textColor">@color/colorWhite</item>
-        <item name="android:background">@color/colorPurple</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/text_dimen_24</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:singleLine">true</item>
-    </style>
-
     <style name="customTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textAllCaps">false</item>
     </style>
@@ -46,28 +37,18 @@
         <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
     </style>
 
-    <!--通用text style-->
-    <style name="text_common">
-
+    <!-- 通用提交按钮的style -->
+    <style name="text_button_comm">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:background">@drawable/bg_button_comm</item>
+        <item name="android:gravity">center</item>
         <item name="android:textColor">@color/colorWhite</item>
-        <item name="android:textSize">28sp</item>
-
-    </style>
-
-    <!--text style 2-->
-    <style name="text_common_while50">
-
-        <item name="android:textColor">@color/colorWhite50</item>
-        <item name="android:textSize">@dimen/text_dimen_24</item>
-
-    </style>
-
-    <!--text style 3-->
-    <style name="text_common_purple">
-
-        <item name="android:textColor">@color/colorPurple</item>
-        <item name="android:textSize">@dimen/text_dimen_36</item>
-
+        <item name="android:textSize">@dimen/text_dimen_34pt</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <!-- 通用dialog主题 -->
@@ -77,6 +58,26 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+
+    <!--自定义TabLayout的样式-->
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabMaxWidth">@dimen/tab_max_width</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabPaddingStart">12dp</item>
+        <item name="tabPaddingEnd">12dp</item>
+        <item name="tabBackground">?attr/selectableItemBackground</item>
+        <item name="tabIndicatorColor">@color/colorPurple</item>
+        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@color/colorPurple</item>
+    </style>
+
+    <!--自定义TabLayout文字样式-->
+    <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/text_dimen_28pt</item>
+        <item name="android:textColor">@color/colorWhite50</item>
+        <item name="textAllCaps">false</item>
     </style>
 
 

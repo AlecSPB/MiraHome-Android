@@ -1,221 +1,267 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="230dp">
-
-        <LinearLayout
-            android:id="@+id/layout_connect_mooring"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="visible">
-
-            <ImageView
-                android:id="@+id/imgView_to_connect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/img_device_not_connect" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_arrow" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/connect_mooring_tip"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_18" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_connected_device"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/imgView_switch_user"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/bg_change_location" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/img_bed" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <com.mooring.mh.views.CustomImageView.ZoomCircleView
-                            android:id="@+id/zcView_left"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            app:img_src="@drawable/ic_default_avatar" />
-
-                        <ImageView
-                            android:id="@+id/imgView_delete_left"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/bg_delete_user" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <com.mooring.mh.views.CustomImageView.ZoomCircleView
-                            android:id="@+id/zcView_right"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            app:img_src="@drawable/ic_default_avatar" />
-
-                        <ImageView
-                            android:id="@+id/imgView_delete_right"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/bg_delete_user" />
-                    </LinearLayout>
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
-    </FrameLayout>
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/menu_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/colorPrimaryDark"
-        android:scrollbars="none"
-        android:visibility="visible">
-
-    </android.support.v7.widget.RecyclerView>
+    android:layout_height="match_parent"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/colorPrimaryDark"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/layout_device"
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="240dp">
+
+            <LinearLayout
+                android:id="@+id/layout_connect_mooring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/imgView_to_connect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_device_not_connect" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_arrow" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/connect_mooring_tip"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_18" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_connected_device"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imgView_switch_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/bg_change_location" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/img_bed" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <com.mooring.mh.views.CustomImageView.ZoomCircleView
+                                android:id="@+id/zcView_left"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app:img_src="@drawable/ic_default_avatar" />
+
+                            <ImageView
+                                android:id="@+id/imgView_delete_left"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/bg_delete_user" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="30dp"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <com.mooring.mh.views.CustomImageView.ZoomCircleView
+                                android:id="@+id/zcView_right"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app:img_src="@drawable/ic_default_avatar" />
+
+                            <ImageView
+                                android:id="@+id/imgView_delete_right"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/bg_delete_user" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/menu_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@color/colorPrimaryDark"
+            android:scrollbars="none"
+            android:visibility="visible">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp">
+            android:layout_margin="5dp"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <RelativeLayout
+                android:id="@+id/layout_device"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/tv_device"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_28pt" />
+
+                <TextView
+                    android:id="@+id/tv_not_connected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/tv_not_connected"
+                    android:textColor="@color/colorWhite50"
+                    android:textSize="@dimen/text_dimen_24pt" />
+
+            </RelativeLayout>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:text="Device"
+                android:id="@+id/tv_connect_health"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/tv_google_fit"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_18" />
+                android:textSize="@dimen/text_dimen_28pt" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+
+                <TextView
+                    android:id="@+id/tv_temp_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/tv_temperature_setting"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_28pt" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/unit_fahrenheit"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/text_dimen_24pt" />
+
+                    <com.mooring.mh.views.CustomToggle
+                        android:id="@+id/toggle_temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/unit_celsius"
+                        android:textColor="@color/colorPurple"
+                        android:textSize="@dimen/text_dimen_24pt" />
+
+                </LinearLayout>
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/tv_not_connected"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="Not connected"
-                android:textColor="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_18" />
+                android:id="@+id/tv_about_text"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/title_about"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_28pt" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_suggestions_text"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/title_suggestions"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_28pt" />
 
-        <TextView
-            android:id="@+id/tv_connect_health"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="Connect[Google fit]"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_18" />
-
-        <TextView
-            android:id="@+id/tv_about_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="About"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_18" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_suggestions_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="Suggestions"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_18" />
+            android:id="@+id/tv_login_out"
+            style="@style/text_button_comm"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_log_out"
+            android:text="@string/tv_log_out" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_login_out"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/colorOrange"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Log out"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24"
-        android:textStyle="bold" />
-
-</LinearLayout>
+</ScrollView>

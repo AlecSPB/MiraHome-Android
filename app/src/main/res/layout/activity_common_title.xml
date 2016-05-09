@@ -17,9 +17,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="aaa"
+        android:text="Mooring"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24" />
+        android:textSize="@dimen/text_dimen_34pt" />
 
     <TextView
         android:id="@+id/tv_act_skip"
@@ -28,9 +28,9 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:padding="10dp"
-        android:text="Skip"
+        android:text="@string/tv_skip"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24"
+        android:textSize="@dimen/text_dimen_34pt"
         android:visibility="gone" />
 
     <ImageView

@@ -16,9 +16,9 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
-import com.mooring.mh.app.InitApplication;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
+
+import java.util.Locale;
 
 /**
  * Created by Will on 16/3/24.
@@ -181,6 +183,11 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     }
 
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
+    }
+
 
     private void getLatestWeather() {
         RequestParams params = new RequestParams(MConstants.WEATHER_SERVER);
@@ -243,7 +250,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      * @param time
      */
     private String translateTime(long time) {
-        String date = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(time * 1000L));
+        String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).
+                format(new java.util.Date(time * 1000L));
         return date;
     }
 

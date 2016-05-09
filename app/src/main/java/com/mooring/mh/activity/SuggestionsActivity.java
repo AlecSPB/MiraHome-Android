@@ -1,5 +1,8 @@
 package com.mooring.mh.activity;
 
+import android.view.View;
+
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 
 /**
@@ -13,11 +16,21 @@ public class SuggestionsActivity extends BaseActivity {
 
     @Override
     protected String getTitleName() {
-        return "Suggestions";
+        return getString(R.string.title_suggestions);
     }
 
     @Override
     protected void initActivity() {
 
+    }
+
+    @Override
+    protected void OnClick(View v) {
+
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 }

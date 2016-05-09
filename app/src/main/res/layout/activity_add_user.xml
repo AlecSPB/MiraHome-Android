@@ -30,11 +30,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableRight="@drawable/ic_breath_pause"
-            android:hint="Name"
+            android:hint="@string/hint_name"
             android:singleLine="true"
             android:textColor="@color/colorWhite"
             android:textColorHint="@color/colorWhite50"
-            android:textSize="@dimen/text_dimen_24" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
 
         <LinearLayout
@@ -49,10 +49,10 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/ic_breath_pause"
                 android:gravity="center_vertical"
-                android:hint="Male/Female"
+                android:hint="@string/hint_sex"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_24" />
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <View
                 android:layout_width="match_parent"
@@ -74,10 +74,10 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/ic_breath_pause"
                 android:gravity="center_vertical"
-                android:hint="Birthday"
+                android:hint="@string/hint_birthday"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_24" />
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <View
                 android:layout_width="match_parent"
@@ -99,10 +99,10 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/ic_breath_pause"
                 android:gravity="center_vertical"
-                android:hint="Height"
+                android:hint="@string/hint_height"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_24" />
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <View
                 android:layout_width="match_parent"
@@ -124,10 +124,10 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/ic_breath_pause"
                 android:gravity="center_vertical"
-                android:hint="Weight"
+                android:hint="@string/hint_weight"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite50"
-                android:textSize="@dimen/text_dimen_24" />
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <View
                 android:layout_width="match_parent"
@@ -141,20 +141,8 @@
 
     <TextView
         android:id="@+id/tv_add_user_confirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        style="@style/text_button_comm"
         android:layout_marginTop="40dp"
-        android:background="@color/colorPurple"
-        android:clickable="true"
-        android:gravity="center"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:text="Confirm"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24"
-        android:textStyle="bold" />
+        android:text="@string/tv_confirm" />
 
 </LinearLayout>

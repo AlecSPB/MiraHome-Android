@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
@@ -38,7 +39,7 @@ public class ConfirmationPswActivity extends BaseActivity {
 
     @Override
     protected String getTitleName() {
-        return "Confirmation Password";
+        return getString(R.string.title_confirmation_password);
     }
 
     @Override
@@ -47,29 +48,34 @@ public class ConfirmationPswActivity extends BaseActivity {
         tv_confirm_next = (TextView) findViewById(R.id.tv_confirm_next);
         tv_confirm_error = (TextView) findViewById(R.id.tv_confirm_error);
 
-        tv_confirm_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isReturn) {
-                    newPsw = edit_confirm_phone.getText().toString().trim();
-                    if (checkPsw()) {
-                        resetPassword();
-                    }
-                } else {
-                    phone = edit_confirm_phone.getText().toString();
-                    if (!(CommonUtils.isEmail(phone) || CommonUtils.isMobileNO(phone))) {
-                        setError("Please use the phone number or E-mail login");
-                    } else {
-                        Intent it = new Intent();
-                        it.setClass(ConfirmationPswActivity.this, VerifyPhoneActivity.class);
-                        it.putExtra("entranceFlag", MConstants.CONFIRM_SUCCESS);
-                        it.putExtra("phone", phone);
-                        startActivity(it);
-                        startActivityForResult(it, 100001);
-                    }
-                }
+        tv_confirm_next.setOnClickListener(this);
+    }
+
+    @Override
+    protected void OnClick(View v) {
+        if (isReturn) {
+            newPsw = edit_confirm_phone.getText().toString().trim();
+            if (checkPsw()) {
+                resetPassword();
             }
-        });
+        } else {
+            phone = edit_confirm_phone.getText().toString();
+            if (!(CommonUtils.isEmail(phone) || CommonUtils.isMobileNO(phone))) {
+                setError(getString(R.string.error_with_num_email));
+            } else {
+                Intent it = new Intent();
+                it.setClass(ConfirmationPswActivity.this, VerifyPhoneActivity.class);
+                it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.CONFIRM_SUCCESS);
+                it.putExtra(MConstants.SP_KEY_USERNAME, phone);
+                startActivity(it);
+                startActivityForResult(it, 100001);
+            }
+        }
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 
     /**
@@ -117,7 +123,7 @@ public class ConfirmationPswActivity extends BaseActivity {
     private void showSuccess() {
         Intent it = new Intent();
         it.setClass(ConfirmationPswActivity.this, CommonSuccessActivity.class);
-        it.putExtra("entranceFlag", MConstants.CONFIRM_SUCCESS);
+        it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.CONFIRM_SUCCESS);
         startActivity(it);
     }
 
@@ -129,11 +135,11 @@ public class ConfirmationPswActivity extends BaseActivity {
     private boolean checkPsw() {
 
         if (TextUtils.isEmpty(newPsw)) {
-            setError("The password can not be empty");
+            setError(getString(R.string.error_login_psw_empty));
             return false;
         }
         if (!CommonUtils.checkPsw(newPsw)) {
-            setError("Please enter 8-12 by the numbers and letters in the password");
+            setError(getString(R.string.error_psw_format));
             return false;
         }
         return true;
@@ -149,8 +155,8 @@ public class ConfirmationPswActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100001 && resultCode == MConstants.CONFIRM_SUCCESS) {
             edit_confirm_phone.setText("");
-            edit_confirm_phone.setHint("New Password");
-            tv_confirm_next.setText("Confirm");
+            edit_confirm_phone.setHint(getString(R.string.tv_new_password));
+            tv_confirm_next.setText(getString(R.string.tv_confirm));
             tv_confirm_error.setVisibility(View.INVISIBLE);
             if (data != null) {
                 isReturn = data.getBooleanExtra("isReturn", false);

@@ -30,9 +30,9 @@
                 android:layout_marginTop="20dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                android:text="186 0000 0000"
+                android:text="@string/default_phone_num"
                 android:textColor="@color/colorPurple"
-                android:textSize="@dimen/text_dimen_36" />
+                android:textSize="@dimen/text_dimen_60pt" />
 
             <EditText
                 android:id="@+id/edit_verify_code"
@@ -43,7 +43,8 @@
                 android:inputType="phone|textEmailAddress"
                 android:singleLine="true"
                 android:textColor="@color/colorWhite"
-                android:textColorHint="@color/colorWhite50" />
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_34pt" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -64,28 +65,24 @@
 
                 <TextView
                     android:id="@+id/tv_verify_send"
-                    style="@style/text_send_verify"
                     android:layout_width="80dp"
                     android:layout_height="40dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text="Send" />
+                    android:background="@color/colorPurple"
+                    android:gravity="center"
+                    android:text="Send"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_34pt" />
             </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_verify_confirm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/edit_confirm_phone"
+                style="@style/text_button_comm"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
                 android:layout_marginTop="50dp"
-                android:background="@color/colorPurple"
-                android:gravity="center"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:text="Confirm"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_24"
-                android:textStyle="bold" />
+                android:text="@string/tv_confirm" />
 
             <TextView
                 android:id="@+id/tv_verify_error"
@@ -93,9 +90,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
-                android:text="verify fail"
+                android:text="@string/error_verify"
                 android:textColor="@color/colorOrange"
-                android:textSize="@dimen/text_dimen_16"
+                android:textSize="@dimen/text_dimen_28pt"
                 android:visibility="invisible" />
 
         </LinearLayout>

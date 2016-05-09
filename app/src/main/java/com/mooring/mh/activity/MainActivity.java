@@ -17,8 +17,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.machtalk.sdk.connect.MachtalkSDK;
 import com.mooring.mh.R;
-import com.mooring.mh.adapter.HorizontalDataAdapter;
+import com.mooring.mh.adapter.UserListAdapter;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.fragment.ControlFragment;
@@ -69,6 +70,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private User currUser;//当前展示User
     private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
     private DbManager dbManager;
+    private OnSwitchUserListener listener;
     /**
      * ---------侧边滑动栏相关--------
      */
@@ -92,7 +94,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
     private List<UserHeadInfo> dataList;//用户list
-    private HorizontalDataAdapter adapter;//横向滑动适配器
+    private UserListAdapter adapter;//横向滑动适配器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,13 +196,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      */
     private void initData() {
         dataList = new ArrayList<UserHeadInfo>();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 10; i++) {
             UserHeadInfo d = new UserHeadInfo("Alex", Environment.getExternalStorageDirectory().getPath()
                     + "/Download/11223.jpg");
             dataList.add(d);
         }
-        adapter = new HorizontalDataAdapter(this, dataList);
-        adapter.setOnClickListener(new HorizontalDataAdapter.OnClickListener<UserHeadInfo>() {
+        adapter = new UserListAdapter(this, dataList);
+        adapter.setOnClickListener(new UserListAdapter.OnClickListener<UserHeadInfo>() {
             @Override
             public void onClick(UserHeadInfo data, int position) {
                 Intent it = new Intent();
@@ -313,9 +315,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch (location) {
             case MConstants.LEFT_USER:
                 //左边用户
+                if (listener != null) {
+                    listener.onSwitch(MConstants.LEFT_USER);
+                }
                 break;
             case MConstants.RIGHT_USER:
                 //右边用户
+                if (listener != null) {
+                    listener.onSwitch(MConstants.RIGHT_USER);
+                }
                 break;
         }
     }
@@ -394,7 +402,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 Toast.makeText(this, "imgView_switch_user", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imgView_to_connect:
-                startActivity(new Intent(MainActivity.this, SearchDeviceActivity.class));
+                startActivity(new Intent(MainActivity.this, SetWifiActivity.class));
                 break;
             case R.id.imgView_delete_left:
                 Toast.makeText(this, "imgView_delete_left", Toast.LENGTH_SHORT).show();
@@ -467,5 +475,25 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onResume();
     }
 
+    @Override
+    protected void onDestroy() {
+        MachtalkSDK.getInstance().stopSDK();
+        super.onDestroy();
+    }
 
+    /**
+     * 切换用户接口
+     */
+    public interface OnSwitchUserListener {
+        void onSwitch(int position);
+    }
+
+    /**
+     * 设置切换用户监听--用于四个fragment
+     *
+     * @param l
+     */
+    public void setOnSwitchUserListener(OnSwitchUserListener l) {
+        this.listener = l;
+    }
 }

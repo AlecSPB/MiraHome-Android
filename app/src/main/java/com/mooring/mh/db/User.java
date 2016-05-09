@@ -30,7 +30,7 @@ public class User {
     private String _weight; // 64kg--64ib
 
     @Column(name = "_location")
-    private int _location; // 0:out  1:left  2:right  3:middle
+    private int _location; // 0:out  1:left  2:right
 
 
     public String get_birthday() {

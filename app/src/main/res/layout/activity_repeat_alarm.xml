@@ -21,7 +21,7 @@
                 android:id="@+id/layout_mon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_mon"
@@ -29,9 +29,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Mon"
+                    android:text="@string/tv_monday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_tue"
@@ -61,9 +61,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Tue"
+                    android:text="@string/tv_tuesday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -85,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_wed"
@@ -93,9 +93,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Wed"
+                    android:text="@string/tv_wednesday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -118,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_tues"
@@ -126,9 +126,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Tues"
+                    android:text="@string/tv_thursday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -150,7 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_fri"
@@ -158,9 +158,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Fri"
+                    android:text="@string/tv_friday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -182,7 +182,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_sat"
@@ -190,9 +190,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Sat"
+                    android:text="@string/tv_saturday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -214,7 +214,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/colorClockItem">
+                android:background="@color/color_day_normal">
 
                 <TextView
                     android:id="@+id/tv_sun"
@@ -222,9 +222,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="Sun"
+                    android:text="@string/tv_sunday"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_34pt" />
 
 
                 <ToggleButton
@@ -245,20 +245,8 @@
 
     <TextView
         android:id="@+id/tv_confirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/text_button_comm"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@color/colorPurple"
-        android:clickable="true"
-        android:gravity="center"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:text="Confirm"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24"
-        android:textStyle="bold" />
+        android:text="@string/tv_confirm" />
 </RelativeLayout>

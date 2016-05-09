@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    android:background="@color/colorClockItem"
+    android:background="@color/color_day_select"
     android:orientation="vertical"
     android:paddingBottom="10dp"
     android:paddingLeft="20dp"
@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:text="08:00"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_28" />
+                android:textSize="@dimen/text_dimen_48pt" />
 
             <com.mooring.mh.views.AlarmDaySelectView
                 android:id="@+id/daySV_clock"
@@ -62,9 +62,9 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="100dp"
             android:layout_marginTop="20dp"
-            android:text="@string/clock_tip"
+            android:text="@string/clock_smart_tip"
             android:textColor="@color/colorWhite50"
-            android:textSize="@dimen/text_dimen_14" />
+            android:textSize="@dimen/text_dimen_28pt" />
 
 
         <ToggleButton

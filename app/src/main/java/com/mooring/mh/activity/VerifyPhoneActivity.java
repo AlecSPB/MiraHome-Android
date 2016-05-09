@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
@@ -28,7 +29,7 @@ import java.util.TimerTask;
  * 2.从注册页面条转过来
  * Created by Will on 16/3/30.
  */
-public class VerifyPhoneActivity extends BaseActivity implements View.OnClickListener {
+public class VerifyPhoneActivity extends BaseActivity {
     private TextView tv_verify_phone;//手机号
     private EditText edit_verify_code;//验证码
     private TextView tv_wait_times;//等待时间
@@ -36,7 +37,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnClickLis
     private TextView tv_verify_confirm;//验证按钮
     private TextView tv_verify_error;//错误提示
 
-    private int entranceFlag; //跳转入口标志,重置密码 或 注册用户
+    private int entrance_flag; //跳转入口标志,重置密码 或 注册用户
     private String phone;//手机号码
     private String psw;//密码
     private String sms_code;//验证码
@@ -52,18 +53,18 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected String getTitleName() {
-        return "Verify phone number";
+        return getResources().getString(R.string.title_verify_phone);
     }
 
     @Override
     protected void initActivity() {
 
         Intent it = getIntent();
-        entranceFlag = it.getIntExtra("entranceFlag", 0);
-        phone = it.getStringExtra("phone");
+        entrance_flag = it.getIntExtra(MConstants.ENTRANCE_FLAG, 0);
+        phone = it.getStringExtra(MConstants.SP_KEY_USERNAME);
 
-        if (entranceFlag == MConstants.SIGN_UP_SUCCESS) {
-            psw = it.getStringExtra("psw");
+        if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
+            psw = it.getStringExtra(MConstants.SP_KEY_PASSWORD);
         }
 
         initView();
@@ -96,7 +97,8 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnClickLis
     Handler han = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            tv_wait_times.setText("Please wait " + time + "s");
+            String ts = "Please wait " + time + "s";
+            tv_wait_times.setText(ts);
             time--;
             if (time < 0) {
                 tv_verify_send.setEnabled(true);
@@ -142,7 +144,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnClickLis
         initTimer();
         timer.schedule(timerTask, 0, 1000);
         tv_verify_send.setEnabled(false);
-        tv_verify_send.setText("Resend");
+        tv_verify_send.setText(getResources().getString(R.string.btn_tv_resend));
         tv_verify_send.setBackgroundColor(getResources().getColor(R.color.colorPurple50));
         tv_verify_send.setTextColor(getResources().getColor(R.color.colorWhite50));
     }
@@ -266,7 +268,7 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnClickLis
     private void showSuccess() {
         Intent it = new Intent();
         it.setClass(VerifyPhoneActivity.this, CommonSuccessActivity.class);
-        it.putExtra("entranceFlag", MConstants.SIGN_UP_SUCCESS);
+        it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.SIGN_UP_SUCCESS);
         startActivity(it);
     }
 
@@ -282,19 +284,24 @@ public class VerifyPhoneActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v) {
+    protected void OnClick(View v) {
         switch (v.getId()) {
             case R.id.tv_verify_send:
 //                sendIdentify();
                 break;
 
             case R.id.tv_verify_confirm:
-//                if (entranceFlag == MConstants.SIGN_UP_SUCCESS) {
+//                if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
 //                    executeSignUp();
-//                } else if (entranceFlag == MConstants.CONFIRM_SUCCESS) {
+//                } else if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
 //                    executeResetPassword();
 //                }
                 break;
         }
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 }

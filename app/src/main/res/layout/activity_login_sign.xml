@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/login_tabLayout"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            app:tabSelectedTextColor="@color/colorPurple"
-            app:tabTextColor="@color/colorWhite50" />
-    </RelativeLayout>
+    <android.support.design.widget.TabLayout
+        android:id="@+id/login_tabLayout"
+        style="@style/MyCustomTabLayout"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="200dp"
+        android:layout_height="?attr/actionBarSize" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/login_viewPager"

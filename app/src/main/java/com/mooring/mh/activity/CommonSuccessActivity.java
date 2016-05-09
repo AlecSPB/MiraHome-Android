@@ -11,7 +11,7 @@ import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 
 /**
- * 注册成功和修改密码成功公用
+ * 注册成功,修改密码,设备连接成功公用
  * <p/>
  * Created by Will on 16/3/30.
  */
@@ -19,7 +19,7 @@ public class CommonSuccessActivity extends AppCompatActivity {
     private ImageView imgView_success_icon;
     private TextView tv_success_tip;
 
-    private int entranceFlag = 0;//0X11:signUp  0X22:confirm
+    private int entrance_flag = 0;//0X11:signUp  0X12:confirm  0X21:connected
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class CommonSuccessActivity extends AppCompatActivity {
         setContentView(R.layout.activity_common_success);
 
         Intent it = getIntent();
-        entranceFlag = it.getIntExtra("entranceFlag", 0);
+        entrance_flag = it.getIntExtra(MConstants.ENTRANCE_FLAG, 0);
 
         initView();
 
@@ -36,12 +36,14 @@ public class CommonSuccessActivity extends AppCompatActivity {
                 try {
                     Intent intent = new Intent();
 
-                    if (entranceFlag == MConstants.SIGN_UP_SUCCESS) {
+                    if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
                         // 回到系统首页,表示直接注册成功<把之前所有Activity都关闭>
                         intent.setClass(CommonSuccessActivity.this, MainActivity.class);
-                    } else if (entranceFlag == MConstants.CONFIRM_SUCCESS) {
+                    } else if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
                         // 回到登陆页,密码重置成功,继续登陆  <把之前所有Activity都关闭>
                         intent.setClass(CommonSuccessActivity.this, LoginAndSignUpActivity.class);
+                    } else if (entrance_flag == MConstants.CONNECTED_SUCCESS) {
+                        intent.setClass(CommonSuccessActivity.this, ExistingDeviceActivity.class);
                     }
                     startActivity(intent);
 //                    overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
@@ -57,16 +59,21 @@ public class CommonSuccessActivity extends AppCompatActivity {
         imgView_success_icon = (ImageView) findViewById(R.id.imgView_success_icon);
         tv_success_tip = (TextView) findViewById(R.id.tv_success_tip);
 
-        if (entranceFlag != 0) {
-            if (entranceFlag == MConstants.SIGN_UP_SUCCESS) {
-
-//                展示注册成功图表和文字
-
+        if (entrance_flag != 0) {
+            if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
+                //展示注册成功图表和文字
+                imgView_success_icon.setImageResource(R.drawable.img_badge_success);
+                tv_success_tip.setText(getResources().getString(R.string.register_complete));
             }
-            if (entranceFlag == MConstants.CONFIRM_SUCCESS) {
-
-//                展示修改密码成功图标和字体
-
+            if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
+                //展示修改密码成功图标和字体
+                imgView_success_icon.setImageResource(R.drawable.img_badge_confirm_success);
+                tv_success_tip.setText(getResources().getString(R.string.modify_success));
+            }
+            if (entrance_flag == MConstants.CONNECTED_SUCCESS) {
+                //链接设备成功
+                imgView_success_icon.setImageResource(R.drawable.img_badge_success);
+                tv_success_tip.setText(getResources().getString(R.string.device_connected));
             }
         }
     }

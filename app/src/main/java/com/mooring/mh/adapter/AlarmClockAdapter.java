@@ -1,13 +1,10 @@
 package com.mooring.mh.adapter;
 
-import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -15,40 +12,30 @@ import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.views.AlarmDaySelectView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 自定义闹钟RecycleView 的Adapter
- * <p/>
+ * <p>
  * Created by Will on 16/4/21.
  */
 public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.ViewHolder> {
 
     private List<String> data;
-    private Context mContext;
     private OnRecyclerItemClickListener itemClickListener;
-    private List<Boolean> smartTag;
-    private List<Boolean> switchTag;
 
-    public AlarmClockAdapter(Context mContext, List<String> data) {
+    public AlarmClockAdapter(List<String> data) {
         this.data = data;
-        this.mContext = mContext;
-        smartTag = new ArrayList<>();
-        switchTag = new ArrayList<>();
-        setSmartAndSwitchList(data);
     }
 
-    /**
-     * 更新当前smart和switch的状态
-     */
-    public void setSmartAndSwitchList(List<String> list) {
-        smartTag.clear();
-        switchTag.clear();
-        for (int i = 0; i < list.size(); i++) {
-            smartTag.add("1".equals(list.get(i).substring(11, 12)) ? true : false);
-            switchTag.add("1".equals(list.get(i).substring(12)) ? true : false);
-        }
+    public void addData(int position) {
+        data.add(position, "Insert One");
+        notifyItemInserted(position);
+    }
+
+    public void removeData(int position) {
+        data.remove(position);
+        notifyItemRemoved(position);
     }
 
     /**
@@ -94,42 +81,10 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             holder.tglBtn_wake_up.setChecked("1".equals(smart));
             holder.tglBtn_clock_set.setChecked("1".equals(clockSwitch));
 
-            holder.tglBtn_wake_up.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    smartTag.set(position, isChecked);
-                }
-            });
-            holder.tglBtn_clock_set.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    switchTag.set(position, isChecked);
-                }
-            });
             holder.v.setTag(position);
         }
     }
 
-    /**
-     * 获取指定位置的smart值
-     *
-     * @param position
-     * @return
-     */
-    public boolean getSmartWithPosition(int position) {
-        Log.e("getSmartWithPosition", smartTag.size() + "   ");
-        return smartTag.get(position);
-    }
-
-    /**
-     * 获取指定位置switch值
-     *
-     * @param position
-     * @return
-     */
-    public boolean getSwitchWithPosition(int position) {
-        return switchTag.get(position);
-    }
 
     /**
      * 设置item点击监听
@@ -183,15 +138,5 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             }
             outRect.bottom = space;
         }
-    }
-
-    public interface OnRecyclerItemClickListener {
-        /**
-         * item view 回调方法
-         *
-         * @param view     被点击的view
-         * @param position 点击索引
-         */
-        void onItemClick(View view, int position);
     }
 }

@@ -30,7 +30,7 @@
             android:gravity="center_horizontal"
             android:text="Heating"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_24" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
     </RelativeLayout>
 
@@ -51,7 +51,7 @@
             android:gravity="center_horizontal"
             android:text="Drying"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_24" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
     </RelativeLayout>
 

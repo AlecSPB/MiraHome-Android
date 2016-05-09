@@ -19,10 +19,10 @@ import java.util.List;
 public class AlarmDaySelectView extends LinearLayout {
 
     private TextView tv;
-    private int normalColor;
-    private int selectColor;
+    private int normalColor;//正常颜色
+    private int selectColor;//选中颜色
     private int textSize;
-    private String[] text = {"Mon", "Tue", "Wed", "Tues", "Fri", "Sat", "Sun"};
+    private String[] text;//文本
     private List<TextView> tvList;
 
     public AlarmDaySelectView(Context context) {
@@ -43,6 +43,16 @@ public class AlarmDaySelectView extends LinearLayout {
 
         setHorizontalGravity(Gravity.CENTER_VERTICAL);
         setOrientation(HORIZONTAL);
+
+        text = new String[]{
+                getResources().getString(R.string.tv_monday),
+                getResources().getString(R.string.tv_tuesday),
+                getResources().getString(R.string.tv_wednesday),
+                getResources().getString(R.string.tv_thursday),
+                getResources().getString(R.string.tv_friday),
+                getResources().getString(R.string.tv_saturday),
+                getResources().getString(R.string.tv_sunday)
+        };
 
         normalColor = getResources().getColor(R.color.colorWhite50);
         selectColor = getResources().getColor(R.color.colorPurple);

@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.mooring.mh.R;
@@ -272,7 +271,6 @@ public class WeatherView extends View {
         mSnowFlakes.clear();
         //mSnowFlakes所有的雪花都生成放到这里面
         for (int i = 0; i < NUM_SNOWFLAKES; ++i) {
-            Log.e("NUM_SNOWFLAKES", "width  " + width + "  height  " + height);
             mSnowFlakes.add(SnowFlake.create(width, height, kind));
         }
     }

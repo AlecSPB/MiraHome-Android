@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/layout_wifi_related"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorMainBg"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <include layout="@layout/activity_common_title" />
+
+        <LinearLayout
+            android:id="@+id/layout_setting_wifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_connect_wifi"
+                android:textColor="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_34pt" />
+
+            <TextView
+                android:id="@+id/tv_wifi_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MIRAHOME"
+                android:textColor="@color/colorPurple"
+                android:textSize="@dimen/text_dimen_60pt" />
+
+            <EditText
+                android:id="@+id/edit_wifi_psw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_wifi_password"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite50"
+                android:textSize="@dimen/text_dimen_34pt" />
+
+            <TextView
+                android:id="@+id/tv_send_wifi"
+                style="@style/text_button_comm"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="50dp"
+                android:text="@string/tv_confirm" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_no_wifi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/img_no_wifi"
+                android:contentDescription="@string/app_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="40dp"
+                android:gravity="center"
+                android:text="@string/set_no_wifi"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_34pt" />
+
+            <ImageView
+                android:id="@+id/imgView_retry_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_retry_connect"
+                android:contentDescription="@string/app_name" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_scan_wifi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/scan_wifi_bg"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_scan_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/tv_skip"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_34pt"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp">
+
+                <ImageView
+                    android:id="@+id/imgView_search_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_search_anim_bot" />
+
+                <ImageView
+                    android:id="@+id/imgView_search_mid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_search_anim_mid" />
+
+                <ImageView
+                    android:id="@+id/imgView_search_bot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_search_anim_up" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="@string/tip_searching"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_34pt" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

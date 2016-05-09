@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 
@@ -17,7 +18,8 @@ import java.util.ArrayList;
  * <p/>
  * Created by Will on 16/5/6.
  */
-public class RepeatAlarmActivity extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class RepeatAlarmActivity extends BaseActivity implements
+        CompoundButton.OnCheckedChangeListener {
 
     private ImageView imgView_act_right;
     private View layout_mon;
@@ -53,7 +55,7 @@ public class RepeatAlarmActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected String getTitleName() {
-        return "Repeat alarm";
+        return getString(R.string.title_repeat_alarm);
     }
 
     @Override
@@ -133,7 +135,7 @@ public class RepeatAlarmActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v) {
+    protected void OnClick(View v) {
         if (v.getId() == R.id.imgView_act_right) {
             tglBtn_mon.setChecked(true);
             tglBtn_tue.setChecked(true);
@@ -149,6 +151,11 @@ public class RepeatAlarmActivity extends BaseActivity implements View.OnClickLis
             this.setResult(MConstants.REPEAT_ALARM_RESULT, it);
             this.finish();
         }
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 
 
@@ -196,10 +203,10 @@ public class RepeatAlarmActivity extends BaseActivity implements View.OnClickLis
     private void changeBg(View layout, TextView tv, boolean isChecked) {
         if (isChecked) {
             tv.setTextColor(getResources().getColor(R.color.colorPurple));
-            layout.setBackgroundColor(getResources().getColor(R.color.colorClockItem));
+            layout.setBackgroundColor(getResources().getColor(R.color.color_day_select));
         } else {
             tv.setTextColor(getResources().getColor(R.color.colorPurpleDeep));
-            layout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            layout.setBackgroundColor(getResources().getColor(R.color.color_day_normal));
         }
     }
 

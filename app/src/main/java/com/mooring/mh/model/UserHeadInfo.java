@@ -3,14 +3,14 @@ package com.mooring.mh.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.mooring.mh.adapter.HorizontalDataAdapter;
+import com.mooring.mh.adapter.UserListAdapter;
 
 /**
  * 用于menu中横向滑动用户的model
  * <p/>
  * Created by Will on 16/4/7.
  */
-public class UserHeadInfo implements HorizontalDataAdapter.AdapterData, Parcelable {
+public class UserHeadInfo implements UserListAdapter.AdapterData, Parcelable {
     private String title;
     private String thumbnailUrl;
 

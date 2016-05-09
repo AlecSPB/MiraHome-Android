@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.views.ChartView.MyChartView;
 import com.mooring.mh.views.ChartView.YAxisView;
@@ -150,6 +151,11 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
     @Override
     protected void lazyLoad() {
 
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 
     @Override

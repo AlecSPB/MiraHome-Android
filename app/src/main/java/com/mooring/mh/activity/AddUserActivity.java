@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
@@ -19,7 +20,7 @@ import com.mooring.mh.views.WheelPicker.widget.WheelWeightSelectPicker;
  * <p/>
  * Created by Will on 16/3/31.
  */
-public class AddUserActivity extends BaseActivity implements View.OnClickListener {
+public class AddUserActivity extends BaseActivity {
 
     private CircleImageView imgView_add_user;
     private EditText add_user_name;
@@ -41,7 +42,7 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     protected String getTitleName() {
-        return "User profile";
+        return getString(R.string.title_add_user);
     }
 
     @Override
@@ -52,6 +53,35 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
 
 
         initData();
+    }
+
+    @Override
+    protected void OnClick(View v) {
+        switch (v.getId()) {
+            case R.id.imgView_add_user:
+
+                break;
+            case R.id.add_user_sex:
+                SelectSex();
+                break;
+            case R.id.add_user_birthday:
+                SelectBirthday();
+                break;
+            case R.id.add_user_height:
+                SelectHeight();
+                break;
+            case R.id.add_user_weight:
+                SelectWeight();
+                break;
+            case R.id.tv_add_user_confirm:
+
+                break;
+        }
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 
     private void initView() {
@@ -76,30 +106,6 @@ public class AddUserActivity extends BaseActivity implements View.OnClickListene
     private void initData() {
 
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imgView_add_user:
-
-                break;
-            case R.id.add_user_sex:
-                SelectSex();
-                break;
-            case R.id.add_user_birthday:
-                SelectBirthday();
-                break;
-            case R.id.add_user_height:
-                SelectHeight();
-                break;
-            case R.id.add_user_weight:
-                SelectWeight();
-                break;
-            case R.id.tv_add_user_confirm:
-
-                break;
-        }
     }
 
     /**

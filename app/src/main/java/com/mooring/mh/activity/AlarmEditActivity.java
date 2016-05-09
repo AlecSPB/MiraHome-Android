@@ -1,19 +1,21 @@
 package com.mooring.mh.activity;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.AlarmDaySelectView;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelTimePicker;
+
+import org.xutils.common.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
@@ -23,7 +25,7 @@ import java.util.TimeZone;
  * <p/>
  * Created by Will on 16/5/5.
  */
-public class AlarmEditActivity extends BaseActivity implements View.OnClickListener {
+public class AlarmEditActivity extends BaseActivity {
 
     private WheelTimePicker time_picker;
     private ImageView imgView_act_right;
@@ -32,10 +34,11 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
     private ToggleButton tglBtn_alarm_smart;
     private TextView tv_confirm;
 
-    private String flag;
-    private String time;
-    private ArrayList<String> repeat;
-    private boolean smart;
+    private String flag;//编辑/添加 标志
+    private String time;//时间
+    private ArrayList<String> repeat;//重复
+    private boolean smart;//只能开关
+    private boolean set;//闹钟开关
     private int position = -1;
 
 
@@ -46,14 +49,14 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     protected String getTitleName() {
-        return "Alarm";
+        return getString(R.string.title_alarm_edit);
     }
 
     @Override
     protected void initActivity() {
 
 
-        Log.e("initActivity", "______" + getCurrentTimeZone());
+        LogUtil.e("______" + getCurrentTimeZone());
 
         Intent it = getIntent();
 
@@ -62,6 +65,7 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
             time = it.getStringExtra("time");
             repeat = CommonUtils.ParsingDay(it.getStringExtra("repeat"));
             smart = it.getBooleanExtra("smart", false);
+            set = it.getBooleanExtra("set", false);
             position = it.getIntExtra("position", -1);
         } else {
             repeat = new ArrayList<>();
@@ -70,6 +74,7 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
             }
             time = CommonUtils.getCurrTime("HHmm");
             smart = true;
+            set = true;
         }
 
         initView();
@@ -135,7 +140,7 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
 
     public static String getCurrentTimeZone() {
         TimeZone tz = TimeZone.getDefault();
-        Log.e("initActivity", "______" + tz.getRawOffset());
+        LogUtil.e("______" + tz.getRawOffset());
         return createGmtOffsetString(true, true, tz.getRawOffset());
     }
 
@@ -169,7 +174,7 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v) {
+    protected void OnClick(View v) {
         Intent it = new Intent();
         switch (v.getId()) {
             case R.id.imgView_act_right:
@@ -189,11 +194,17 @@ public class AlarmEditActivity extends BaseActivity implements View.OnClickListe
                 it.putStringArrayListExtra("repeat", repeat);
                 it.putExtra("time", time);
                 it.putExtra("smart", smart);
+                it.putExtra("set", set);
                 it.putExtra("position", position);
                 this.setResult(MConstants.ALARM_EDIT_RESULT, it);
                 this.finish();
                 break;
         }
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 
     @Override

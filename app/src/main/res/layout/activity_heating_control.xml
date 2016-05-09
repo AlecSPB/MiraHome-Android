@@ -21,9 +21,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Heating"
+            android:text="@string/title_heating"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_24" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
         <RelativeLayout
             android:id="@+id/layout_two_header"
@@ -47,7 +47,6 @@
                 android:src="@drawable/ic_default_avatar" />
 
         </RelativeLayout>
-
     </RelativeLayout>
 
     <View
@@ -63,7 +62,7 @@
             android:id="@+id/layout_one_user"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <com.mooring.mh.views.ControlView.DragScaleView
                 android:id="@+id/dragScaleView"
@@ -75,7 +74,8 @@
                 android:id="@+id/toggle_middle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom" />
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="30dp" />
 
         </FrameLayout>
 
@@ -83,7 +83,7 @@
             android:id="@+id/layout_two_user"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <com.mooring.mh.views.ControlView.DragScaleTwoView
                 android:id="@+id/dragScaleTwoView"
@@ -91,12 +91,11 @@
                 android:layout_height="match_parent"
                 android:clickable="true" />
 
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_gravity="bottom"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="30dp"
                 android:orientation="horizontal">
 
                 <com.mooring.mh.views.CustomToggle
@@ -108,10 +107,8 @@
                     android:id="@+id/toggle_right"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="80dp" />
+                    android:layout_marginLeft="100dp" />
             </LinearLayout>
         </FrameLayout>
-
     </FrameLayout>
-
 </LinearLayout>

@@ -16,13 +16,13 @@
 
     <TextView
         android:id="@+id/tv_dialog_message"
-        style="@style/text_common"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="25dp"
-        android:text="Stop Heating?"
-        android:textSize="@dimen/text_dimen_18" />
+        android:text="@string/stop_drying"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_34pt" />
 
     <RelativeLayout
         android:layout_width="200dp"

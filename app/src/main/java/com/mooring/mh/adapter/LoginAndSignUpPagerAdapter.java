@@ -1,9 +1,11 @@
 package com.mooring.mh.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.mooring.mh.R;
 import com.mooring.mh.fragment.LoginFragment;
 import com.mooring.mh.fragment.SignUpFragment;
 
@@ -11,8 +13,11 @@ import com.mooring.mh.fragment.SignUpFragment;
  * Created by Will on 16/3/30.
  */
 public class LoginAndSignUpPagerAdapter extends FragmentPagerAdapter {
-    public LoginAndSignUpPagerAdapter(FragmentManager fm) {
+    private Context context;
+
+    public LoginAndSignUpPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -39,9 +44,9 @@ public class LoginAndSignUpPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Login";
+                return context.getResources().getString(R.string.title_login);
             case 1:
-                return "Sign Up";
+                return context.getResources().getString(R.string.title_sign_up);
         }
         return null;
     }

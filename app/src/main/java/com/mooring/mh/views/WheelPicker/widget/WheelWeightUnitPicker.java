@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.mooring.mh.views.WheelPicker.WheelCurvedPicker;
-import com.mooring.mh.views.WheelPicker.WheelStraightPicker;
 
 import java.util.ArrayList;
 import java.util.List;

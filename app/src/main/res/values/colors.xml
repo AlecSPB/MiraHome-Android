@@ -8,7 +8,7 @@
 
     <color name="colorMainBg">#191923</color>
     <color name="colorOrange">#FF9A86</color>
-    <color name="colorOrangePress">#6900FF</color>
+    <color name="colorOrangeDeep">#FF694B</color>
     <color name="colorPurple">#7D55FF</color>
     <color name="colorPurpleDeep">#6900FF</color>
     <color name="colorPurple50">#7F7D55FF</color>
@@ -25,10 +25,16 @@
 
     <color name="colorDeepBlue">#0F0F1B</color>
 
-    <color name="colorClockItem">#35353E</color>
+    <!--闹钟日期选择背景颜色-->
+    <color name="color_day_select">#35353E</color>
+    <color name="color_day_normal">#272732</color>
+
+    <!--wifi扫描的背景颜色-->
+    <color name="scan_wifi_bg">#030919</color>
 
     <!--头部和布局间隔处颜色值-->
     <color name="head_gap_body">#181822</color>
+
     <!--heating 背景渐变色值-->
     <color name="heating_start">#7D55FF</color>
     <color name="heating_center">#732AFF</color>

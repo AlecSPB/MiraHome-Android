@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.VerifyPhoneActivity;
 import com.mooring.mh.utils.CommonUtils;
@@ -62,15 +63,20 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     }
 
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
+    }
+
     /**
      * 注册
      */
     private void signUp() {
         Intent it = new Intent();
         it.setClass(getActivity(), VerifyPhoneActivity.class);
-        it.putExtra("entranceFlag", MConstants.SIGN_UP_SUCCESS);
-        it.putExtra("phone", phone);
-        it.putExtra("psw", psw);
+        it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.SIGN_UP_SUCCESS);
+        it.putExtra(MConstants.SP_KEY_USERNAME, phone);
+        it.putExtra(MConstants.SP_KEY_PASSWORD, psw);
         getActivity().startActivity(it);
     }
 
@@ -81,19 +87,19 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
      */
     private boolean checkSignUp() {
         if ("".equals(phone)) {
-            setError("Login name can not be empty");
+            setError(getResources().getString(R.string.error_login_name_empty));
             return false;
         }
         if ("".equals(psw)) {
-            setError("The password can not be empty");
+            setError(getResources().getString(R.string.error_login_psw_empty));
             return false;
         }
         if (!(CommonUtils.isMobileNO(phone) || CommonUtils.isEmail(phone))) {
-            setError("Please use the phone number or E-mail login!");
+            setError(getResources().getString(R.string.error_with_num_email));
             return false;
         }
         if (!CommonUtils.checkPsw(psw)) {
-            setError("Please enter 8-12 by the numbers and letters in the password");
+            setError(getResources().getString(R.string.error_psw_format));
             return false;
         }
         return true;

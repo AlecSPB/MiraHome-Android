@@ -10,7 +10,7 @@ import com.mooring.mh.adapter.LoginAndSignUpPagerAdapter;
 
 /**
  * 登录和注册Activity
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class LoginAndSignUpActivity extends AppCompatActivity {
@@ -36,11 +36,10 @@ public class LoginAndSignUpActivity extends AppCompatActivity {
     }
 
     private void initData() {
-
-        pagerAdapter = new LoginAndSignUpPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new LoginAndSignUpPagerAdapter(this, getSupportFragmentManager());
         login_viewPager.setAdapter(pagerAdapter);
-        login_tabLayout.setupWithViewPager(login_viewPager);
-
+        login_tabLayout.setupWithViewPager(login_viewPager);//在设定Adapter之后才可执行
+        login_tabLayout.setTabMode(TabLayout.MODE_FIXED);
     }
 
 }

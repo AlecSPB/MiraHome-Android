@@ -21,12 +21,12 @@
 
         <TextView
             android:id="@+id/tv_detail_title"
-            style="@style/text_common"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Heart rate"
-            android:textSize="34px" />
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_34pt" />
     </RelativeLayout>
 
     <ImageView
@@ -41,34 +41,28 @@
 
     <TextView
         android:id="@+id/tv_detail_param"
-        style="@style/text_common"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="39dp"
         android:text="88"
-        android:textSize="150px" />
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_168pt" />
 
     <TextView
         android:id="@+id/tv_detail_unit"
-        style="@style/text_common"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="30dp"
         android:text="bmp"
-        android:textSize="20px" />
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_18pt" />
 
-    <TextView
-        style="@style/text_common"
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="29dp"
-        android:gravity="bottom"
-        android:paddingBottom="20dp"
-        android:text="M I R A H O M E"
-        android:textSize="30px" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="120dp"
+        android:src="@drawable/ic_logo_mirahome" />
 </LinearLayout>

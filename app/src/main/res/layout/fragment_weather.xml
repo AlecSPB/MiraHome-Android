@@ -108,7 +108,7 @@
                                 android:layout_centerInParent="true"
                                 android:text="70"
                                 android:textColor="@color/colorTotalPoint"
-                                android:textSize="@dimen/text_total_point"
+                                android:textSize="@dimen/text_dimen_168pt"
                                 android:typeface="normal" />
 
                         </RelativeLayout>
@@ -121,7 +121,7 @@
                             android:layout_marginBottom="5dp"
                             android:text="Your scores beat 84% of the uses"
                             android:textColor="@color/colorWhite50"
-                            android:textSize="@dimen/text_dimen_16" />
+                            android:textSize="@dimen/text_dimen_28pt" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -155,7 +155,7 @@
                                         android:layout_marginTop="10dp"
                                         android:text="Deep sleep"
                                         android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_14" />
+                                        android:textSize="@dimen/text_dimen_24pt" />
 
                                 </LinearLayout>
 
@@ -184,7 +184,7 @@
                                             android:layout_marginTop="10dp"
                                             android:text="Light sleep"
                                             android:textColor="@color/colorWhite"
-                                            android:textSize="@dimen/text_dimen_14" />
+                                            android:textSize="@dimen/text_dimen_24pt" />
 
                                     </LinearLayout>
 
@@ -208,7 +208,7 @@
                                             android:layout_marginTop="10dp"
                                             android:text="REM"
                                             android:textColor="@color/colorWhite"
-                                            android:textSize="@dimen/text_dimen_14" />
+                                            android:textSize="@dimen/text_dimen_24pt" />
 
                                     </LinearLayout>
                                 </RelativeLayout>
@@ -233,7 +233,7 @@
                                         android:layout_marginTop="10dp"
                                         android:text="Wake-up"
                                         android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_14" />
+                                        android:textSize="@dimen/text_dimen_24pt" />
 
                                 </LinearLayout>
                             </RelativeLayout>
@@ -256,7 +256,7 @@
                                         android:layout_gravity="left"
                                         android:text="Sleep Duration"
                                         android:textColor="@color/colorWhite50"
-                                        android:textSize="@dimen/text_dimen_14" />
+                                        android:textSize="@dimen/text_dimen_24pt" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -264,7 +264,7 @@
                                         android:layout_gravity="left"
                                         android:text="7h15m"
                                         android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_28" />
+                                        android:textSize="@dimen/text_dimen_48pt" />
 
                                 </LinearLayout>
 
@@ -286,7 +286,7 @@
                                         android:layout_gravity="left"
                                         android:text="Sleep Times"
                                         android:textColor="@color/colorWhite50"
-                                        android:textSize="@dimen/text_dimen_14" />
+                                        android:textSize="@dimen/text_dimen_24pt" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -294,7 +294,7 @@
                                         android:layout_gravity="left"
                                         android:text="2"
                                         android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_28" />
+                                        android:textSize="@dimen/text_dimen_48pt" />
 
                                 </LinearLayout>
 
@@ -306,7 +306,7 @@
                                     android:gravity="center"
                                     android:text="More"
                                     android:textColor="@color/colorWhite"
-                                    android:textSize="@dimen/text_dimen_18" />
+                                    android:textSize="@dimen/text_dimen_34pt" />
 
                             </LinearLayout>
 
@@ -330,7 +330,7 @@
                             android:gravity="center_vertical"
                             android:text="27℃"
                             android:textColor="@color/colorWhite50"
-                            android:textSize="@dimen/text_dimen_28" />
+                            android:textSize="@dimen/text_dimen_48pt" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -347,7 +347,7 @@
                                 android:gravity="center_vertical"
                                 android:text="3.0km/h"
                                 android:textColor="@color/colorWhite50"
-                                android:textSize="@dimen/text_dimen_18" />
+                                android:textSize="@dimen/text_dimen_28pt" />
 
                             <TextView
                                 android:id="@+id/tv_humidity"
@@ -359,7 +359,7 @@
                                 android:gravity="center_vertical"
                                 android:text="20%"
                                 android:textColor="@color/colorWhite50"
-                                android:textSize="@dimen/text_dimen_18" />
+                                android:textSize="@dimen/text_dimen_28pt" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>

@@ -1,15 +1,12 @@
 package com.mooring.mh.views.CircleProgress;
 
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;

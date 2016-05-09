@@ -18,12 +18,12 @@ import com.mooring.mh.views.CustomImageView.CircleImageView;
 import java.util.List;
 
 /**
- * 横向滑动RecycleView的适配器
+ * 用户列表横向滑动RecycleView的适配器
  * <p/>
  * Created by Will on 16/4/7.
  */
-public class HorizontalDataAdapter extends RecyclerView
-        .Adapter<HorizontalDataAdapter.HorizontalViewHolder> {
+public class UserListAdapter extends RecyclerView
+        .Adapter<UserListAdapter.HorizontalViewHolder> {
 
     public interface AdapterData {
         String getTitle();
@@ -40,7 +40,7 @@ public class HorizontalDataAdapter extends RecyclerView
     private OnClickListener<UserHeadInfo> listener;
     private Activity context;
 
-    public HorizontalDataAdapter(Activity context, List<UserHeadInfo> dataList) {
+    public UserListAdapter(Activity context, List<UserHeadInfo> dataList) {
         this.context = context;
         this.dataList = dataList;
         resources = context.getResources();

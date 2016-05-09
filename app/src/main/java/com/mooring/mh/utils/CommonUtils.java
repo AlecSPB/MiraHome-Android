@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -279,9 +279,8 @@ public class CommonUtils {
      */
     public static String getCurrDate() {
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
-
-        return df.format(new Date()).toString();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//设置日期格式
+        return df.format(new Date());
     }
 
     /**
@@ -291,9 +290,9 @@ public class CommonUtils {
      */
     public static String getCurrTime(String format) {
 
-        SimpleDateFormat df = new SimpleDateFormat(format);//设置日期格式
+        SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());//设置日期格式
 
-        return df.format(new Date()).toString();
+        return df.format(new Date());
     }
 
     /**
@@ -304,7 +303,7 @@ public class CommonUtils {
      * @return true:白天
      */
     public static boolean judgeTimeInterval(String before, String after) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try {
             Date d1 = sdf.parse(before);
             Date d2 = sdf.parse(after);
@@ -349,4 +348,26 @@ public class CommonUtils {
         }
         return daySet;
     }
+
+    /**
+     * 摄氏度转华氏度
+     *
+     * @param temperature
+     * @return
+     */
+    public static float C2F(float temperature) {
+        return (float) (32 + 1.8 * temperature);
+    }
+
+    /**
+     * 华氏度转摄氏度
+     *
+     * @param temperature
+     * @return
+     */
+    public static float F2C(float temperature) {
+        return (temperature - 32) * 5 / 9;
+    }
+
+
 }

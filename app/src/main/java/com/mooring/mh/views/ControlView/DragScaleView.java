@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MConstants;
 
 /**
  * 自定义可拖动改变图层控件
@@ -22,39 +23,36 @@ import com.mooring.mh.utils.CommonUtils;
  * Created by Will on 16/4/8.
  */
 public class DragScaleView extends View implements View.OnTouchListener {
-    private int lastY;
-    private int oriTop;//拖动变量
-    private boolean dragDirection;//是否符合拖动位置
 
     private Paint colorPaint;//可改变高度View画笔
     private Bitmap drop;//拖动图标
     private Paint tickMarkPaint;//刻度线画笔
     private Paint scalePaint;//刻度圆圈
     private Paint maskPaint;//遮罩层
-
-    private int dropW = 0;//拖动小球宽度
-    private int dropH = 0;//拖动小球高度
-
-    private int upperBound = 104;//温度上界
-    private int lowerBound = 68;//温度下界
-    private String bedTemperature = "83°";//床的温度
-    private String currTemperature = "8°";//当前温度
-
+    private Shader mShader;  //渐变对象
     /*针对文本居中显示*/
     private Rect targetRect;
     private Paint commonPaint;
     private Paint.FontMetricsInt fontMetrics;
 
+    private int dropW = 0;//拖动小球宽度
+    private int dropH = 0;//拖动小球高度
+    private int upperBound = 40;//温度上界
+    private int lowerBound = 20;//温度下界
+    private int bedTemperature = 30;//床的温度
+    private int currTemperature = 35;//当前温度
     private int viewW = 0;//当前View的宽度
     private int viewH = 0;//当前View的高度
     private boolean isDropAble = true;//是否可用且可拖动
+    private int roomY;//室内温度y坐标
+    private int roomTemp = 35;//室内温度
+    private String unit = "";//床温,拖动温度,Room温度显示单位
+    private String currUnit = "℃";//当前系统设置的温度单位
+    private int lastY;
+    private int oriTop;//拖动变量
+    private boolean dragDirection;//是否符合拖动位置
 
     private OnDropListener listener;//拖动监听
-
-    private int roomY;//室内温度y坐标
-
-    private int roomTemp = 80;//室内温度
-
 
     private int dropTop = 0;  //拖动图标顶部
     private int lineBottom = 0; //刻度线的底部
@@ -66,8 +64,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
     private int dropTvSize = 0;  //拖动文字的字体大小
     private int tempTvSize = 0;  //温度上下界的文字字体大小
     private int bedTvSize = 0;  //床温文字字体大小
-
-    private Shader mShader;  //渐变对象
 
     public DragScaleView(Context context) {
         this(context, null);
@@ -158,11 +154,11 @@ public class DragScaleView extends View implements View.OnTouchListener {
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
 
         //绘制室内温度值
-        drawText(canvas, "Room" + "     " + roomTemp + "°", bedTvSize, Color.WHITE, roomY - CommonUtils.
-                dp2px(getContext(), 30), viewW / 4 - CommonUtils.dp2px(getContext(), 5));
+        drawText(canvas, "Room" + "     " + roomTemp + unit, bedTvSize, Color.WHITE, roomY - CommonUtils.
+                dp2px(getContext(), 30), viewW / 4 - CommonUtils.dp2px(getContext(), 10));
 
         //温度text
-        drawText(canvas, currTemperature, dropTvSize, 0X7FFFFFFF, oriTop, viewW * 2 / 3 + dropW / 2);
+        drawText(canvas, currTemperature + unit, dropTvSize, 0X7FFFFFFF, oriTop, viewW * 2 / 3 + dropW / 2);
 
         //拖动图标
         canvas.drawBitmap(drop, viewW * 2 / 3, dropTop + oriTop, null);
@@ -182,10 +178,10 @@ public class DragScaleView extends View implements View.OnTouchListener {
         }
 
         //温度上界
-        drawText(canvas, upperBound + "℉", tempTvSize, Color.WHITE, tempTop, viewW / 4);
+        drawText(canvas, upperBound + currUnit, tempTvSize, Color.WHITE, tempTop, viewW / 4);
 
         //温度下界
-        drawText(canvas, lowerBound + "℉", tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
+        drawText(canvas, lowerBound + currUnit, tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
 
         //bed温度
         drawText(canvas, "Bed " + bedTemperature, bedTvSize, Color.WHITE, viewH - tempBottom, viewW * 3 / 4);
@@ -218,7 +214,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -238,7 +233,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
                     oriTop += dy;
 
                     if (oriTop >= 0 && oriTop <= viewH - dropTop - lineBottom - dropH / 2) {
-                        currTemperature = computeTemp() + "°";
+                        currTemperature = computeTemp();
                         invalidate();
                     }
                 }
@@ -251,14 +246,14 @@ public class DragScaleView extends View implements View.OnTouchListener {
                 if (oriTop < 0) {
                     oriTop = 0;
 
-                    currTemperature = computeTemp() + "°";
+                    currTemperature = computeTemp();
                     invalidate();
                 }
 
                 if (oriTop > viewH - dropTop - lineBottom - dropH / 2) {
                     oriTop = viewH - dropTop - lineBottom - dropH / 2;
 
-                    currTemperature = computeTemp() + "°";
+                    currTemperature = computeTemp();
                     invalidate();
                 }
 
@@ -273,17 +268,24 @@ public class DragScaleView extends View implements View.OnTouchListener {
     /**
      * 设置当前的室内温度
      *
-     * @param roomTemp
+     * @param roomTemp 30
      */
     public void setRoomY(int roomTemp) {
-
         this.roomTemp = roomTemp;
-
         this.roomY = (upperBound - roomTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
                 (upperBound - lowerBound) + dropTop + dropH / 2;
 
         invalidate();
+    }
 
+    /**
+     * 设置当前的室内温度
+     *
+     * @param roomTemp "30"
+     */
+    public void setRoomY(String roomTemp) {
+        int temp = Integer.parseInt(roomTemp);
+        setRoomY(temp);
     }
 
     /**
@@ -303,7 +305,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
      * @return 是否在小球得x, y位置
      */
     protected boolean getDirection(int x, int y) {
-
         if (y > dropTop + oriTop && y < dropTop + oriTop + dropH) {
             if (x > viewW * 2 / 3 && x < viewW * 2 / 3 + dropW) {
                 return true;
@@ -329,34 +330,43 @@ public class DragScaleView extends View implements View.OnTouchListener {
     /**
      * 设置bed的温度
      *
-     * @param bedTemperature
+     * @param bedTemperature "30"
      */
     public void setBedTemperature(String bedTemperature) {
+        int temp = Integer.parseInt(bedTemperature);
+        this.bedTemperature = temp;
+
+        invalidate();
+    }
+
+    /**
+     * 设置bed的温度
+     *
+     * @param bedTemperature 30
+     */
+    public void setBedTemperature(int bedTemperature) {
         this.bedTemperature = bedTemperature;
+
         invalidate();
     }
 
     /**
      * 设置当前的温度
      *
-     * @param currTemperature 70°
+     * @param currTemperature "30"
      */
     public void setCurrTemperature(String currTemperature) {
-        this.currTemperature = currTemperature;
-        int temp = Integer.parseInt(currTemperature.substring(0, currTemperature.length() - 1));
-        oriTop = (upperBound - temp) * (viewH - dropTop - lineBottom - dropH / 2) /
-                (upperBound - lowerBound);
-        invalidate();
+        int temp = Integer.parseInt(currTemperature);
+        setCurrTemperature(temp);
     }
 
     /**
      * 设置当前的温度
      *
-     * @param currTemp 70
+     * @param currTemp 30
      */
     public void setCurrTemperature(int currTemp) {
-
-        this.currTemperature = currTemp + "°";
+        this.currTemperature = currTemp;
         oriTop = (upperBound - currTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
                 (upperBound - lowerBound);
 
@@ -370,11 +380,12 @@ public class DragScaleView extends View implements View.OnTouchListener {
      */
     public void setIsDropAble(boolean isDropAble) {
         this.isDropAble = isDropAble;
+
         invalidate();
     }
 
     public interface OnDropListener {
-        void onDrop(String currTemp);
+        void onDrop(int currTemp);
     }
 
     /**
@@ -384,5 +395,42 @@ public class DragScaleView extends View implements View.OnTouchListener {
      */
     public void setOnDropListener(OnDropListener listener) {
         this.listener = listener;
+    }
+
+    /**
+     * 设置  床温,拖动温度,Room温度显示单位
+     *
+     * @param unit ℃
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+        invalidate();
+    }
+
+    /**
+     * 设置当前系统设定的纬度单位,
+     * 一旦改变对应的上下架温度值也跟着改变
+     *
+     * @param unit ℃  ||  ℉
+     * @see MConstants
+     */
+    public void setCurrUnit(int unit) {
+        if (unit == MConstants.DEGREES_C) {
+            this.currUnit = getResources().getString(R.string.unit_celsius);
+            this.upperBound = 40;
+            this.lowerBound = 20;
+            roomTemp = (int) CommonUtils.F2C(roomTemp);
+            bedTemperature = (int) CommonUtils.F2C(bedTemperature);
+            currTemperature = (int) CommonUtils.F2C(currTemperature);
+        }
+        if (unit == MConstants.DEGREES_F) {
+            this.currUnit = getResources().getString(R.string.unit_fahrenheit);
+            this.upperBound = 104;
+            this.lowerBound = 68;
+            roomTemp = (int) CommonUtils.C2F(roomTemp);
+            bedTemperature = (int) CommonUtils.C2F(bedTemperature);
+            currTemperature = (int) CommonUtils.C2F(currTemperature);
+        }
+        invalidate();
     }
 }

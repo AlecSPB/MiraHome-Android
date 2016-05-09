@@ -1,5 +1,6 @@
 package com.mooring.mh.fragment;
 
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.views.ChartView.XXChartView;
 import com.mooring.mh.views.ChartView.YAxisView;
@@ -57,5 +58,10 @@ public class MonthFragment extends BaseFragment {
     @Override
     protected void lazyLoad() {
 
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+        return null;
     }
 }

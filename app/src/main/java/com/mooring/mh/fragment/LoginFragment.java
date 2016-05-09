@@ -2,13 +2,13 @@ package com.mooring.mh.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -18,8 +18,10 @@ import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MConstants;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
@@ -33,24 +35,22 @@ import java.util.List;
  */
 public class LoginFragment extends BaseFragment implements View.OnClickListener {
 
-    private EditText edit_phone;
-    private EditText edit_psw;
+    private EditText edit_userName;
+    private EditText edit_userPwd;
     private TextView tv_forget_psw;
     private TextView tv_login_btn;
     private TextView tv_login_error;
-
     private ImageView imgView_sina;
     private ImageView imgView_weChart;
     private ImageView imgView_QQ;
     private ImageView imgView_facebook;
 
-
-    private String phone;//手机号码
-    private String psw;//密码
+    private String userName;//手机号码
+    private String userPwd;//密码
     private DbManager dbManager;
 
-    MyYuulinkSDKListener listener;
-
+    private MySDKListener listener;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected int getLayoutId() {
@@ -60,8 +60,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     @Override
     protected void initView() {
 
-        edit_phone = (EditText) rootView.findViewById(R.id.edit_phone);
-        edit_psw = (EditText) rootView.findViewById(R.id.edit_psw);
+        editor = InitApplicationHelper.sp.edit();
+        listener = new MySDKListener();
+
+        edit_userName = (EditText) rootView.findViewById(R.id.edit_phone);
+        edit_userPwd = (EditText) rootView.findViewById(R.id.edit_psw);
         tv_forget_psw = (TextView) rootView.findViewById(R.id.tv_forget_psw);
         tv_login_btn = (TextView) rootView.findViewById(R.id.tv_login_btn);
         tv_login_error = (TextView) rootView.findViewById(R.id.tv_login_error);
@@ -79,56 +82,58 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         imgView_QQ.setOnClickListener(this);
         imgView_facebook.setOnClickListener(this);
 
-        listener = new MyYuulinkSDKListener();
-
-        MachtalkSDK.getInstance().startSDK(getContext(), null);
-        MachtalkSDK.getInstance().setSdkListener(listener);
-
+        //--------------暂时使用,真实情况去除!!!!!!!!---------------------------
+        edit_userName.setText("13661498824");
+        edit_userPwd.setText("123456");
 
     }
 
-    class MyYuulinkSDKListener extends MachtalkSDKListener {
-
+    class MySDKListener extends MachtalkSDKListener {
         @Override
-        public void onUserLogin(Result result, String user) {
-
-            Log.e("onUserLogin", "onUserLogin  " + user + "  " + result.getErrorCode() + "  " + result.getSuccess());
-
-            int success = Result.FAILED;
-            String errmesg = null;
-            if (result != null) {
-                success = result.getSuccess();
-                errmesg = result.getErrorMessage();
-            }
-//            closeDialog();
-            if (success == Result.SUCCESS) {
-//                editor.putString(Constant.SP_KEY_USERNAME, telephone);
-//                editor.putString(Constant.SP_KEY_PASSWORD, password);
-//                editor.commit();
-//                Log.i(TAG, "store username: " + telephone + " password: " + password);
-//                DemoGlobal.instance().setUserName(telephone);
-//                DemoGlobal.instance().setPassword(password);
-//
-//                Intent it = new Intent(UserLogin.this, Main.class);
-//                startActivity(it);
-//                UserLogin.this.finish();
-
-                SharedPreferences.Editor edit = InitApplicationHelper.sp.edit();
-                edit.putBoolean("appFirstStart", false);
-                edit.commit();
-
-                getActivity().startActivity(new Intent(getActivity(), MainActivity.class));
-                getActivity().finish();
-            } else {
+        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
+            super.onServerConnectStatusChanged(serverConnStatus);
+            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
+                context.finish();
+                return;
             }
         }
 
+        @Override
+        public void onUserLogin(Result result, String user) {
+            int success = Result.FAILED;
+            String errMsg = null;
+            if (result != null) {
+                success = result.getSuccess();
+                errMsg = result.getErrorMessage();
+            }
+            if (success == Result.SUCCESS) {
+                editor.putString(MConstants.SP_KEY_USERNAME, userName);
+                editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
+                editor.commit();
 
+                LogUtil.i("store username: " + userName + " password: " + userPwd);
+
+                startActivity(new Intent(context, MainActivity.class));
+                context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                context.finish();
+            } else {
+                if (errMsg == null) {
+                    errMsg = getResources().getString(R.string.network_exception);
+                }
+                CommonUtils.showToast(context, errMsg);
+            }
+        }
     }
 
     @Override
     protected void lazyLoad() {
 
+    }
+
+    @Override
+    protected MachtalkSDKListener setSDKListener() {
+
+        return listener;
     }
 
     /**
@@ -137,13 +142,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     private void login() {
 
 
-//        MachtalkSDK.getInstance().userLogin("13661498824", "123456", 1);
+        MachtalkSDK.getInstance().userLogin("13661498824", "123456", null);
 
-        MachtalkSDK.getInstance().userLogin("mirahome", "n935rq", 1);
+//        MachtalkSDK.getInstance().userLogin("18136093612", "123456", null);
 
         /*RequestParams params = CommonUtils.getBaseParams(MConstants.LOGIN_BY_MOBILE_PHONE);
-        params.addParameter("mobile_phone", phone);
-        params.addParameter("password", psw);
+        params.addParameter("mobile_userName", userName);
+        params.addParameter("password", userPwd);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -201,16 +206,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      * @return
      */
     private boolean checkLogin() {
-        if ("".equals(phone)) {
-            setError("Login name can not be empty");
+        if ("".equals(userName)) {
+            setError(getResources().getString(R.string.error_login_name_empty));
             return false;
         }
-        if ("".equals(psw)) {
-            setError("The password can not be empty");
+        if ("".equals(userPwd)) {
+            setError(getResources().getString(R.string.error_login_psw_empty));
             return false;
         }
-        if (!(CommonUtils.isMobileNO(phone) || CommonUtils.isEmail(phone))) {
-            setError("Please use the phone number or E-mail login!");
+        if (!(CommonUtils.isMobileNO(userName) || CommonUtils.isEmail(userName))) {
+            setError(getResources().getString(R.string.error_with_num_email));
             return false;
         }
         return true;
@@ -225,7 +230,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      * 第三方登陆
      */
     private void SSO() {
-        CommonUtils.showToast(getActivity(), CommonUtils.getSP("token"));
+        CommonUtils.showToast(context, CommonUtils.getSP("token"));
     }
 
     @Override
@@ -237,8 +242,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 getActivity().startActivity(it);
                 break;
             case R.id.tv_login_btn:
-                phone = edit_phone.getText().toString().trim();
-                psw = edit_psw.getText().toString().trim();
+                userName = edit_userName.getText().toString().trim();
+                userPwd = edit_userPwd.getText().toString().trim();
 
 
                 /*if (checkLogin()) {
@@ -262,25 +267,5 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 SSO();
                 break;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        MachtalkSDK.getInstance().stopSDK();
-        MachtalkSDK.getInstance().removeSdkListener(listener);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MachtalkSDK.getInstance().setContext(getContext());
-        MachtalkSDK.getInstance().setSdkListener(listener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MachtalkSDK.getInstance().removeSdkListener(listener);
     }
 }

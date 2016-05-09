@@ -40,9 +40,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Repeat"
+                    android:text="@string/tv_repeat"
                     android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_dimen_22" />
+                    android:textSize="@dimen/text_dimen_28pt" />
 
                 <com.mooring.mh.views.AlarmDaySelectView
                     android:id="@+id/asv_alarm_edit"
@@ -79,9 +79,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:text="Smart Alarm"
+                android:text="@string/tv_smart_alarm"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_18" />
+                android:textSize="@dimen/text_dimen_24pt" />
 
             <ToggleButton
                 android:id="@+id/tglBtn_alarm_smart"
@@ -102,28 +102,16 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="100dp"
-            android:text="@string/clock_tip"
+            android:text="@string/clock_smart_tip"
             android:textColor="@color/colorWhite50"
-            android:textSize="@dimen/text_dimen_18" />
+            android:textSize="@dimen/text_dimen_24pt" />
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_confirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/text_button_comm"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@color/colorPurple"
-        android:clickable="true"
-        android:gravity="center"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:text="Confirm"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_24"
-        android:textStyle="bold" />
+        android:text="@string/tv_confirm" />
 </RelativeLayout>
