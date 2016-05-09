@@ -37,8 +37,8 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
     private int upperBound = 104;//温度上界
     private int lowerBound = 68;//温度下界
-    private String bedTemperature = "83℉";//床的温度
-    private String currTemperature = "86℉";//当前温度
+    private String bedTemperature = "83°";//床的温度
+    private String currTemperature = "8°";//当前温度
 
     /*针对文本居中显示*/
     private Rect targetRect;
@@ -158,7 +158,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
 
         //绘制室内温度值
-        drawText(canvas, "Room" + "     " + roomTemp + "℉", bedTvSize, Color.WHITE, roomY - CommonUtils.
+        drawText(canvas, "Room" + "     " + roomTemp + "°", bedTvSize, Color.WHITE, roomY - CommonUtils.
                 dp2px(getContext(), 30), viewW / 4 - CommonUtils.dp2px(getContext(), 5));
 
         //温度text
@@ -238,7 +238,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
                     oriTop += dy;
 
                     if (oriTop >= 0 && oriTop <= viewH - dropTop - lineBottom - dropH / 2) {
-                        currTemperature = computeTemp() + "℉";
+                        currTemperature = computeTemp() + "°";
                         invalidate();
                     }
                 }
@@ -251,14 +251,14 @@ public class DragScaleView extends View implements View.OnTouchListener {
                 if (oriTop < 0) {
                     oriTop = 0;
 
-                    currTemperature = computeTemp() + "℉";
+                    currTemperature = computeTemp() + "°";
                     invalidate();
                 }
 
                 if (oriTop > viewH - dropTop - lineBottom - dropH / 2) {
                     oriTop = viewH - dropTop - lineBottom - dropH / 2;
 
-                    currTemperature = computeTemp() + "℉";
+                    currTemperature = computeTemp() + "°";
                     invalidate();
                 }
 
@@ -339,7 +339,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
     /**
      * 设置当前的温度
      *
-     * @param currTemperature 70℉
+     * @param currTemperature 70°
      */
     public void setCurrTemperature(String currTemperature) {
         this.currTemperature = currTemperature;
@@ -356,7 +356,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
      */
     public void setCurrTemperature(int currTemp) {
 
-        this.currTemperature = currTemp + "℉";
+        this.currTemperature = currTemp + "°";
         oriTop = (upperBound - currTemp) * (viewH - dropTop - lineBottom - dropH / 2) /
                 (upperBound - lowerBound);
 

@@ -227,7 +227,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (index == TIMING) {
             imgView_title_plus.setVisibility(View.VISIBLE);
         } else {
-            imgView_title_plus.setVisibility(View.GONE);
+            imgView_title_plus.setVisibility(View.INVISIBLE);
         }
         hideFragments(fragmentTransaction);
         switch (index) {

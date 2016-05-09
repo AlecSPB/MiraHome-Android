@@ -11,6 +11,11 @@
 
         <include layout="@layout/activity_common_title" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@color/head_gap_body" />
+
         <com.mooring.mh.views.WheelPicker.widget.WheelTimePicker
             android:id="@+id/time_picker"
             android:layout_width="match_parent"

@@ -7,12 +7,17 @@
 
     <include layout="@layout/activity_common_title" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/head_gap_body" />
+
     <com.mooring.mh.views.CircleProgress.DryingCircleView
         android:id="@+id/drying"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="75dp" />
+        android:layout_marginTop="70dp" />
 
     <TextView
         android:id="@+id/tv_drying_times"
@@ -24,23 +29,11 @@
         android:textColor="@color/colorWhite"
         android:textSize="30sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.mooring.mh.views.CustomToggle
+        android:id="@+id/toggle_drying"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开始" />
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="暂停" />
-    </LinearLayout>
 </LinearLayout>

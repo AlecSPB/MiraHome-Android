@@ -60,5 +60,5 @@
         android:layout_centerVertical="true"
         android:contentDescription="@string/app_name"
         android:src="@drawable/bg_add_clock"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 </RelativeLayout>

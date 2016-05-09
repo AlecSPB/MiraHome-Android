@@ -180,6 +180,18 @@ public class DryingCircleView extends View {
 
     /**
      * 开始动画
+     *
+     * @param phase
+     */
+    public void startAnim(float phase) {
+        this.mPhase = phase;
+        mDrawAnimator.setFloatValues(mPhase, 1f);
+        mDrawAnimator.start();
+        invalidate();
+    }
+
+    /**
+     * 开始动画
      */
     public void startAnim() {
 //        if (updateListener.isPause) {

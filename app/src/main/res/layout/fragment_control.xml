@@ -2,64 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
-    android:orientation="vertical">
+    android:background="@color/colorMainBg"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="?attr/actionBarSize">
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorMainBg" />
+        android:layout_height="5dp"
+        android:background="@color/head_gap_body" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_heating"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/img_heating"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_heating" />
+        android:background="@drawable/bg_heating_control">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
+            android:layout_centerInParent="true"
+            android:drawablePadding="30dp"
+            android:drawableTop="@drawable/ic_heating"
+            android:gravity="center_horizontal"
             android:text="Heating"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_24" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_drying"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
-        android:background="@drawable/img_drying"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_drying" />
+        android:background="@drawable/bg_drying_control">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
+            android:layout_centerInParent="true"
+            android:drawablePadding="30dp"
+            android:drawableTop="@drawable/ic_drying"
+            android:gravity="center_horizontal"
             android:text="Drying"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_24" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

@@ -7,6 +7,11 @@
 
     <include layout="@layout/activity_common_title" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/head_gap_body" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -14,7 +19,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="225dp"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:background="@color/colorPrimaryDark"
             android:gravity="top"
             android:hint="@string/act_suggestions_hint"

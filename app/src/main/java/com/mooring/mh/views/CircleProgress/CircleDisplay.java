@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -16,7 +15,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.CommonUtils;
-import com.mooring.mh.views.other.Utils;
 
 import java.text.DecimalFormat;
 
@@ -119,11 +117,10 @@ public class CircleDisplay extends View {
         finishedPaint.setAntiAlias(true);
         finishedPaint.setStrokeWidth(mStrokeWidth);
 
-        mTextPaint = new TextPaint();
-        mTextPaint.setStyle(Style.STROKE);
+        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextAlign(Align.CENTER);
         mTextPaint.setColor(textColor);
-        mTextPaint.setTextSize(Utils.sp2px(getResources(), 10f));
+        mTextPaint.setTextSize(CommonUtils.sp2px(getContext(), 10));
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
         mDrawAnimator.setInterpolator(new AccelerateDecelerateInterpolator());

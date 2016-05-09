@@ -5,23 +5,21 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.ToggleButton;
 
 import com.mooring.mh.R;
+import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.ControlView.DragScaleTwoView;
 import com.mooring.mh.views.ControlView.DragScaleView;
 import com.mooring.mh.views.CustomImageView.CircleImageView;
-import com.mooring.mh.views.other.CommonDialog;
+import com.mooring.mh.views.CustomToggle;
 
 /**
  * Heating 控制Activity
  * <p/>
  * Created by Will on 16/4/8.
  */
-public class HeatingControlActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class HeatingControlActivity extends AppCompatActivity implements CustomToggle.OnCheckedChangeListener {
     private ImageView imgView_act_back;
     private View layout_two_header;
     private CircleImageView circleImg_left;
@@ -29,17 +27,17 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
 
     private View layout_one_user;
     private DragScaleView dragScaleView;
-    private Switch switch_one_user;
+    private CustomToggle toggle_middle;
 
     private View layout_two_user;
     private DragScaleTwoView dragScaleTwoView;
-    private ToggleButton toggle_left;
-    private ToggleButton toggle_right;
+    private CustomToggle toggle_left;
+    private CustomToggle toggle_right;
 
     /**
      * 当前用户的个数
      */
-    private int currUsers = 2;
+    private int currUsers = 1;
 
 
     @Override
@@ -61,12 +59,15 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
 
         layout_one_user = findViewById(R.id.layout_one_user);
         dragScaleView = (DragScaleView) findViewById(R.id.dragScaleView);
-        switch_one_user = (Switch) findViewById(R.id.switch_one_user);
+        toggle_middle = (CustomToggle) findViewById(R.id.toggle_middle);
+        toggle_middle.setChecked(true);
 
         layout_two_user = findViewById(R.id.layout_two_user);
         dragScaleTwoView = (DragScaleTwoView) findViewById(R.id.dragScaleTwoView);
-        toggle_left = (ToggleButton) findViewById(R.id.toggle_left);
-        toggle_right = (ToggleButton) findViewById(R.id.toggle_right);
+        toggle_left = (CustomToggle) findViewById(R.id.toggle_left);
+        toggle_right = (CustomToggle) findViewById(R.id.toggle_right);
+        toggle_left.setChecked(true);
+        toggle_right.setChecked(true);
 
 
     }
@@ -85,19 +86,14 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
             layout_two_header.setVisibility(View.GONE);
             layout_one_user.setVisibility(View.VISIBLE);
 
-            switch_one_user.setOnCheckedChangeListener(this);
-            switch_one_user.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showDialog();
-                }
-            });
+            toggle_middle.setOnCheckedChange(this);
             dragScaleView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.
                     OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     dragScaleView.setCurrTemperature(69);
                     dragScaleView.setIsDropAble(true);
+                    dragScaleView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
             });
 
@@ -113,15 +109,15 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
             layout_two_user.setVisibility(View.VISIBLE);
             layout_two_header.setVisibility(View.VISIBLE);
 
-            toggle_left.setOnCheckedChangeListener(this);
-            toggle_right.setOnCheckedChangeListener(this);
+            toggle_left.setOnCheckedChange(this);
+            toggle_right.setOnCheckedChange(this);
 
             dragScaleTwoView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.
                     OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    dragScaleTwoView.setCurrLeftTemp("70℉");
-                    dragScaleTwoView.setCurrRightTemp("88℉");
+                    dragScaleTwoView.setCurrLeftTemp(70);
+                    dragScaleTwoView.setCurrRightTemp(88);
                     dragScaleTwoView.setIsLeftDropAble(true);
                     dragScaleTwoView.setIsRightDropAble(true);
                     dragScaleTwoView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -137,46 +133,29 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
         }
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.switch_one_user:
-                if (isChecked) {
-                    dragScaleView.setIsDropAble(true);
-                } else {
-                    dragScaleView.setIsDropAble(false);
-                }
-                break;
-
-            case R.id.toggle_left:
-                if (isChecked) {
-                    dragScaleTwoView.setIsLeftDropAble(true);
-                } else {
-                    dragScaleTwoView.setIsLeftDropAble(false);
-                }
-                break;
-
-            case R.id.toggle_right:
-                if (isChecked) {
-                    dragScaleTwoView.setIsRightDropAble(true);
-                } else {
-                    dragScaleTwoView.setIsRightDropAble(false);
-                }
-                break;
-        }
-    }
-
     /**
      * show提示dialog
      */
-    private void showDialog() {
+    private void showDialog(final CustomToggle toggle) {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
-        builder.setMessage("stop drying?");
+        builder.setMessage("stop heating?");
         builder.setLogo(R.drawable.img_close_heating);
         builder.setCanceledOnTouchOtherPlace(false);
         builder.setPositiveButton(true, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (toggle == toggle_middle) {
+                    toggle_middle.setChecked(false);
+                    dragScaleView.setIsDropAble(false);
+                }
+                if (toggle == toggle_left) {
+                    toggle_left.setChecked(false);
+                    dragScaleTwoView.setIsLeftDropAble(false);
+                }
+                if (toggle == toggle_right) {
+                    toggle_right.setChecked(false);
+                    dragScaleTwoView.setIsRightDropAble(false);
+                }
                 dialog.dismiss();
             }
         });
@@ -191,4 +170,35 @@ public class HeatingControlActivity extends AppCompatActivity implements Compoun
     }
 
 
+    @Override
+    public void onCheckedChanged(View v, boolean isChecked) {
+        switch (v.getId()) {
+            case R.id.toggle_middle:
+                if (isChecked) {
+                    toggle_middle.setChecked(true);
+                    dragScaleView.setIsDropAble(true);
+                } else {
+                    showDialog(toggle_middle);
+                }
+                break;
+
+            case R.id.toggle_left:
+                if (isChecked) {
+                    toggle_left.setChecked(true);
+                    dragScaleTwoView.setIsLeftDropAble(true);
+                } else {
+                    showDialog(toggle_middle);
+                }
+                break;
+
+            case R.id.toggle_right:
+                if (isChecked) {
+                    toggle_right.setChecked(true);
+                    dragScaleTwoView.setIsRightDropAble(true);
+                } else {
+                    showDialog(toggle_middle);
+                }
+                break;
+        }
+    }
 }
