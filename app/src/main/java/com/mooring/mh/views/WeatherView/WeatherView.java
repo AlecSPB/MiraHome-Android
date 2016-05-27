@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,10 +78,10 @@ public class WeatherView extends View {
     private Bitmap blade_small;//小风车扇叶
     private float windScale = 0.0f;//风扇起始度数
     private float windSpeed = 0.0f;//风速
-    private int windBig_x = CommonUtils.dp2px(getContext(), 150);
-    private int windBig_y = CommonUtils.dp2px(getContext(), 100);
-    private int windSma_x = CommonUtils.dp2px(getContext(), 30);
-    private int windSma_y = CommonUtils.dp2px(getContext(), 200);
+    private int windBig_x = MUtils.dp2px(getContext(), 150);
+    private int windBig_y = MUtils.dp2px(getContext(), 100);
+    private int windSma_x = MUtils.dp2px(getContext(), 30);
+    private int windSma_y = MUtils.dp2px(getContext(), 200);
     private Matrix matrixWind;
 
     private int viewW;

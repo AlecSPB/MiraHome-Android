@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Mooring"
+        android:text=""
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_dimen_34pt" />
 
@@ -42,4 +42,5 @@
         android:contentDescription="@string/app_name"
         android:src="@drawable/bg_delete_clock"
         android:visibility="gone" />
+
 </RelativeLayout>

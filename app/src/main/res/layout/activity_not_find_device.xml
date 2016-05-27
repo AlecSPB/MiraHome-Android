@@ -8,10 +8,12 @@
 
     <include layout="@layout/activity_common_title" />
 
-    <View
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/head_gap_body" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_shadow" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -27,21 +29,21 @@
         android:gravity="center"
         android:text="@string/not_find_device_1"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_18" />
+        android:textSize="@dimen/text_dimen_34pt" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/not_find_device_2"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_18" />
+        android:textSize="@dimen/text_dimen_34pt" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/not_find_device_3"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_18" />
+        android:textSize="@dimen/text_dimen_34pt" />
 
     <ImageView
         android:id="@+id/imgView_retry_connect"

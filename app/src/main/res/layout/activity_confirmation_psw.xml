@@ -7,10 +7,12 @@
 
     <include layout="@layout/activity_common_title" />
 
-    <View
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/colorDeepBlue" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_shadow" />
 
     <RelativeLayout
         android:layout_width="match_parent"

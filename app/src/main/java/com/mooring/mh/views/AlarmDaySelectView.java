@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,11 +56,11 @@ public class AlarmDaySelectView extends LinearLayout {
 
         normalColor = getResources().getColor(R.color.colorWhite50);
         selectColor = getResources().getColor(R.color.colorPurple);
-        textSize = CommonUtils.sp2px(getContext(), 5);
+        textSize = MUtils.sp2px(getContext(), 5);
 
         tvList = new ArrayList<>();
         LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.rightMargin = CommonUtils.dp2px(getContext(), 10);
+        lp.rightMargin = MUtils.dp2px(getContext(), 10);
         for (int i = 0; i < text.length; i++) {
             tv = new TextView(getContext());
             tv.setPadding(0, 0, 0, 0);
@@ -118,6 +118,6 @@ public class AlarmDaySelectView extends LinearLayout {
      * @param textSize
      */
     public void setTextSize(int textSize) {
-        this.textSize = CommonUtils.sp2px(getContext(), textSize);
+        this.textSize = MUtils.sp2px(getContext(), textSize);
     }
 }

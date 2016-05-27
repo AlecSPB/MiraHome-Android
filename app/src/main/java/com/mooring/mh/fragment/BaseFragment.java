@@ -9,10 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.app.InitApplicationHelper;
-
-import org.xutils.common.util.LogUtil;
 
 /**
  * 自定义BaseFragment，支持View预加载，首次展现时数据加载
@@ -22,24 +21,29 @@ import org.xutils.common.util.LogUtil;
 public abstract class BaseFragment extends Fragment {
     protected View rootView;
     protected Activity context;
+    private BaseListener baseListener;
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.context = getActivity();
-        if (getLayoutId() == 0) {
-            throw new NullPointerException();
-        }
-        rootView = inflater.inflate(getLayoutId(), container, false);
 
         sp = InitApplicationHelper.sp;
         editor = sp.edit();
-
-        initView();
+        editor.apply();
 
         MachtalkSDK.getInstance().setContext(context);
-        MachtalkSDK.getInstance().setSdkListener(setSDKListener());
+        baseListener = new BaseListener();
+
+        initFragment();
+
+        if (getLayoutId() == 0) {
+            throw new NullPointerException("Layout files can not be empty");
+        }
+        rootView = inflater.inflate(getLayoutId(), container, false);
+
+        initView();
 
         return rootView;
     }
@@ -49,10 +53,9 @@ public abstract class BaseFragment extends Fragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             MachtalkSDK.getInstance().setContext(context);
-            MachtalkSDK.getInstance().setSdkListener(setSDKListener());
-            lazyLoad();
+            MachtalkSDK.getInstance().setSdkListener(baseListener);
         } else {
-            MachtalkSDK.getInstance().removeSdkListener(setSDKListener());
+            MachtalkSDK.getInstance().removeSdkListener(baseListener);
         }
     }
 
@@ -69,25 +72,32 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void initView();
 
     /**
-     * 每次展现的时候执行,但是除此展现不会执行(展现时执行)
+     * 初始化Fragment
      */
-    protected abstract void lazyLoad();
+    protected abstract void initFragment();
 
-    protected abstract MachtalkSDKListener setSDKListener();
+    class BaseListener extends MachtalkSDKListener {
+        @Override
+        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
+            super.onServerConnectStatusChanged(scs);
+            if (scs == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
+                context.finish();
+                return;
+            }
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
-        MachtalkSDK.getInstance().setSdkListener(setSDKListener());
-        LogUtil.e("智成云监听此时为null    " + (setSDKListener() == null));
+        MachtalkSDK.getInstance().setSdkListener(baseListener);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        MachtalkSDK.getInstance().removeSdkListener(setSDKListener());
-        LogUtil.e("智成云监听此时为null    " + (setSDKListener() == null));
+    public void onDestroy() {
+        MachtalkSDK.getInstance().removeSdkListener(baseListener);
+        super.onDestroy();
+        System.gc();
     }
-
 }

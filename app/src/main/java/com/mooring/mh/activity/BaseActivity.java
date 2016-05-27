@@ -1,78 +1,135 @@
 package com.mooring.mh.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
+import com.mooring.mh.app.InitApplicationHelper;
 
 /**
- * 自定义BaseActivty for common
+ * 自定义BaseActivity for common
  * <p/>
  * Created by Will on 16/3/30.
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected Activity context;
+    private MachtalkSDKListener baseListener;
+    protected SharedPreferences sp;
+    protected SharedPreferences.Editor editor;
+    protected ImageView imgView_act_back;
+    protected TextView tv_act_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        if (getLayoutId() == 0) {
-            throw new NullPointerException();
-        }
-        setContentView(getLayoutId());
-        ImageView imgView_act_back = (ImageView) findViewById(R.id.imgView_act_back);
-        if (imgView_act_back != null) {
-            imgView_act_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BaseActivity.this.finish();
-                }
-            });
-        }
-        TextView tv_act_title = (TextView) findViewById(R.id.tv_act_title);
-        if (tv_act_title != null) {
-            tv_act_title.setText(getTitleName());
-        }
+
+        sp = InitApplicationHelper.sp;
+        editor = sp.edit();
+        editor.apply();
+
+        MachtalkSDK.getInstance().setContext(this);
+        baseListener = new BaseListener();
 
         initActivity();
 
-        MachtalkSDK.getInstance().setContext(this);
-        MachtalkSDK.getInstance().setSdkListener(setSDKListener());
+        if (getLayoutId() == 0) {
+            throw new NullPointerException("Layout files can not be empty");
+        }
+
+        setContentView(getLayoutId());
+
+        imgView_act_back = (ImageView) findViewById(R.id.imgView_act_back);
+        if (imgView_act_back != null) {
+            imgView_act_back.setOnClickListener(this);
+        }
+        tv_act_title = (TextView) findViewById(R.id.tv_act_title);
+        if (tv_act_title != null && !TextUtils.isEmpty(getTitleName())) {
+            tv_act_title.setText(getTitleName());
+        }
+
+        initView();
     }
 
     @Override
     public void onClick(View v) {
+        if (v.getId() == R.id.imgView_act_back) {
+            BaseActivity.this.finish();
+        }
         OnClick(v);
     }
 
-    protected abstract int getLayoutId();
 
-    protected abstract String getTitleName();
-
+    /**
+     * 初始化Activity相关参数和变量,和view无关
+     */
     protected abstract void initActivity();
 
-    protected abstract void OnClick(View v);
+    /**
+     * 获取布局文件
+     *
+     * @return
+     */
+    protected abstract int getLayoutId();
 
-    protected abstract MachtalkSDKListener setSDKListener();
+    /**
+     * 获取title名称
+     *
+     * @return
+     */
+    protected abstract String getTitleName();
+
+    /**
+     * 初始化View控件
+     */
+    protected abstract void initView();
+
+    /**
+     * 点击事件
+     *
+     * @param v
+     */
+    protected abstract void OnClick(View v);
 
     @Override
     public void onResume() {
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
-        MachtalkSDK.getInstance().setSdkListener(setSDKListener());
+        MachtalkSDK.getInstance().setSdkListener(baseListener);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        MachtalkSDK.getInstance().removeSdkListener(setSDKListener());
+    protected void onDestroy() {
+        MachtalkSDK.getInstance().removeSdkListener(baseListener);
+        super.onDestroy();
+        System.gc();
+    }
+
+    class BaseListener extends MachtalkSDKListener {
+        @Override
+        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
+            super.onServerConnectStatusChanged(scs);
+            if (scs == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
+                logoutAndRelogin();
+                return;
+            }
+        }
+    }
+
+    protected void logoutAndRelogin() {
+
+        //加入其它操作
+
+        BaseActivity.this.finish();
     }
 }

@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import org.xutils.common.util.LogUtil;
 
@@ -62,5 +61,23 @@ public class NetworkUtil {
             return ssid;
         }
         return "";
+    }
+
+    /**
+     * 判断网络是否可用
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isNetworkConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.
+                    getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            if (mNetworkInfo != null && mNetworkInfo.isAvailable()) {
+                return mNetworkInfo.isConnected();
+            }
+        }
+        return false;
     }
 }

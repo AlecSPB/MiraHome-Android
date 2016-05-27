@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.util.List;
 
@@ -66,13 +66,13 @@ public class YAxisView extends View {
     }
 
     private void initView() {
-        xBottom = CommonUtils.dp2px(getContext(), 10);
-        ySpace = CommonUtils.dp2px(getContext(), 20);
-        yRight = CommonUtils.dp2px(getContext(), 50);
-        yLeft = CommonUtils.dp2px(getContext(), 30);
-        lineSize = CommonUtils.dp2px(getContext(), 10);
-        tvHeight = CommonUtils.dp2px(this.getContext(), 10);
-        tvWidth = CommonUtils.dp2px(this.getContext(), 10);
+        xBottom = MUtils.dp2px(getContext(), 10);
+        ySpace = MUtils.dp2px(getContext(), 20);
+        yRight = MUtils.dp2px(getContext(), 50);
+        yLeft = MUtils.dp2px(getContext(), 30);
+        lineSize = MUtils.dp2px(getContext(), 10);
+        tvHeight = MUtils.dp2px(this.getContext(), 10);
+        tvWidth = MUtils.dp2px(this.getContext(), 10);
 
         commColor = getResources().getColor(R.color.colorWhite50);
 
@@ -80,7 +80,7 @@ public class YAxisView extends View {
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.FILL);
-        linePaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 1));
+        linePaint.setStrokeWidth(MUtils.dp2px(getContext(), 1));
         linePaint.setColor(commColor);
 
         textPaint = new TextPaint();
@@ -132,7 +132,7 @@ public class YAxisView extends View {
      */
     private void drawText(Canvas canvas, String text, int left, int top) {
         targetRect = new Rect(left, top - tvHeight, left + tvWidth, top + tvHeight);
-        commonPaint.setTextSize(CommonUtils.sp2px(getContext(), 10));
+        commonPaint.setTextSize(MUtils.sp2px(getContext(), 10));
         commonPaint.setColor(Color.TRANSPARENT);
         canvas.drawRect(targetRect, commonPaint);
         commonPaint.setColor(commColor);

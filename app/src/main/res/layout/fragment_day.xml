@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <include
@@ -46,7 +46,7 @@
                     android:layout_centerInParent="true"
                     android:text="74"
                     android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_total_point" />
+                    android:textSize="@dimen/text_dimen_168pt" />
             </RelativeLayout>
 
             <ImageView
@@ -81,7 +81,7 @@
                     android:layout_alignParentLeft="true"
                     android:text="Sleep Duration:5h10m"
                     android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_dimen_18" />
+                    android:textSize="@dimen/text_dimen_28pt" />
 
                 <TextView
                     android:id="@+id/tv_sleep_range"
@@ -90,7 +90,7 @@
                     android:layout_alignParentRight="true"
                     android:text="24:00-05:10"
                     android:textColor="@color/colorPurple"
-                    android:textSize="@dimen/text_dimen_18" />
+                    android:textSize="@dimen/text_dimen_28pt" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -119,7 +119,7 @@
                         android:layout_marginTop="10dp"
                         android:text="Deep sleep"
                         android:textColor="@color/colorWhite"
-                        android:textSize="@dimen/text_dimen_14" />
+                        android:textSize="@dimen/text_dimen_24pt" />
 
                 </LinearLayout>
 
@@ -148,7 +148,7 @@
                             android:layout_marginTop="10dp"
                             android:text="Light sleep"
                             android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/text_dimen_14" />
+                            android:textSize="@dimen/text_dimen_24pt" />
 
                     </LinearLayout>
 
@@ -172,7 +172,7 @@
                             android:layout_marginTop="10dp"
                             android:text="REM"
                             android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/text_dimen_14" />
+                            android:textSize="@dimen/text_dimen_24pt" />
 
                     </LinearLayout>
                 </RelativeLayout>
@@ -197,7 +197,7 @@
                         android:layout_marginTop="10dp"
                         android:text="Wake-up"
                         android:textColor="@color/colorWhite"
-                        android:textSize="@dimen/text_dimen_14" />
+                        android:textSize="@dimen/text_dimen_24pt" />
 
                 </LinearLayout>
             </RelativeLayout>

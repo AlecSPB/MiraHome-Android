@@ -23,7 +23,7 @@
         android:orientation="horizontal">
 
 
-        <com.mooring.mh.views.CustomImageView.ZoomCircleView
+        <com.mooring.mh.views.CircleImgView.ZoomCircleView
             android:id="@+id/circleImg_left"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -34,7 +34,7 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content" />
 
-        <com.mooring.mh.views.CustomImageView.ZoomCircleView
+        <com.mooring.mh.views.CircleImgView.ZoomCircleView
             android:id="@+id/circleImg_right"
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -43,7 +43,7 @@
 
     </LinearLayout>
 
-    <com.mooring.mh.views.CustomImageView.CircleImageView
+    <com.mooring.mh.views.CircleImgView.CircleImageView
         android:id="@+id/circleImg_middle"
         android:layout_width="50dp"
         android:layout_height="50dp"

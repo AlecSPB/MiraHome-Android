@@ -1,6 +1,7 @@
 package com.mooring.mh.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -18,8 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
+import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.UserListAdapter;
+import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.fragment.ControlFragment;
@@ -28,8 +32,9 @@ import com.mooring.mh.fragment.TimingFragment;
 import com.mooring.mh.fragment.WeatherFragment;
 import com.mooring.mh.model.UserHeadInfo;
 import com.mooring.mh.utils.MConstants;
-import com.mooring.mh.views.CustomImageView.CircleImageView;
-import com.mooring.mh.views.CustomImageView.ZoomCircleView;
+import com.mooring.mh.views.CircleImgView.CircleImageView;
+import com.mooring.mh.views.CircleImgView.ZoomCircleView;
+import com.mooring.mh.views.CustomToggle;
 
 import org.xutils.DbManager;
 import org.xutils.x;
@@ -61,16 +66,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ControlFragment controlFragment;  //ControlFragment
     private ParameterFragment parameterFragment;  //ParameterFragment
     private TimingFragment timingFragment;  //TimingFragment
-
+    /**
+     * fragment 标签ID
+     */
     public final int WEATHER = 1;
     public final int CONTROL = 2;
     public final int PARAMETER = 3;
     public final int TIMING = 4;
-    private int currLocation = MConstants.LEFT_USER;//当前用户的位置
-    private User currUser;//当前展示User
-    private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
-    private DbManager dbManager;
-    private OnSwitchUserListener listener;
     /**
      * ---------侧边滑动栏相关--------
      */
@@ -81,6 +83,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private View layout_connect_mooring;//重新连接view
     private ImageView imgView_to_connect;//点击链接图片
     private View layout_connected_device;//一连上设备
+    private TextView tv_fahrenheit;//华氏度
+    private CustomToggle toggle_temp;//开关
+    private TextView tv_celsius;//设置
     private ZoomCircleView zcView_left; // 左边用户头像
     private ImageView imgView_delete_left;//左边删除用户图标
     private ZoomCircleView zcView_right;//右边用户头像
@@ -95,23 +100,48 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
     private List<UserHeadInfo> dataList;//用户list
     private UserListAdapter adapter;//横向滑动适配器
+    /**
+     * 系统变量相关
+     */
+    private int currLocation = MConstants.LEFT_USER;//当前用户的位置
+    private User currUser;//当前展示User
+    private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
+    private DbManager dbManager;
+    private OnSwitchUserListener listener;
+    private SharedPreferences.Editor editor;
+    private BaseListener baseListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        editor = InitApplicationHelper.sp.edit();
+
         fragmentManager = getSupportFragmentManager();
 
-        initView();
-
-        initData();
-
-        setTabSelection(CONTROL);
+        baseListener = new BaseListener();
+        MachtalkSDK.getInstance().setContext(this);
 
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
         dbManager = x.getDb(dao);
 
+        initView();
+        initData();
+
+        setTabSelection(CONTROL);
+
+    }
+
+    class BaseListener extends MachtalkSDKListener {
+        @Override
+        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
+            super.onServerConnectStatusChanged(serverConnStatus);
+            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
+                MainActivity.this.finish();
+                return;
+            }
+        }
     }
 
     /**
@@ -154,7 +184,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         /**
          * -----------侧边menu-------------
          */
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.dl_left);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerLayout);
         activity_menu = findViewById(R.id.activity_menu);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);//开启关闭禁止模式
         imgView_switch_user = (ImageView) findViewById(R.id.imgView_switch_user);
@@ -168,6 +198,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         layout_device = findViewById(R.id.layout_device);
         tv_not_connected = (TextView) findViewById(R.id.tv_not_connected);
         tv_connect_health = (TextView) findViewById(R.id.tv_connect_health);
+        tv_fahrenheit = (TextView) findViewById(R.id.tv_fahrenheit);
+        toggle_temp = (CustomToggle) findViewById(R.id.toggle_temp);
+        tv_celsius = (TextView) findViewById(R.id.tv_celsius);
         tv_about_text = (TextView) findViewById(R.id.tv_about_text);
         tv_suggestions_text = (TextView) findViewById(R.id.tv_suggestions_text);
         tv_login_out = (TextView) findViewById(R.id.tv_login_out);
@@ -187,6 +220,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         tv_login_out.setOnClickListener(this);
         activity_menu.setOnClickListener(this);
         layout_device.setOnClickListener(this);
+
+        toggle_temp.setChecked(true);
+        toggle_temp.setOnCheckedChange(new CustomToggle.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View v, boolean isChecked) {
+                toggle_temp.setChecked(isChecked);
+                if (isChecked) {
+                    tv_celsius.setTextColor(getResources().getColor(R.color.colorPurple));
+                    tv_fahrenheit.setTextColor(getResources().getColor(R.color.colorWhite));
+                } else {
+                    tv_celsius.setTextColor(getResources().getColor(R.color.colorWhite));
+                    tv_fahrenheit.setTextColor(getResources().getColor(R.color.colorPurple));
+                }
+                editor.putBoolean(MConstants.TEMPERATURE_UNIT, isChecked).commit();
+                MachtalkSDK.getInstance().operateDevice(
+                        InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, ""),
+                        new String[]{MConstants.ATTR_LEFT_TARGET_TEMP},
+                        new String[]{isChecked ? "30" : "80"});
+            }
+        });
 
     }
 
@@ -208,10 +261,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 Intent it = new Intent();
                 if (position != dataList.size() - 1) {
                     it.setClass(MainActivity.this, UserInfoActivity.class);
+                    it.putExtra(MConstants.ENTRANCE_FLAG, "edit");
                     startActivityForResult(it, MConstants.USER_INFO_REQUEST);
                 } else {
                     //添加用户
-                    it.setClass(MainActivity.this, AddUserActivity.class);
+                    it.setClass(MainActivity.this, UserInfoActivity.class);
+                    it.putExtra(MConstants.ENTRANCE_FLAG, "add");
                     startActivityForResult(it, MConstants.ADD_USER_REQUEST);
                 }
             }
@@ -428,6 +483,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 Toast.makeText(this, "layout_device", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity_menu:
+                //不做任何处理,目的是消费menu上层的点击事件
                 break;
         }
     }
@@ -473,6 +529,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+        MachtalkSDK.getInstance().setContext(this);
+        MachtalkSDK.getInstance().setSdkListener(baseListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MachtalkSDK.getInstance().removeSdkListener(baseListener);
     }
 
     @Override

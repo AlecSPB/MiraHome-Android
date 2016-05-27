@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 
 /**
@@ -27,6 +26,11 @@ public class NotFindDeviceActivity extends BaseActivity {
 
     @Override
     protected void initActivity() {
+
+    }
+
+    @Override
+    protected void initView() {
         imgView_retry_connect = (ImageView) findViewById(R.id.imgView_retry_connect);
         tv_act_skip = (TextView) findViewById(R.id.tv_act_skip);
         imgView_retry_connect.setOnClickListener(this);
@@ -41,10 +45,5 @@ public class NotFindDeviceActivity extends BaseActivity {
         } else if (v.getId() == R.id.tv_act_skip) {
         }
         NotFindDeviceActivity.this.finish();
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 }

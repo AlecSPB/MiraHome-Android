@@ -15,3 +15,28 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+#------------------高德地图定位混淆-----------------------
+#-keep class com.amap.api.location.**{*;}
+
+#-keep class com.amap.api.fence.**{*;}
+
+#-keep class com.autonavi.aps.amapapi.model.**{*;}
+
+#------------------xutils3.+的混淆-----------------------
+#-keep public class org.xutils.** {
+#   public protected ;
+#}
+#-keep public interface org.xutils.* {
+#   public protected ;
+#}
+#-keepclassmembers class * extends org.xutils.* {
+#   public protected ;
+#}
+#-keepclassmembers class * extends org.xutils.http.RequestParams {}
+#-keepclassmembers class * {
+#   void (android.view.View);
+#   ** Click(...);
+#   ** *Event(...);
+#}
+#-keepattributes Exceptions,InnerClasses,Signature,Deprecated,Annotation,Synthetic,EnclosingMethod

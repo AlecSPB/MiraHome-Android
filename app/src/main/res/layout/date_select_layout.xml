@@ -24,7 +24,7 @@
             android:layout_centerInParent="true"
             android:text="2015 11 11"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_18" />
+            android:textSize="@dimen/text_dimen_28pt" />
 
         <ImageView
             android:id="@+id/imgView_right"

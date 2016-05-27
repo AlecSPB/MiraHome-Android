@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Device;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.DeviceListAdapter;
@@ -19,7 +18,7 @@ import java.util.List;
 
 /**
  * 已存在设备列表
- * <p>
+ * <p/>
  * Created by Will on 16/5/13.
  */
 public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerItemClickListener {
@@ -52,11 +51,10 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     @Override
     protected void initActivity() {
 
-        initView();
-
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         tv_act_skip = (TextView) findViewById(R.id.tv_act_skip);
         imgView_retry_connect = (ImageView) findViewById(R.id.imgView_retry_connect);
         tv_act_skip.setVisibility(View.VISIBLE);
@@ -106,11 +104,6 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                         deviceList.get(0).getId()).commit();
                 break;
         }
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 
     @Override

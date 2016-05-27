@@ -1,4 +1,4 @@
-package com.mooring.mh.views.CustomImageView;
+package com.mooring.mh.views.CircleImgView;
 
 import android.content.Context;
 import android.content.res.TypedArray;

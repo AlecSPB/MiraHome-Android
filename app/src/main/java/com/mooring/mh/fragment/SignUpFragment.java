@@ -6,11 +6,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.VerifyPhoneActivity;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 
 /**
  * 注册
@@ -38,6 +37,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
+    protected void initFragment() {
+    }
+
+    @Override
     protected void initView() {
 
         edit_phone = (EditText) rootView.findViewById(R.id.edit_phone);
@@ -56,16 +59,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         imgView_QQ.setOnClickListener(this);
         imgView_facebook.setOnClickListener(this);
 
-    }
-
-    @Override
-    protected void lazyLoad() {
-
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 
     /**
@@ -94,11 +87,11 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             setError(getResources().getString(R.string.error_login_psw_empty));
             return false;
         }
-        if (!(CommonUtils.isMobileNO(phone) || CommonUtils.isEmail(phone))) {
+        if (!(MUtils.isMobileNO(phone) || MUtils.isEmail(phone))) {
             setError(getResources().getString(R.string.error_with_num_email));
             return false;
         }
-        if (!CommonUtils.checkPsw(psw)) {
+        if (!MUtils.checkPsw(psw)) {
             setError(getResources().getString(R.string.error_psw_format));
             return false;
         }
@@ -141,4 +134,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 break;
         }
     }
+
+
 }

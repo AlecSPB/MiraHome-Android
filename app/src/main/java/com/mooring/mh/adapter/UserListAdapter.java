@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.model.UserHeadInfo;
-import com.mooring.mh.views.CustomImageView.CircleImageView;
+import com.mooring.mh.views.CircleImgView.CircleImageView;
 
 import java.util.List;
 

@@ -2,18 +2,23 @@ package com.mooring.mh.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.mooring.mh.app.InitApplicationHelper;
 
+import org.xutils.common.util.FileUtil;
 import org.xutils.http.RequestParams;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,7 +33,10 @@ import java.util.regex.Pattern;
  * <p/>
  * Created by Will on 16/3/25.
  */
-public class CommonUtils {
+public class MUtils {
+
+    public static File tempFile;//临时文件,用于相机或相册的图片存储
+    public static String tempFileName = "";//对应相机或相册文件的文件全路径
 
     /**
      * dp转换成px单位
@@ -118,61 +126,6 @@ public class CommonUtils {
     }
 
     /**
-     * 使用SharedPreferences存储String值
-     *
-     * @param name
-     * @param value
-     */
-    public static void addSP(String name, String value) {
-        if (name != null && value != null) {
-            SharedPreferences.Editor editor = InitApplicationHelper.sp.edit();
-            editor.putString(name, value);
-            editor.commit();
-        }
-    }
-
-    /**
-     * 使用SharedPreferences存储int值
-     *
-     * @param name
-     * @param value
-     */
-    public static void addSP(String name, int value) {
-        if (name != null) {
-            SharedPreferences.Editor editor = InitApplicationHelper.sp.edit();
-            editor.putInt(name, value);
-            editor.commit();
-        }
-    }
-
-    /**
-     * 获取指定key和defValue的SharedPreferences值
-     *
-     * @param key
-     * @param defValue
-     * @return
-     */
-    public static String getSP(String key, String defValue) {
-        if (key != null && !"".equals(key)) {
-            return InitApplicationHelper.sp.getString(key, defValue);
-        }
-        return null;
-    }
-
-    /**
-     * 获取指定key的SharedPreferences值
-     *
-     * @param key
-     * @return
-     */
-    public static String getSP(String key) {
-        if (key != null && !"".equals(key)) {
-            return InitApplicationHelper.sp.getString(key, "");
-        }
-        return null;
-    }
-
-    /**
      * 提示
      *
      * @param c
@@ -190,7 +143,8 @@ public class CommonUtils {
      */
     public static RequestParams getBaseParams(String uri) {
         RequestParams params = new RequestParams(MConstants.SERVICE_URL + uri);
-        params.addBodyParameter("token", getSP("token"));
+        params.addBodyParameter(MConstants.SP_KEY_TOKEN,
+                InitApplicationHelper.sp.getString(MConstants.SP_KEY_TOKEN, ""));
         return params;
     }
 
@@ -369,5 +323,139 @@ public class CommonUtils {
         return (temperature - 32) * 5 / 9;
     }
 
+    /**
+     * 相机获取图片
+     *
+     * @param mContext
+     * @return 图片路径
+     */
+    public static void selectPicFromCamera(Activity mContext) {
+        if (!FileUtil.existsSdcard()) {
+            showToast(mContext, "SD卡不存在，不能拍照");
+            return;
+        }
+        getTempFile(mContext);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+        mContext.startActivityForResult(intent, MConstants.CAMERA_PHOTO);
+    }
 
+    /**
+     * 相册获取图片
+     *
+     * @param mContext
+     */
+    public static void selectPicFromGallery(Activity mContext) {
+        try {
+            getTempFile(mContext);
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI, "image/*");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+            mContext.startActivityForResult(intent, MConstants.GALLERY_PHOTO);
+        } catch (ActivityNotFoundException e) {
+            showToast(mContext, "没有找到相册");
+        }
+    }
+
+    /**
+     * 剪裁图片
+     */
+    public static void cropImg(Activity activity, Uri uri) {
+        // 裁剪图片意图
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // 裁剪框的比例，1：1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // 裁剪后输出图片的尺寸大小
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
+        // 图片格式
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true);// 取消人脸识别
+        intent.putExtra("return-data", true);// true:不返回uri，false：返回uri
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+        activity.startActivityForResult(intent, MConstants.CROP_PHOTO);
+    }
+
+    /**
+     * 获取文件路径
+     *
+     * @param context
+     * @return android/data/...
+     */
+    public static String getFilePath(Context context, int type) {
+        String path;
+        if (FileUtil.existsSdcard()) {
+            path = context.getExternalFilesDir(null).getPath();
+        } else {
+            path = context.getFilesDir().getPath();
+        }
+        switch (type) {
+            case 1:
+                path += File.separator + "userHead" + File.separator;
+                break;
+            case 2:
+                path += File.separator + "dbFile" + File.separator;
+                break;
+        }
+
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        return path;
+    }
+
+    /**
+     * 删除非指定名称以外的文件
+     *
+     * @param file
+     * @param name
+     */
+    public static void deleteNonNameFile(File file, String name) {
+        if (file.exists()) { // 判断文件是否存在
+            if (file.isFile() && !file.getName().equals(name)) { // 判断是否是文件且是否是指定名称
+                file.delete(); // delete()方法 你应该知道 是删除的意思;
+            } else if (file.isDirectory()) { // 否则如果它是一个目录
+                File files[] = file.listFiles(); // 声明目录下所有的文件 files[];
+                for (int i = 0; i < files.length; i++) { // 遍历目录下所有的文件
+                    deleteNonNameFile(files[i], name); // 把每个文件 用这个方法进行迭代
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除非指定名称以外的文件
+     *
+     * @param file
+     * @param name
+     */
+    public static void deleteFileWithName(File file, String name) {
+        if (file.exists()) { // 判断文件是否存在
+            if (file.isFile() && file.getName().equals(name)) { // 判断是否是文件且是否是指定名称
+                file.delete(); // delete()方法 你应该知道 是删除的意思;
+            } else if (file.isDirectory()) { // 否则如果它是一个目录
+                File files[] = file.listFiles(); // 声明目录下所有的文件 files[];
+                for (int i = 0; i < files.length; i++) { // 遍历目录下所有的文件
+                    deleteNonNameFile(files[i], name); // 把每个文件 用这个方法进行迭代
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取temp文件
+     *
+     * @param context
+     */
+    public static void getTempFile(Context context) {
+        if ("".equals(tempFileName)) {
+            String path = getFilePath(context, 1);
+            tempFileName = path + "user_head_photo" + ".jpg";
+            tempFile = new File(tempFileName);
+        }
+    }
 }

@@ -269,6 +269,8 @@ public class MConstants {
     public final static String SP_KEY_USERNAME = "username";
     public final static String SP_KEY_CURRUSERS = "currUsers";
     public final static String SP_KEY_PASSWORD = "password";
+    public final static String SP_KEY_TOKEN = "token";
+    public final static String SP_KEY_FIRST_START = "appFirstStart";
     public final static String DEVICE_ID = "deviceId";
     public final static String DRYING_START_TIME = "drying_start_time";
     public final static String DRYING_TIMES = "drying_times";
@@ -277,6 +279,7 @@ public class MConstants {
     public final static String RIGHT_TARGET_TEMP = "right_target_temp";
     public final static String FIRST_ADD_DEVICE = "first_add_device";
     public final static String ENTRANCE_FLAG = "entrance_flag";
+    public final static String TEMPERATURE_UNIT = "temperature_unit";
 
     /**
      * 设备属性值
@@ -376,9 +379,33 @@ public class MConstants {
      */
     public static final int CONNECTED_SUCCESS = 0X21;
 
+    /**
+     * 跳转照相机
+     */
+    public static final int CAMERA_PHOTO = 0X22;
 
     /**
-     * 工具类常亮
+     * 跳转相册
+     */
+    public static final int GALLERY_PHOTO = 0X23;
+
+    /**
+     * 跳转相册
+     */
+    public static final int CROP_PHOTO = 0X24;
+
+    /**
+     * 位置权限
+     */
+    public static final int PERMISSIONS_LOCATION = 0X25;
+
+    /**
+     * 文件读写权限
+     */
+    public static final int PERMISSIONS_STORAGE = 0X26;
+
+    /**
+     * 工具类常量
      */
     public final static int DEGREES_C = 0X111;//摄氏度
     public final static int DEGREES_F = 0X112;//华氏度

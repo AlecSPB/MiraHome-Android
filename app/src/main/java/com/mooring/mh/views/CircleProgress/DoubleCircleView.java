@@ -13,7 +13,7 @@ import android.view.View;
 
 import com.mooring.mh.R;
 import com.mooring.mh.model.SleepTimeInfo;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.util.List;
 
@@ -38,8 +38,8 @@ public class DoubleCircleView extends View {
     private int keStop;//刻度结束
     private float startAngle = 0.0f;//环形起始角度
     private RectF outerRect = new RectF();
-    private float delta = CommonUtils.dp2px(getContext(), 45);//外环
-    private float deltaInn = CommonUtils.dp2px(getContext(), 70);//内环
+    private float delta = MUtils.dp2px(getContext(), 45);//外环
+    private float deltaInn = MUtils.dp2px(getContext(), 70);//内环
 
     public DoubleCircleView(Context context) {
         this(context, null);
@@ -61,16 +61,16 @@ public class DoubleCircleView extends View {
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 2));
+        linePaint.setStrokeWidth(MUtils.dp2px(getContext(), 2));
         linePaint.setColor(Color.WHITE);
 
         ringPaint = new Paint();
         ringPaint.setStyle(Paint.Style.STROKE);
         ringPaint.setAntiAlias(true);
-        ringPaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 6));
+        ringPaint.setStrokeWidth(MUtils.dp2px(getContext(), 6));
 
-        keStart = CommonUtils.dp2px(getContext(), 35);
-        keStop = CommonUtils.dp2px(getContext(), 55);
+        keStart = MUtils.dp2px(getContext(), 35);
+        keStop = MUtils.dp2px(getContext(), 55);
     }
 
     @Override

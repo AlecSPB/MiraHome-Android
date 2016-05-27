@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:text="数据获取失败"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_18" />
+        android:textSize="@dimen/text_dimen_34pt" />
 
 </LinearLayout>

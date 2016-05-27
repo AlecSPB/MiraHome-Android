@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
+
 import org.xutils.x;
 
 /**
@@ -38,6 +41,13 @@ public class InitApplicationHelper {
 
         //用来更换app key,用来覆盖AndroidManifest中
 //        AMapLocationClient.setApiKey("921d6e61c0c6b31c2772adb34bb63e43");
+
+        //设定Log输出等级以及输出到本地文件
+        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, true);
+
+        MachtalkSDK.getInstance().startSDK(mApp, null);
+
+
     }
 
 }

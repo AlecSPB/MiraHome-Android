@@ -8,10 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -66,14 +65,10 @@ public class VerifyPhoneActivity extends BaseActivity {
         if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
             psw = it.getStringExtra(MConstants.SP_KEY_PASSWORD);
         }
-
-        initView();
-
-        initData();
-
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         tv_verify_phone = (TextView) findViewById(R.id.tv_verify_phone);
         edit_verify_code = (EditText) findViewById(R.id.edit_verify_code);
         tv_wait_times = (TextView) findViewById(R.id.tv_wait_times);
@@ -83,6 +78,8 @@ public class VerifyPhoneActivity extends BaseActivity {
 
         tv_verify_send.setOnClickListener(this);
         tv_verify_confirm.setOnClickListener(this);
+
+        initData();
     }
 
     private void initData() {
@@ -156,13 +153,13 @@ public class VerifyPhoneActivity extends BaseActivity {
 
         changeIdentifyButton();
 
-        RequestParams params = CommonUtils.getBaseParams(MConstants.SMS_CODE);
+        RequestParams params = MUtils.getBaseParams(MConstants.SMS_CODE);
         params.addParameter("mobile_phone", phone);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null) {
-                    CommonUtils.showToast(VerifyPhoneActivity.this, result.toString());
+                    MUtils.showToast(VerifyPhoneActivity.this, result.toString());
 
                     //成功之后进行保存验证码  sms_code
                 }
@@ -190,7 +187,7 @@ public class VerifyPhoneActivity extends BaseActivity {
      */
     private void executeSignUp() {
 
-        RequestParams params = CommonUtils.getBaseParams(MConstants.MOBILE_PHONE_USER);
+        RequestParams params = MUtils.getBaseParams(MConstants.MOBILE_PHONE_USER);
         params.addParameter("password", psw);
         params.addHeader("mobile_phone", phone);
         params.addParameter("sms_code", sms_code);
@@ -229,7 +226,7 @@ public class VerifyPhoneActivity extends BaseActivity {
      * 执行重置密码
      */
     private void executeResetPassword() {
-        RequestParams params = CommonUtils.getBaseParams(MConstants.SEND_RESET_PASSWORD_SMS_CODE);
+        RequestParams params = MUtils.getBaseParams(MConstants.SEND_RESET_PASSWORD_SMS_CODE);
         params.addParameter("mobile_phone", phone);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
@@ -298,10 +295,5 @@ public class VerifyPhoneActivity extends BaseActivity {
 //                }
                 break;
         }
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 }

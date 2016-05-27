@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,19 +88,19 @@ public class MyChartView extends View {
 
     private void initView() {
 
-        xSpace = CommonUtils.dp2px(getContext(), 30);
-        ySpace = CommonUtils.dp2px(getContext(), 20);
-        circleSize = CommonUtils.dp2px(getContext(), 8);
-        xLeft = CommonUtils.dp2px(getContext(), 10);
-        xBottom = CommonUtils.dp2px(getContext(), 10);
-        xTick = CommonUtils.dp2px(getContext(), 5);
+        xSpace = MUtils.dp2px(getContext(), 30);
+        ySpace = MUtils.dp2px(getContext(), 20);
+        circleSize = MUtils.dp2px(getContext(), 8);
+        xLeft = MUtils.dp2px(getContext(), 10);
+        xBottom = MUtils.dp2px(getContext(), 10);
+        xTick = MUtils.dp2px(getContext(), 5);
 
         mPath = new Path();
 
         linePaint = new Paint();
         linePaint.setColor(lineColor);
         linePaint.setAntiAlias(true);
-        linePaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 2));
+        linePaint.setStrokeWidth(MUtils.dp2px(getContext(), 2));
         linePaint.setStyle(Paint.Style.STROKE);
 
         areaPaint = new Paint();
@@ -121,7 +121,7 @@ public class MyChartView extends View {
         axisPaint = new Paint();
         axisPaint.setAntiAlias(true);
         axisPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        axisPaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 1));
+        axisPaint.setStrokeWidth(MUtils.dp2px(getContext(), 1));
         axisPaint.setColor(commColor);
 
         dataPaint = new TextPaint();

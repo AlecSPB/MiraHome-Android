@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorMainBg"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
+        android:layout_height="?attr/actionBarSize">
 
         <ImageView
             android:id="@+id/imgView_back"
@@ -25,6 +25,13 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_shadow" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/more_viewPager"

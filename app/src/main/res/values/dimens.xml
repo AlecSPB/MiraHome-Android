@@ -2,16 +2,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="tab_max_width">150dp</dimen>
-
-    <dimen name="text_total_point">78sp</dimen>
-    <dimen name="text_dimen_14">14sp</dimen>
-    <dimen name="text_dimen_16">16sp</dimen>
-    <dimen name="text_dimen_18">18sp</dimen>
-    <dimen name="text_dimen_22">22sp</dimen>
-    <dimen name="text_dimen_24">24sp</dimen>
-    <dimen name="text_dimen_28">28sp</dimen>
-    <dimen name="text_dimen_36">36sp</dimen>
 
     <!--系统全局全部字体大小-->
     <dimen name="text_dimen_18pt">10sp</dimen>
@@ -22,9 +12,8 @@
     <dimen name="text_dimen_60pt">38sp</dimen>
     <dimen name="text_dimen_142pt">71sp</dimen>
     <dimen name="text_dimen_168pt">84sp</dimen>
+    <dimen name="tab_max_width">150dp</dimen>
 
-
-    <!--WheelPicker通用尺寸-->
     <!--item之间间距-->
     <dimen name="WheelItemSpace">8dp</dimen>
     <!--WheelPicker的padding-->
@@ -34,6 +23,6 @@
     <!--标志  例如"年"的TextSize-->
     <dimen name="WheelLabelTextSize">12sp</dimen>
 
-    <dimen name="TextSizeLarge">28sp</dimen>
+    <dimen name="TextSizeLarge">30sp</dimen>
     <dimen name="ItemSpaceLarge">30dp</dimen>
 </resources>

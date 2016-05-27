@@ -36,7 +36,7 @@ public class CustomToggle extends View implements View.OnClickListener {
     public CustomToggle(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        setOnClickListener(this);
+        this.setOnClickListener(this);
         toggle_on = BitmapFactory.decodeResource(getResources(), R.drawable.btn_toggle_on);
         toggle_off = BitmapFactory.decodeResource(getResources(), R.drawable.btn_toggle_off);
         bgBitmap = toggle_off;

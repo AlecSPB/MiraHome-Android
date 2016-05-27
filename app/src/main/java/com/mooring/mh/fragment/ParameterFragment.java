@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
-import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.DeviceStatus;
 import com.machtalk.sdk.domain.DvidStatus;
@@ -18,8 +17,8 @@ import com.mooring.mh.R;
 import com.mooring.mh.activity.MainActivity;
 import com.mooring.mh.activity.ParameterDetailActivity;
 import com.mooring.mh.activity.SetWifiActivity;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 
 import org.xutils.common.util.LogUtil;
 
@@ -54,7 +53,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     private TextView tv_bed_temperature;
     private TextView tv_light;
     private TextView tv_noise;
-    private BaseListener listener;
+    private MSDKListener msdkListener;
 
     private int currUsers;
     private String deviceId;
@@ -67,12 +66,15 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    protected void initView() {
-
-        listener = new BaseListener();
+    protected void initFragment() {
+        msdkListener = new MSDKListener();
 
         currUsers = sp.getInt(MConstants.SP_KEY_CURRUSERS, 0);
         deviceId = sp.getString(MConstants.DEVICE_ID, "");
+    }
+
+    @Override
+    protected void initView() {
 
         layout_parameter = rootView.findViewById(R.id.layout_parameter);
         layout_no_device = rootView.findViewById(R.id.layout_no_device);
@@ -120,20 +122,9 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         tv_noise.setAnimation(alphaAnimation);
         alphaAnimation.start();
 
-        //获取当前Device的详细信息
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+//        //获取当前Device的详细信息
+//        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
 
-    }
-
-    @Override
-    protected void lazyLoad() {
-        //判断用户是否以切换
-
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return listener;
     }
 
     @Override
@@ -191,36 +182,10 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        //每次跳转回来执行一次请求,防止设备断开
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
-        LogUtil.v(" 此时的listener是否为null  " + (listener == null));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (alphaAnimation != null) {
-            alphaAnimation.cancel();
-            alphaAnimation = null;
-        }
-    }
-
     /**
      * 自定义回调监听
      */
-    class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                context.finish();
-                return;
-            }
-        }
-
+    class MSDKListener extends MachtalkSDKListener {
         @Override
         public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
             super.onQueryDeviceStatus(result, deviceStatus);
@@ -236,7 +201,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
                 layout_parameter.setVisibility(View.VISIBLE);
                 layout_no_device.setVisibility(View.GONE);
             } else {
-                CommonUtils.showToast(context, getResources().getString(R.string.device_not_online));
+                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
                 layout_parameter.setVisibility(View.GONE);
                 layout_no_device.setVisibility(View.VISIBLE);
             }
@@ -320,5 +285,41 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
                 }
             }
         }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        } else {
+            MachtalkSDK.getInstance().setContext(context);
+            MachtalkSDK.getInstance().setSdkListener(msdkListener);
+            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MachtalkSDK.getInstance().setContext(context);
+        MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        //每次跳转回来执行一次请求,防止设备断开
+//        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (alphaAnimation != null) {
+            alphaAnimation.cancel();
+            alphaAnimation = null;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
     }
 }

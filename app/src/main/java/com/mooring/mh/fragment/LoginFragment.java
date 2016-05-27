@@ -1,14 +1,12 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
-import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -17,8 +15,8 @@ import com.mooring.mh.activity.MainActivity;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
@@ -49,8 +47,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     private String userPwd;//密码
     private DbManager dbManager;
 
-    private MySDKListener listener;
-    private SharedPreferences.Editor editor;
+    private MSDKListener msdkListener;
 
     @Override
     protected int getLayoutId() {
@@ -58,10 +55,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     }
 
     @Override
-    protected void initView() {
+    protected void initFragment() {
+        msdkListener = new MSDKListener();
+    }
 
-        editor = InitApplicationHelper.sp.edit();
-        listener = new MySDKListener();
+    @Override
+    protected void initView() {
 
         edit_userName = (EditText) rootView.findViewById(R.id.edit_phone);
         edit_userPwd = (EditText) rootView.findViewById(R.id.edit_psw);
@@ -88,16 +87,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
     }
 
-    class MySDKListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                context.finish();
-                return;
-            }
-        }
-
+    class MSDKListener extends MachtalkSDKListener {
         @Override
         public void onUserLogin(Result result, String user) {
             int success = Result.FAILED;
@@ -120,20 +110,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 if (errMsg == null) {
                     errMsg = getResources().getString(R.string.network_exception);
                 }
-                CommonUtils.showToast(context, errMsg);
+                MUtils.showToast(context, errMsg);
             }
         }
-    }
-
-    @Override
-    protected void lazyLoad() {
-
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-
-        return listener;
     }
 
     /**
@@ -146,7 +125,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
 //        MachtalkSDK.getInstance().userLogin("18136093612", "123456", null);
 
-        /*RequestParams params = CommonUtils.getBaseParams(MConstants.LOGIN_BY_MOBILE_PHONE);
+        /*RequestParams params = MUtils.getBaseParams(MConstants.LOGIN_BY_MOBILE_PHONE);
         params.addParameter("mobile_userName", userName);
         params.addParameter("password", userPwd);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
@@ -154,9 +133,26 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             public void onSuccess(JSONObject result) {
                 if (result != null) {
 
+                    MUtils.showToast(context, result.optString("message"));
+
                     //登陆成功   检查本地是否有用户
 
-                    checkHasLocalUser();
+//                    checkHasLocalUser();
+
+                    JSONObject data = result.optJSONObject("data");
+                    if(data!=null){
+                        editor.putString(MConstants.SP_KEY_USERNAME, userName);
+                        editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
+                        editor.commit();
+
+                        LogUtil.i("store username: " + userName + " password: " + userPwd);
+
+                        startActivity(new Intent(context, MainActivity.class));
+                        context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                        context.finish();
+                    }else{
+                        MUtils.showToast(context, getResources().getString(R.string.network_exception));
+                    }
                 }
             }
 
@@ -175,6 +171,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 LogUtil.e("onFinished");
             }
         });*/
+
+//        editor.putString(MConstants.SP_KEY_USERNAME, userName);
+//        editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
+//        editor.commit();
+//
+//        LogUtil.i("store username: " + userName + " password: " + userPwd);
+//
+//        startActivity(new Intent(context, MainActivity.class));
+//        context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+//        context.finish();
 
     }
 
@@ -214,7 +220,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             setError(getResources().getString(R.string.error_login_psw_empty));
             return false;
         }
-        if (!(CommonUtils.isMobileNO(userName) || CommonUtils.isEmail(userName))) {
+        if (!(MUtils.isMobileNO(userName) || MUtils.isEmail(userName))) {
             setError(getResources().getString(R.string.error_with_num_email));
             return false;
         }
@@ -230,7 +236,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      * 第三方登陆
      */
     private void SSO() {
-        CommonUtils.showToast(context, CommonUtils.getSP("token"));
+        MUtils.showToast(context, InitApplicationHelper.sp.getString(MConstants.SP_KEY_TOKEN, ""));
     }
 
     @Override
@@ -267,5 +273,29 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 SSO();
                 break;
         }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        } else {
+            MachtalkSDK.getInstance().setContext(context);
+            MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MachtalkSDK.getInstance().setContext(context);
+        MachtalkSDK.getInstance().setSdkListener(msdkListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
     }
 }

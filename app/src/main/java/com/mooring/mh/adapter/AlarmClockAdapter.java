@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.AlarmDaySelectView;
 
 import java.util.List;
@@ -76,8 +76,8 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             final String smart = times.substring(11, 12);
             String clockSwitch = times.substring(12);
 
-            holder.tv_clock_time.setText(CommonUtils.ParsingTime(time));
-            holder.daySV_clock.setTvData(CommonUtils.ParsingDay(alarmDay));
+            holder.tv_clock_time.setText(MUtils.ParsingTime(time));
+            holder.daySV_clock.setTvData(MUtils.ParsingDay(alarmDay));
             holder.tglBtn_wake_up.setChecked("1".equals(smart));
             holder.tglBtn_clock_set.setChecked("1".equals(clockSwitch));
 

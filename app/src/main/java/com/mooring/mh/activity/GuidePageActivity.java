@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.GuideViewPagerAdapter;
 import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
 
 import org.json.JSONObject;
@@ -25,6 +24,8 @@ import org.xutils.x;
 import java.util.ArrayList;
 
 /**
+ * 导航页面
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class GuidePageActivity extends AppCompatActivity {
@@ -46,14 +47,20 @@ public class GuidePageActivity extends AppCompatActivity {
     // 定义开始按钮对象
     private TextView startBt;
 
+    //Editor 对象
+    private SharedPreferences.Editor editor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        editor = InitApplicationHelper.sp.edit();
+        editor.apply();
+
         setContentView(R.layout.activity_guidepage);
 
-        if ("".equals(CommonUtils.getSP("token"))) {
+        if ("".equals(InitApplicationHelper.sp.getString(MConstants.SP_KEY_TOKEN, ""))) {
             getToken();
         }
 
@@ -70,7 +77,7 @@ public class GuidePageActivity extends AppCompatActivity {
                 if (result != null) {
                     JSONObject data = result.optJSONObject("data");
                     String token = data.optString("token");
-                    CommonUtils.addSP("token", token);
+                    editor.putString(MConstants.SP_KEY_TOKEN, token).apply();
                 }
             }
 
@@ -163,12 +170,10 @@ public class GuidePageActivity extends AppCompatActivity {
 
         @Override
         public void onPageScrollStateChanged(int arg0) {
-
         }
 
         @Override
         public void onPageScrolled(int arg0, float arg1, int arg2) {
-
         }
     }
 
@@ -176,23 +181,12 @@ public class GuidePageActivity extends AppCompatActivity {
      * 相应按钮点击事件
      */
     private void startButton() {
-        SharedPreferences.Editor edit = InitApplicationHelper.sp.edit();
-        edit.putBoolean("appFirstStart", false);
-        edit.commit();
-        Intent intent = new Intent();
-        intent.setClass(GuidePageActivity.this, LoginAndSignUpActivity.class);
-        startActivity(intent);
+        //修改初次登陆
+        editor.putBoolean(MConstants.SP_KEY_FIRST_START, false).apply();
+
+        startActivity(new Intent(GuidePageActivity.this, LoginAndSignUpActivity.class));
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         this.finish();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
 }

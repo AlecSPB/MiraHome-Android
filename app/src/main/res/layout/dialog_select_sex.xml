@@ -13,7 +13,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:background="@color/colorPurple">
 
         <TextView
@@ -22,18 +22,18 @@
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:text="Male/Female"
+            android:text="@string/hint_sex"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_18" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
         <ImageView
             android:id="@+id/imgView_chose_confirm"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/ic_arrow" />
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_dialog_confirm" />
     </RelativeLayout>
 
 
@@ -41,20 +41,20 @@
         android:id="@+id/sex_choose_male"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorMainBg"
+        android:background="@color/color_day_select"
         android:gravity="center"
-        android:text="@string/male"
+        android:text="@string/tv_male"
         android:textColor="@color/colorWhite50"
-        android:textSize="@dimen/text_dimen_18" />
+        android:textSize="@dimen/text_dimen_34pt" />
 
     <TextView
         android:id="@+id/sex_choose_female"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorMainBg"
+        android:background="@color/color_day_select"
         android:gravity="center"
-        android:text="@string/female"
+        android:text="@string/tv_female"
         android:textColor="@color/colorWhite50"
-        android:textSize="@dimen/text_dimen_18" />
+        android:textSize="@dimen/text_dimen_34pt" />
 
 </LinearLayout>

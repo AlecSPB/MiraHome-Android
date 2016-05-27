@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.WheelPicker.AbstractWheelDecor;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.IWheelPicker;
@@ -63,9 +63,9 @@ public class WheelTimePicker extends LinearLayout implements IWheelPicker {
 
         TextView textView = new TextView(getContext());
         textView.setText(":");
-        textView.setTextSize(CommonUtils.sp2px(getContext(), 12));
+        textView.setTextSize(MUtils.sp2px(getContext(), 12));
         textView.setTextColor(labelColor);
-        textView.setPadding(padding2x, 0, padding2x, CommonUtils.dp2px(getContext(), 14));
+        textView.setPadding(padding2x, 0, padding2x, MUtils.dp2px(getContext(), 14));
 
         addView(wheelHourPicker, llParams);
         addView(textView, llParams);

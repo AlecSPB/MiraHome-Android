@@ -6,10 +6,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -44,6 +43,11 @@ public class ConfirmationPswActivity extends BaseActivity {
 
     @Override
     protected void initActivity() {
+
+    }
+
+    @Override
+    protected void initView() {
         edit_confirm_phone = (EditText) findViewById(R.id.edit_confirm_phone);
         tv_confirm_next = (TextView) findViewById(R.id.tv_confirm_next);
         tv_confirm_error = (TextView) findViewById(R.id.tv_confirm_error);
@@ -60,7 +64,7 @@ public class ConfirmationPswActivity extends BaseActivity {
             }
         } else {
             phone = edit_confirm_phone.getText().toString();
-            if (!(CommonUtils.isEmail(phone) || CommonUtils.isMobileNO(phone))) {
+            if (!(MUtils.isEmail(phone) || MUtils.isMobileNO(phone))) {
                 setError(getString(R.string.error_with_num_email));
             } else {
                 Intent it = new Intent();
@@ -73,16 +77,11 @@ public class ConfirmationPswActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
-    }
-
     /**
      * 使用手机号重置密码
      */
     private void resetPassword() {
-        RequestParams params = CommonUtils.getBaseParams(MConstants.RESET_PASSWORD_BY_PHONE);
+        RequestParams params = MUtils.getBaseParams(MConstants.RESET_PASSWORD_BY_PHONE);
         params.addParameter("verify_code", verify_code);
         params.addParameter("new_password", newPsw);
         params.addParameter("mobile_phone", phone);
@@ -138,7 +137,7 @@ public class ConfirmationPswActivity extends BaseActivity {
             setError(getString(R.string.error_login_psw_empty));
             return false;
         }
-        if (!CommonUtils.checkPsw(newPsw)) {
+        if (!MUtils.checkPsw(newPsw)) {
             setError(getString(R.string.error_psw_format));
             return false;
         }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MiraHome</string>
+    <string name="app_about_2">綿眠(上海)智能科技有限公司 版權所有</string>
+    <string name="cancel">取消</string>
+    <string name="app_about_1">MIRAHOME 1.0.1</string>
+    <string name="app_about_3">Copyright @ 2015 All right reserved</string>
+    <string name="blank_time">00:00:00</string>
+    <string name="btn_tv_resend">重新發送</string>
+    <string name="btn_tv_send">發送</string>
+    <string name="chose_existing_device">已有設備存在請選擇</string>
+    <string name="click_connect_device">點擊連接設備</string>
+    <string name="clock_add_success">添加成功</string>
+    <string name="clock_delete_success">刪除成功</string>
+    <string name="clock_edit_success">修改成功</string>
+    <string name="connect_mooring_tip">請鏈接MOORING</string>
+    <string name="default_phone_num">186 0000 0000</string>
+    <string name="device_connected">已連接MOORING</string>
+    <string name="device_not_online">查詢狀態失敗,請查看設備是否在線</string>
+    <string name="drying_title">烘乾</string>
+    <string name="error_login_name_empty">用戶名不可為空</string>
+    <string name="error_login_psw_empty">密碼不可為空</string>
+</resources>

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">MiraHome</string>
     <string name="guide_four_start">Start</string>
-    <string name="male">Male</string>
-    <string name="female">Female</string>
+    <string name="tv_male">Male</string>
+    <string name="tv_female">Female</string>
     <string name="cancel">cancel</string>
 
     <!--AboutActivity 关于页面-->
@@ -14,10 +14,14 @@
 
     <!--SuggestionsActivity 提出建议页面-->
     <string name="title_suggestions">Suggestions</string>
-    <string name="act_suggestions_hint">请输入意见内容</string>
+    <string name="hint_suggestions">请输入意见内容</string>
+    <string name="tip_suggest_empty">似乎内容有点少呀&#8230;</string>
 
     <!--StartPageActivity 开始页面-->
     <string name="network_exception">网络连接异常，请检查网络连接</string>
+    <string name="permission_storage">在设置-应用-MIRAHOME-权限中开启存储空间权限,以正常使用MIRAHOME功能</string>
+    <string name="permission_location">在设置-应用-MIRAHOME-权限中开启位置信息权限,以正常使用所在地的天气信息功能</string>
+    <string name="permission_phone">MIRAHOME使用电话权限确定本机号码和设备ID，以保障账号登录安全性。MIRAHOME不会拨打其他电话或终止通话。\n在设置-应用-MIRAHOME-权限中开启电话权限,以正常登录MIRAHOME。</string>
 
     <!--TimingFragment 闹钟部分-->
     <string name="clock_smart_tip">Wake you up at the optimal time during the period you set</string>
@@ -98,8 +102,6 @@
     <!--UserInfoActivity 用户详情页面-->
     <string name="tv_sleep_on_mooring">Sleep on MOORING</string>
     <string name="title_user_info">Edit user profile</string>
-
-    <!--AddUserActivity 添加用户-->
     <string name="title_add_user">User profile</string>
     <string name="hint_name">Name</string>
     <string name="hint_sex">Male/Female</string>

@@ -2,7 +2,6 @@ package com.mooring.mh.activity;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -10,14 +9,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
-import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
-import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleProgress.DryingCircleView;
 import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.CustomToggle;
@@ -48,9 +45,7 @@ public class DryingControlActivity extends BaseActivity {
     private TimerTask timerTask;
     private long times = 30 * 60 * 1000;//默认烘干时间30分钟
     private String deviceId;//设备ID
-    private BaseListener baseListener;//自定义SDK回调监听
-    private SharedPreferences sp;
-    private SharedPreferences.Editor editor;
+    private MSDKListener msdkListener;//自定义SDK回调监听
 
     @Override
     protected int getLayoutId() {
@@ -64,21 +59,14 @@ public class DryingControlActivity extends BaseActivity {
 
     @Override
     protected void initActivity() {
-        sp = InitApplicationHelper.sp;
-        editor = sp.edit();
 
-        deviceId = InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, "");
-        baseListener = new BaseListener();
-        MachtalkSDK.getInstance().setContext(this);
-        MachtalkSDK.getInstance().setSdkListener(baseListener);
-
-        LogUtil.e("deviceId  " + deviceId);
-
-        initView();
+        deviceId = sp.getString(MConstants.DEVICE_ID, "");
+        msdkListener = new MSDKListener();
 
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         drying = (DryingCircleView) findViewById(R.id.drying);
         tv_drying_times = (TextView) findViewById(R.id.tv_drying_times);
         toggle_drying = (CustomToggle) findViewById(R.id.toggle_drying);
@@ -105,7 +93,7 @@ public class DryingControlActivity extends BaseActivity {
                     time = 0;
 
                     editor.putString(MConstants.DRYING_START_TIME,
-                            CommonUtils.getCurrTime("yyyy-MM-dd HH:mm:ss"));
+                            MUtils.getCurrTime("yyyy-MM-dd HH:mm:ss"));
                     editor.putString(MConstants.DRYING_TIMES, String.valueOf(times));
                     editor.putBoolean(MConstants.DRYING_OPEN, true);
                     editor.commit();
@@ -153,12 +141,6 @@ public class DryingControlActivity extends BaseActivity {
     protected void OnClick(View v) {
 
     }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return baseListener;
-    }
-
 
     /**
      * 发送消息
@@ -272,24 +254,31 @@ public class DryingControlActivity extends BaseActivity {
     /**
      * 自定义回调监听
      */
-    class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                context.finish();
-                return;
-            }
-        }
+    class MSDKListener extends MachtalkSDKListener {
 
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
+            LogUtil.w("  " + result.getSuccess() + "  " + (rdm == null));
             if (result != null && result.getSuccess() == Result.SUCCESS && rdm != null) {
                 //操作成功
+                LogUtil.w("  " + result.getSuccess() + "  " + (rdm.getDvidStatusList().get(0).toString()));
             } else {
-                CommonUtils.showToast(context, getResources().getString(R.string.operate_failed));
+                MUtils.showToast(context, getResources().getString(R.string.operate_failed));
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MachtalkSDK.getInstance().setContext(this);
+        MachtalkSDK.getInstance().setSdkListener(msdkListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
     }
 }

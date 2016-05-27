@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +29,12 @@ public class XXChartView extends View {
     private Paint currPaint;//当天竖线
     private Paint linePaint;//曲线
     private Paint pointPaint;//线上圆点
-    private int xLeft = CommonUtils.dp2px(getContext(), 20);//left
-    private int xSpace = CommonUtils.dp2px(getContext(), 40);//x间隔
-    private int ySpace = CommonUtils.dp2px(getContext(), 20);//y间隔
-    private int topText = CommonUtils.dp2px(getContext(), 10);//顶部文字距离上部距离
-    private int xBottom = CommonUtils.dp2px(getContext(), 40);//bottom
-    private int textHeight = CommonUtils.dp2px(getContext(), 30);//文字外容器高度
+    private int xLeft = MUtils.dp2px(getContext(), 20);//left
+    private int xSpace = MUtils.dp2px(getContext(), 40);//x间隔
+    private int ySpace = MUtils.dp2px(getContext(), 20);//y间隔
+    private int topText = MUtils.dp2px(getContext(), 10);//顶部文字距离上部距离
+    private int xBottom = MUtils.dp2px(getContext(), 40);//bottom
+    private int textHeight = MUtils.dp2px(getContext(), 30);//文字外容器高度
     private int commColor = getResources().getColor(R.color.colorWhite50);//通用颜色
     private int currColor = getResources().getColor(R.color.colorPurple);//当天竖线颜色
 
@@ -52,14 +52,14 @@ public class XXChartView extends View {
     private Path mPath_sleep;//平滑线条path
     private int color_deep = getResources().getColor(R.color.colorPurple);//线条颜色
     private int color_sleep = Color.WHITE;//线条颜色
-    private int circleSize = CommonUtils.dp2px(getContext(), 8);//线上原点大小
+    private int circleSize = MUtils.dp2px(getContext(), 8);//线上原点大小
 
-    private int tvHeight = CommonUtils.dp2px(this.getContext(), 20);
-    private int tvWidth = CommonUtils.dp2px(this.getContext(), 20);
+    private int tvHeight = MUtils.dp2px(this.getContext(), 20);
+    private int tvWidth = MUtils.dp2px(this.getContext(), 20);
     private Rect targetRect;
     private Paint commonPaint;
     private Paint.FontMetricsInt fontMetrics;
-    private int textSize = CommonUtils.sp2px(getContext(), 15);//文字大小
+    private int textSize = MUtils.sp2px(getContext(), 15);//文字大小
 
     private int viewW;
     private int viewH;
@@ -86,11 +86,11 @@ public class XXChartView extends View {
 
         currPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         currPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        currPaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 1));
+        currPaint.setStrokeWidth(MUtils.dp2px(getContext(), 1));
         currPaint.setColor(currColor);
 
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        linePaint.setStrokeWidth(CommonUtils.dp2px(getContext(), 2));
+        linePaint.setStrokeWidth(MUtils.dp2px(getContext(), 2));
         linePaint.setStyle(Paint.Style.STROKE);
 
         pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -136,13 +136,13 @@ public class XXChartView extends View {
          */
         for (int i = 0; i < Xdatas.size(); i++) {
             drawText(canvas, Xdatas.get(i), textSize, Color.WHITE, xLeft + xSpace * i, topText);
-            drawText(canvas, CommonUtils.getWeek(month + "-" + String.format("%02d", Integer.parseInt(Xdatas.get(i)))),
+            drawText(canvas, MUtils.getWeek(month + "-" + String.format("%02d", Integer.parseInt(Xdatas.get(i)))),
                     textSize, Color.WHITE, xLeft + xSpace * i, viewH - textHeight);
             for (int j = 0; j <= num_y; j++) {
                 canvas.drawPoint(xSpace * i + xLeft, viewH - xBottom - ySpace * j, bgPaint);
             }
             //如果是当天日期,绘制竖线
-            if (CommonUtils.getCurrDate().equals(month + "-" + String.format("%02d", Integer.parseInt(Xdatas.get(i))))) {
+            if (MUtils.getCurrDate().equals(month + "-" + String.format("%02d", Integer.parseInt(Xdatas.get(i))))) {
                 canvas.drawLine(xLeft + xSpace * i, xBottom, xLeft + xSpace * i, viewH - xBottom, currPaint);
             }
         }

@@ -1,10 +1,12 @@
 package com.mooring.mh.fragment;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
@@ -16,12 +18,11 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.MoreActivity;
 import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
 import com.mooring.mh.views.WeatherView.WeatherView;
 
@@ -29,12 +30,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.common.util.LogUtil;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.Locale;
 
 /**
+ * 天气Fragment
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class WeatherFragment extends BaseFragment implements View.OnClickListener, AMapLocationListener {
@@ -64,8 +68,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private double temp;//当前温度
     private int humidity;//单位%
     private double wind_speed;//米每秒
-    private String sunrise = CommonUtils.getCurrDate() + " 06:00:00";//日出
-    private String sunset = CommonUtils.getCurrDate() + " 18:00:00";//日落
+    private String sunrise = MUtils.getCurrDate() + " 06:00:00";//日出
+    private String sunset = MUtils.getCurrDate() + " 18:00:00";//日落
 
     private int weatherKind = 0;
     private WeatherView weather_view;//天气
@@ -84,6 +88,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_weather;
+    }
+
+    @Override
+    protected void initFragment() {
     }
 
     @Override
@@ -126,10 +134,22 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
             //------------直接切换天气有问题
         }
 
+        if (Build.VERSION.SDK_INT >= 23) {
+            int check = ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (check != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MConstants.PERMISSIONS_LOCATION);
+                return;
+            }
+        }
+
         getLatAndLon();
 
         System.out.printf(translateTime(1461320856));
-        if (!CommonUtils.judgeTimeInterval(sunrise, sunset)) {
+        if (!MUtils.judgeTimeInterval(sunrise, sunset)) {
             layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_night);
             imgView_cloud_1.setImageResource(R.drawable.ic_night_cloud_1);
             imgView_cloud_2.setImageResource(R.drawable.ic_night_cloud_2);
@@ -178,14 +198,13 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    protected void lazyLoad() {
-        weather_view.setRuning(true);
-
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            weather_view.setRuning(false);
+        } else {
+            weather_view.setRuning(true);
+        }
     }
 
 
@@ -228,17 +247,17 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.e("onError", "ex  " + ex.getMessage() + "  ");
+                LogUtil.e("ex  " + ex.getMessage() + "  ");
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                Log.e("onCancelled", "cex  " + cex.getMessage() + "  ");
+                LogUtil.e("cex  " + cex.getMessage() + "  ");
             }
 
             @Override
             public void onFinished() {
-                Log.e("onFinished", "onFinished ");
+                LogUtil.e("onFinished ");
             }
         });
     }
@@ -253,15 +272,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).
                 format(new java.util.Date(time * 1000L));
         return date;
-    }
-
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {
-            weather_view.setRuning(false);
-        }
     }
 
     @Override
@@ -394,7 +404,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      * @param id
      */
     private void changeWeatherIcon(int id) {
-        tv_curr_temp.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(id), null, null, null);
+        tv_curr_temp.setCompoundDrawablesWithIntrinsicBounds(
+                getResources().getDrawable(id), null, null, null);
     }
 
     /**
@@ -404,7 +415,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private void switchBackground(int kind) {
         this.weatherKind = kind;
-        if (!CommonUtils.judgeTimeInterval(sunrise, sunset)) {
+        if (!MUtils.judgeTimeInterval(sunrise, sunset)) {
             return;
         }
         switch (kind) {
@@ -466,124 +477,79 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     public void onPause() {
         super.onPause();
         weather_view.setRuning(false);
-        Log.e("onPause", "  onPause " + weather_view.getRuning());
     }
 
     @Override
     public void onStop() {
         super.onStop();
         weather_view.setRuning(false);
-        Log.e("onStop", "  onStop " + weather_view.getRuning());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         weather_view.setRuning(true);
-        Log.e("onResume", "  onResume " + weather_view.getRuning());
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MConstants.PERMISSIONS_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //允许
+                    getLatAndLon();
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            context, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        //弹出Dialog,告知用户为什么要去申请该权限
+
+
+                    } else {
+                        MUtils.showToast(context, "位置权限请求失败");
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
+    }
 
     /**
      * 高德定位
      * 获取经纬度
      */
     private void getLatAndLon() {
-        locationClient = new AMapLocationClient(getActivity().getApplicationContext());
+        locationClient = new AMapLocationClient(context);
         locationOption = new AMapLocationClientOption();
-        // 设置定位模式为低功耗模式
-        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
+        // 设置定位模式为高精度模式
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         // 设置定位监听
         locationClient.setLocationListener(this);
-
+        //单次定位
         locationOption.setOnceLocation(true);
-
         // 设置定位参数
         locationClient.setLocationOption(locationOption);
         // 启动定位
         locationClient.startLocation();
-        mHandler.sendEmptyMessage(MSG_LOCATION_START);
-    }
-
-    private Handler mHandler = new Handler() {
-        public void dispatchMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case MSG_LOCATION_START:
-                    break;
-                case MSG_LOCATION_FINISH:
-                    AMapLocation loc = (AMapLocation) msg.obj;
-                    String result = getLocationStr(loc);
-                    Log.e("AMapLocation", "result  " + result);
-                    if ("-1".equals(result)) {
-                        //定位成功
-                        //执行天气请求
-                        getLatestWeather();
-                    }
-                    break;
-                case MSG_LOCATION_STOP:
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    public synchronized String getLocationStr(AMapLocation location) {
-        if (null == location) {
-            return null;
-        }
-        StringBuffer sb = new StringBuffer();
-        //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
-        if (location.getErrorCode() == 0) {
-//            sb.append("定位成功" + "\n");
-//            sb.append("定位类型: " + location.getLocationType() + "\n");
-//            sb.append("经    度    : " + location.getLongitude() + "\n");
-//            sb.append("纬    度    : " + location.getLatitude() + "\n");
-//            sb.append("精    度    : " + location.getAccuracy() + "米" + "\n");
-//            sb.append("提供者    : " + location.getProvider() + "\n");
-//
-//            if (location.getProvider().equalsIgnoreCase(
-//                    android.location.LocationManager.GPS_PROVIDER)) {
-//                // 以下信息只有提供者是GPS时才会有
-//                sb.append("速    度    : " + location.getSpeed() + "米/秒" + "\n");
-//                sb.append("角    度    : " + location.getBearing() + "\n");
-//                // 获取当前提供定位服务的卫星个数
-//                sb.append("星    数    : "
-//                        + location.getSatellites() + "\n");
-//            } else {
-//                // 提供者是GPS时是没有以下信息的
-//                sb.append("国    家    : " + location.getCountry() + "\n");
-//                sb.append("省            : " + location.getProvince() + "\n");
-//                sb.append("市            : " + location.getCity() + "\n");
-//                sb.append("城市编码 : " + location.getCityCode() + "\n");
-//                sb.append("区            : " + location.getDistrict() + "\n");
-//                sb.append("区域 码   : " + location.getAdCode() + "\n");
-//                sb.append("地    址    : " + location.getAddress() + "\n");
-//                sb.append("兴趣点    : " + location.getPoiName() + "\n");
-//            }
-            sb.append("-1");
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-
-        } else {
-            lat = -200;
-            lon = -200;
-            //定位失败
-            sb.append("定位失败" + "\n");
-            sb.append("错误码:" + location.getErrorCode() + "\n");
-            sb.append("错误信息:" + location.getErrorInfo() + "\n");
-            sb.append("错误描述:" + location.getLocationDetail() + "\n");
-        }
-        return sb.toString();
     }
 
     @Override
-    public void onLocationChanged(AMapLocation aMapLocation) {
-        if (null != aMapLocation) {
-            Message msg = mHandler.obtainMessage();
-            msg.obj = aMapLocation;
-            msg.what = MSG_LOCATION_FINISH;
-            mHandler.sendMessage(msg);
+    public void onLocationChanged(AMapLocation amapLocation) {
+        if (null != amapLocation) {
+            if (amapLocation.getErrorCode() == 0) {
+                lat = amapLocation.getLatitude();//获取纬度
+                lon = amapLocation.getLongitude();//获取经度
+
+                getLatestWeather();
+
+                LogUtil.i("定位来源: " + amapLocation.getLocationType()
+                        + " 精度信息 " + amapLocation.getAccuracy());
+            } else {
+                LogUtil.e("location Error, ErrCode:" + amapLocation.getErrorCode() + ", errInfo:"
+                        + amapLocation.getErrorInfo());
+            }
         }
     }
 }

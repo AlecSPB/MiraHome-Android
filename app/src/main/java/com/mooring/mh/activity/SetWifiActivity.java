@@ -17,9 +17,9 @@ import com.machtalk.sdk.domain.DeviceListInfo;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.DeviceManager;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.utils.NetworkUtil;
 
 /**
@@ -46,7 +46,7 @@ public class SetWifiActivity extends BaseActivity {
     private RotateAnimation rotateAnimation;//旋转动画
 
 
-    private MySDKListener listener;
+    private MSDKListener msdkListener;
     private boolean isFirstAddDevice;
 
 
@@ -63,14 +63,13 @@ public class SetWifiActivity extends BaseActivity {
     @Override
     protected void initActivity() {
 
-        isFirstAddDevice = InitApplicationHelper.sp.getBoolean(MConstants.FIRST_ADD_DEVICE, true);
-        listener = new MySDKListener();
+        isFirstAddDevice = sp.getBoolean(MConstants.FIRST_ADD_DEVICE, true);
+        msdkListener = new MSDKListener();
 
-        initView();
     }
 
-
-    private void initView() {
+    @Override
+    protected void initView() {
         imgView_act_back = (ImageView) findViewById(R.id.imgView_act_back);
         tv_act_skip = (TextView) findViewById(R.id.tv_act_skip);
         layout_setting_wifi = findViewById(R.id.layout_setting_wifi);
@@ -124,7 +123,7 @@ public class SetWifiActivity extends BaseActivity {
             if (!TextUtils.isEmpty(SSID)) {
                 tv_wifi_name.setText(SSID);
             } else {
-                CommonUtils.showToast(this, "请检查WIFI是否已连接");
+                MUtils.showToast(this, "请检查WIFI是否已连接");
             }
         } else {
             imgView_act_back.setVisibility(View.VISIBLE);
@@ -153,22 +152,8 @@ public class SetWifiActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return listener;
-    }
 
-    class MySDKListener extends MachtalkSDKListener {
-
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                SetWifiActivity.this.finish();
-                return;
-            }
-        }
-
+    class MSDKListener extends MachtalkSDKListener {
         @Override
         public void onAddDevice(Result result, String deviceId) {
             super.onAddDevice(result, deviceId);
@@ -205,7 +190,7 @@ public class SetWifiActivity extends BaseActivity {
                 if (errorMsg == null) {
                     errorMsg = getResources().getString(R.string.load_device_list_fail);
                 }
-                CommonUtils.showToast(SetWifiActivity.this, errorMsg);
+                MUtils.showToast(SetWifiActivity.this, errorMsg);
                 //添加失败直接跳转错误界面
                 startActivity(new Intent(SetWifiActivity.this, NotFindDeviceActivity.class));
             }
@@ -217,18 +202,15 @@ public class SetWifiActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        MachtalkSDK.getInstance().setContext(this);
+        MachtalkSDK.getInstance().setSdkListener(msdkListener);
         imgView_search_mid.startAnimation(rotateAnimation);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        imgView_search_mid.clearAnimation();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
         imgView_search_mid.clearAnimation();
     }
 }

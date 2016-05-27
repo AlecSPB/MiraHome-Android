@@ -18,12 +18,12 @@ import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
+import com.mooring.mh.views.CircleImgView.CircleImageView;
 import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.ControlView.DragScaleTwoView;
 import com.mooring.mh.views.ControlView.DragScaleView;
-import com.mooring.mh.views.CustomImageView.CircleImageView;
 import com.mooring.mh.views.CustomToggle;
 
 import org.xutils.common.util.LogUtil;
@@ -65,6 +65,12 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
     private String right_target_temp;//可调整温度
     private Boolean right_drop_enable = false;//右边可操控
     private String room_temp = "";//室温
+    private boolean temp_unit = true;
+
+    /**
+     * 是否初始化完成
+     */
+    private Boolean isInit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +79,7 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
 
         editor = InitApplicationHelper.sp.edit();
         deviceId = InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, "");
+        temp_unit = InitApplicationHelper.sp.getBoolean(MConstants.TEMPERATURE_UNIT, true);
 
         listener = new BaseListener();
         MachtalkSDK.getInstance().setContext(this);
@@ -124,6 +131,9 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
                     OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
+                    if (dragScaleView.getCurrUnit().equals(getString(R.string.unit_celsius)) != temp_unit) {
+                        dragScaleView.setCurrUnit(temp_unit ? MConstants.DEGREES_C : MConstants.DEGREES_F);
+                    }
                     if (!TextUtils.isEmpty(left_target_temp)) {
                         dragScaleView.setCurrTemperature(Integer.parseInt(left_target_temp));
                     }
@@ -159,6 +169,9 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
                     OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
+                    if (dragScaleTwoView.getCurrUnit().equals(getString(R.string.unit_celsius)) != temp_unit) {
+                        dragScaleTwoView.setCurrUnit(temp_unit ? MConstants.DEGREES_C : MConstants.DEGREES_F);
+                    }
                     if (!TextUtils.isEmpty(left_target_temp)) {
                         dragScaleTwoView.setCurrLeftTemp(Integer.parseInt(left_target_temp));
                     }
@@ -303,12 +316,13 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
         @Override
         public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
             super.onQueryDeviceStatus(result, deviceStatus);
-
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
+
+            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
+
             if (success == Result.SUCCESS && deviceStatus != null
                     && deviceId.equals(deviceStatus.getDeviceId())) {
                 List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
@@ -345,9 +359,10 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
                         }
                     }
                     judgeUser();
+                    isInit = true;
                 }
             } else {
-                CommonUtils.showToast(HeatingControlActivity.this,
+                MUtils.showToast(HeatingControlActivity.this,
                         getResources().getString(R.string.device_not_online));
             }
         }
@@ -359,7 +374,7 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
             LogUtil.e("result  " + result.getSuccess());
             LogUtil.e("mDeviceId  " + rdm.getDeviceId() + " 操作回复 " + rdm.isRespMsg());
 
-            if (rdm.isRespMsg()) {
+            if (rdm.isRespMsg() && isInit) {
                 List<DvidStatus> list = rdm.getDvidStatusList();
                 if (list != null) {
                     for (int i = 0; i < list.size(); i++) {
@@ -367,7 +382,7 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
                         LogUtil.e("  dvid  " + list.get(i).getDvid() + " value  " + list.get(i).getValue());
 
                         if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(list.get(i).getDvid())) {
-                            room_temp = list.get(i).getValue();
+                            room_temp = list.get(i).getValue();//室温
                             if (currUsers == 1) {
                                 dragScaleView.setRoomY(Integer.parseInt(room_temp));
                             } else {
@@ -375,17 +390,45 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
                             }
                         }
                         if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(list.get(i).getDvid())) {
-                            left_real_temp = list.get(i).getValue();
+                            left_real_temp = list.get(i).getValue();//左边实际--左床温
                             if (currUsers == 1) {
                                 dragScaleView.setBedTemperature(left_real_temp);
                             } else {
                                 dragScaleTwoView.setBedLeftTemp(left_real_temp);
                             }
                         }
-                        if (currUsers == 2 && MConstants.ATTR_RIGHT_ACTUAL_TEMP.
-                                equals(list.get(i).getDvid())) {
-                            right_real_temp = list.get(i).getValue();
-                            dragScaleTwoView.setBedRightTemp(right_real_temp);
+                        if (MConstants.ATTR_LEFT_TARGET_TEMP.equals(list.get(i).getDvid())) {
+                            left_target_temp = list.get(i).getValue();//左边目标温度
+                            if (currUsers == 1) {
+                                dragScaleView.setCurrTemperature(left_target_temp);
+                            } else {
+                                dragScaleTwoView.setCurrLeftTemp(left_target_temp);
+                            }
+                        }
+                        if (MConstants.ATTR_LEFT_TARGET_TEMP_SWITCH.equals(list.get(i).getDvid())) {
+                            left_drop_enable = Integer.parseInt(list.get(i).getValue()) == 1;
+                            if (currUsers == 1) {//左边目标温度开关
+                                toggle_middle.setChecked(left_drop_enable);
+                                dragScaleView.setIsDropAble(left_drop_enable);
+                            } else {
+                                toggle_left.setChecked(left_drop_enable);
+                                dragScaleTwoView.setIsLeftDropAble(left_drop_enable);
+                            }
+                        }
+                        if (currUsers == 2) {
+                            if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(list.get(i).getDvid())) {
+                                right_real_temp = list.get(i).getValue();//右边实际温度-右床温
+                                dragScaleTwoView.setBedRightTemp(right_real_temp);
+                            }
+                            if (MConstants.ATTR_RIGHT_TARGET_TEMP.equals(list.get(i).getDvid())) {
+                                right_target_temp = list.get(i).getValue();//右边目标温度
+                                dragScaleTwoView.setCurrRightTemp(right_target_temp);
+                            }
+                            if (MConstants.ATTR_RIGHT_TARGET_TEMP_SWITCH.equals(list.get(i).getDvid())) {
+                                right_drop_enable = Integer.parseInt(list.get(i).getValue()) == 1;
+                                toggle_right.setChecked(right_drop_enable);
+                                dragScaleTwoView.setIsRightDropAble(right_drop_enable);//右边目标温度开关
+                            }
                         }
                     }
                 }

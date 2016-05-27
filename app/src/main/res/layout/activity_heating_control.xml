@@ -31,14 +31,14 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true">
 
-            <com.mooring.mh.views.CustomImageView.CircleImageView
+            <com.mooring.mh.views.CircleImgView.CircleImageView
                 android:id="@+id/circleImg_left"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_default_avatar" />
 
-            <com.mooring.mh.views.CustomImageView.CircleImageView
+            <com.mooring.mh.views.CircleImgView.CircleImageView
                 android:id="@+id/circleImg_right"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
@@ -49,10 +49,12 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <View
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/head_gap_body" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_shadow" />
 
     <FrameLayout
         android:layout_width="match_parent"

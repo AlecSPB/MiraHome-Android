@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
+import com.mooring.mh.utils.MUtils;
 
 import java.text.DecimalFormat;
 
@@ -120,7 +120,7 @@ public class CircleDisplay extends View {
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextAlign(Align.CENTER);
         mTextPaint.setColor(textColor);
-        mTextPaint.setTextSize(CommonUtils.sp2px(getContext(), 10));
+        mTextPaint.setTextSize(MUtils.sp2px(getContext(), 10));
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
         mDrawAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -270,7 +270,7 @@ public class CircleDisplay extends View {
      * @param size
      */
     public void setTextSize(float size) {
-        mTextPaint.setTextSize(CommonUtils.dp2px(this.getContext(), size));
+        mTextPaint.setTextSize(MUtils.dp2px(this.getContext(), size));
     }
 
     /**

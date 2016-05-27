@@ -7,10 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.AlarmDaySelectView;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelTimePicker;
@@ -63,7 +62,7 @@ public class AlarmEditActivity extends BaseActivity {
         flag = it.getStringExtra("flag");
         if ("edit".equals(flag)) {
             time = it.getStringExtra("time");
-            repeat = CommonUtils.ParsingDay(it.getStringExtra("repeat"));
+            repeat = MUtils.ParsingDay(it.getStringExtra("repeat"));
             smart = it.getBooleanExtra("smart", false);
             set = it.getBooleanExtra("set", false);
             position = it.getIntExtra("position", -1);
@@ -72,17 +71,15 @@ public class AlarmEditActivity extends BaseActivity {
             for (int i = 0; i < 7; i++) {
                 repeat.add("0");
             }
-            time = CommonUtils.getCurrTime("HHmm");
+            time = MUtils.getCurrTime("HHmm");
             smart = true;
             set = true;
         }
 
-        initView();
-
-        initData();
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
 
         imgView_act_right = (ImageView) findViewById(R.id.imgView_act_right);
         layout_repeat = findViewById(R.id.layout_repeat);
@@ -104,14 +101,17 @@ public class AlarmEditActivity extends BaseActivity {
             }
         });
 
+
+        initData();
+
     }
 
 
     private void initData() {
         time_picker.setTextColor(getResources().getColor(R.color.colorWhite50));
         time_picker.setCurrentTextColor(getResources().getColor(R.color.colorPurple));
-        time_picker.setTextSize(CommonUtils.sp2px(this, 35));
-        time_picker.setItemSpace(CommonUtils.dp2px(this, 40));
+        time_picker.setTextSize(MUtils.sp2px(this, 35));
+        time_picker.setItemSpace(MUtils.dp2px(this, 40));
         time_picker.setCurrentData(time.substring(0, 2), time.substring(2));
         time_picker.setOnWheelChangeListener(new AbstractWheelPicker.OnWheelChangeListener() {
             @Override
@@ -200,11 +200,6 @@ public class AlarmEditActivity extends BaseActivity {
                 this.finish();
                 break;
         }
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 
     @Override

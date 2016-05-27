@@ -7,29 +7,32 @@
 
     <include layout="@layout/activity_common_title" />
 
-    <View
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/head_gap_body" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_shadow" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <EditText
+            android:id="@+id/EdTv_suggestion"
             android:layout_width="match_parent"
             android:layout_height="225dp"
             android:layout_margin="5dp"
             android:background="@color/colorPrimaryDark"
             android:gravity="top"
-            android:hint="@string/act_suggestions_hint"
+            android:hint="@string/hint_suggestions"
             android:padding="10dp"
             android:textColor="@color/colorWhite"
             android:textColorHint="@color/colorWhite50"
             android:textSize="@dimen/text_dimen_34pt" />
 
         <TextView
-            android:id="@+id/tv_suggestions"
+            android:id="@+id/tv_send"
             style="@style/text_button_comm"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="40dp"

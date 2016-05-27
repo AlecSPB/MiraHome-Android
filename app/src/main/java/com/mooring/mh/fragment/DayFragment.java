@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.views.ChartView.MyChartView;
 import com.mooring.mh.views.ChartView.YAxisView;
@@ -58,6 +57,11 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_day;
+    }
+
+    @Override
+    protected void initFragment() {
+
     }
 
     @Override
@@ -145,17 +149,6 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
         allChart1.setYdatas(ydata);
         allChart2.setYdatas(ydata);
         allChart3.setYdatas(ydata);
-    }
-
-
-    @Override
-    protected void lazyLoad() {
-
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 
     @Override

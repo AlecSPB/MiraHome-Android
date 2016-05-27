@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 
@@ -64,13 +63,10 @@ public class RepeatAlarmActivity extends BaseActivity implements
         Intent it = getIntent();
         repeat = it.getStringArrayListExtra("repeat");
 
-        initView();
-
-        initData();
-
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
 
         imgView_act_right = (ImageView) findViewById(R.id.imgView_act_right);
         imgView_act_right.setVisibility(View.VISIBLE);
@@ -112,6 +108,8 @@ public class RepeatAlarmActivity extends BaseActivity implements
         tglBtn_sat.setOnCheckedChangeListener(this);
         tglBtn_sun.setOnCheckedChangeListener(this);
 
+
+        initData();
     }
 
 
@@ -152,12 +150,6 @@ public class RepeatAlarmActivity extends BaseActivity implements
             this.finish();
         }
     }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
-    }
-
 
     @Override
     public void onCheckedChanged(CompoundButton cb, boolean isChecked) {

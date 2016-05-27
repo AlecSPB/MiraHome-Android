@@ -3,12 +3,9 @@ package com.mooring.mh.fragment;
 import android.content.Intent;
 import android.view.View;
 
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.DryingControlActivity;
 import com.mooring.mh.activity.HeatingControlActivity;
-
-import org.xutils.common.util.LogUtil;
 
 /**
  * 第二个fragment 负责控制仪器的温度
@@ -27,6 +24,11 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
+    protected void initFragment() {
+
+    }
+
+    @Override
     protected void initView() {
 
         layout_heating = rootView.findViewById(R.id.layout_heating);
@@ -35,17 +37,6 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
         layout_heating.setOnClickListener(this);
         layout_drying.setOnClickListener(this);
 
-    }
-
-    @Override
-    protected void lazyLoad() {
-
-        LogUtil.i("ControlFragment");
-    }
-
-    @Override
-    protected MachtalkSDKListener setSDKListener() {
-        return null;
     }
 
     @Override

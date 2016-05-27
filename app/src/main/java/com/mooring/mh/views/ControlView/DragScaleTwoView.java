@@ -14,8 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.mooring.mh.R;
-import com.mooring.mh.utils.CommonUtils;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 
 /**
  * 自定义双边可拖动改变图层控件
@@ -46,7 +46,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     private int currLeftTemp = 30;//当前温度
     private int currRightTemp = 36;//当前温度
     private String unit = "";//床温,拖动温度,Room温度显示单位
-    private String currUnit = "℃";//当前系统设置的温度单位
+    private String currUnit = "℃";//当前系统设置的温度单位,默认为摄氏度--MConstants.DEGREES_C
     private int lastY;
     private int oriLeft;//拖动变量
     private int oriRight;//拖动变量
@@ -100,7 +100,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         tickMarkPaint = new Paint();
         tickMarkPaint.setColor(Color.WHITE);
         tickMarkPaint.setStyle(Paint.Style.STROKE);
-        tickMarkPaint.setStrokeWidth(CommonUtils.dp2px(this.getContext(), 1));
+        tickMarkPaint.setStrokeWidth(MUtils.dp2px(this.getContext(), 1));
 
         scalePaint = new Paint();
         scalePaint.setColor(Color.WHITE);
@@ -113,16 +113,17 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         maskPaint.setStyle(Paint.Style.FILL);
         maskPaint.setColor(getResources().getColor(R.color.transparent_6));
 
-        dropTop = CommonUtils.dp2px(this.getContext(), 40);
-        lineBottom = CommonUtils.dp2px(this.getContext(), 150);
-        tempTop = CommonUtils.dp2px(this.getContext(), 20);
-        tempBottom = CommonUtils.dp2px(this.getContext(), 130);
-        tvHeight = CommonUtils.dp2px(this.getContext(), 40);
-        tvWidth = CommonUtils.dp2px(this.getContext(), 50);
-        scaleRadius = CommonUtils.dp2px(this.getContext(), 4);
-        dropTvSize = CommonUtils.sp2px(this.getContext(), 50);
-        tempTvSize = CommonUtils.sp2px(this.getContext(), 22);
-        bedTvSize = CommonUtils.sp2px(this.getContext(), 14);
+        currUnit = getResources().getString(R.string.unit_celsius);
+        dropTop = MUtils.dp2px(this.getContext(), 40);
+        lineBottom = MUtils.dp2px(this.getContext(), 150);
+        tempTop = MUtils.dp2px(this.getContext(), 20);
+        tempBottom = MUtils.dp2px(this.getContext(), 130);
+        tvHeight = MUtils.dp2px(this.getContext(), 40);
+        tvWidth = MUtils.dp2px(this.getContext(), 50);
+        scaleRadius = MUtils.dp2px(this.getContext(), 4);
+        dropTvSize = MUtils.sp2px(this.getContext(), 50);
+        tempTvSize = MUtils.sp2px(this.getContext(), 22);
+        bedTvSize = MUtils.sp2px(this.getContext(), 14);
 
     }
 
@@ -165,7 +166,7 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
 
         //绘制室内温度值
         drawText(canvas, "Room" + "     " + roomTemp + unit, bedTvSize, Color.WHITE, roomY -
-                CommonUtils.dp2px(getContext(), 30), viewW / 2 - CommonUtils.dp2px(getContext(), 10));
+                MUtils.dp2px(getContext(), 30), viewW / 2 - MUtils.dp2px(getContext(), 10));
 
         //温度text
         drawText(canvas, currLeftTemp + unit, dropTvSize, (0X7FFFFFFF), oriLeft, viewW / 4);
@@ -526,22 +527,31 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
             this.currUnit = getResources().getString(R.string.unit_celsius);
             this.upperBound = 40;
             this.lowerBound = 20;
-            roomTemp = (int) CommonUtils.F2C(roomTemp);
-            bedLeftTemp = (int) CommonUtils.F2C(bedLeftTemp);
-            bedRightTemp = (int) CommonUtils.F2C(bedRightTemp);
-            currLeftTemp = (int) CommonUtils.F2C(currLeftTemp);
-            currRightTemp = (int) CommonUtils.F2C(currRightTemp);
+            roomTemp = (int) MUtils.F2C(roomTemp);
+            bedLeftTemp = (int) MUtils.F2C(bedLeftTemp);
+            bedRightTemp = (int) MUtils.F2C(bedRightTemp);
+            currLeftTemp = (int) MUtils.F2C(currLeftTemp);
+            currRightTemp = (int) MUtils.F2C(currRightTemp);
         }
         if (unit == MConstants.DEGREES_F) {
             this.currUnit = getResources().getString(R.string.unit_fahrenheit);
             this.upperBound = 104;
             this.lowerBound = 68;
-            roomTemp = (int) CommonUtils.C2F(roomTemp);
-            bedLeftTemp = (int) CommonUtils.C2F(bedLeftTemp);
-            bedRightTemp = (int) CommonUtils.C2F(bedRightTemp);
-            currLeftTemp = (int) CommonUtils.C2F(currLeftTemp);
-            currRightTemp = (int) CommonUtils.C2F(currRightTemp);
+            roomTemp = (int) MUtils.C2F(roomTemp);
+            bedLeftTemp = (int) MUtils.C2F(bedLeftTemp);
+            bedRightTemp = (int) MUtils.C2F(bedRightTemp);
+            currLeftTemp = (int) MUtils.C2F(currLeftTemp);
+            currRightTemp = (int) MUtils.C2F(currRightTemp);
         }
         invalidate();
+    }
+
+    /**
+     * 获取当前温度单位
+     *
+     * @return
+     */
+    public String getCurrUnit() {
+        return currUnit;
     }
 }

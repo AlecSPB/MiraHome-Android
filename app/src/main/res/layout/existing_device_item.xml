@@ -24,6 +24,6 @@
         android:layout_gravity="center"
         android:text="M01001"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_dimen_14" />
+        android:textSize="@dimen/text_dimen_24pt" />
 
 </FrameLayout>
