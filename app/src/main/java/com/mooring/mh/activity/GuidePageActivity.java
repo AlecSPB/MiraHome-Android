@@ -50,7 +50,6 @@ public class GuidePageActivity extends AppCompatActivity {
     //Editor 对象
     private SharedPreferences.Editor editor;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +120,7 @@ public class GuidePageActivity extends AppCompatActivity {
 
     private void initData() {
         // 设置监听
-        viewPager.setOnPageChangeListener(new MyOnPageChangeListener());
+        viewPager.addOnPageChangeListener(new MyOnPageChangeListener());
         // 实例化ArrayList对象
         views = new ArrayList<View>();
         // 将要分页显示的View装入数组中

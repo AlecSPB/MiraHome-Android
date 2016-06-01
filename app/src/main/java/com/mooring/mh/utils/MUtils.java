@@ -454,7 +454,7 @@ public class MUtils {
     public static void getTempFile(Context context) {
         if ("".equals(tempFileName)) {
             String path = getFilePath(context, 1);
-            tempFileName = path + "user_head_photo" + ".jpg";
+            tempFileName = path + "user_head_" + System.currentTimeMillis() + ".jpg";
             tempFile = new File(tempFileName);
         }
     }

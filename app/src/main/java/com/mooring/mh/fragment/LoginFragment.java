@@ -18,6 +18,8 @@ import com.mooring.mh.db.User;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
@@ -87,33 +89,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
     }
 
-    class MSDKListener extends MachtalkSDKListener {
-        @Override
-        public void onUserLogin(Result result, String user) {
-            int success = Result.FAILED;
-            String errMsg = null;
-            if (result != null) {
-                success = result.getSuccess();
-                errMsg = result.getErrorMessage();
-            }
-            if (success == Result.SUCCESS) {
-                editor.putString(MConstants.SP_KEY_USERNAME, userName);
-                editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
-                editor.commit();
-
-                LogUtil.i("store username: " + userName + " password: " + userPwd);
-
-                startActivity(new Intent(context, MainActivity.class));
-                context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                context.finish();
-            } else {
-                if (errMsg == null) {
-                    errMsg = getResources().getString(R.string.network_exception);
-                }
-                MUtils.showToast(context, errMsg);
-            }
-        }
-    }
 
     /**
      * 登陆
@@ -121,7 +96,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     private void login() {
 
 
-        MachtalkSDK.getInstance().userLogin("13661498824", "123456", null);
+        MachtalkSDK.getInstance().userLogin(
+                edit_userName.getText().toString(),
+                edit_userPwd.getText().toString(), null);
 
 //        MachtalkSDK.getInstance().userLogin("18136093612", "123456", null);
 
@@ -274,6 +251,61 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 break;
         }
     }
+
+    class MSDKListener extends MachtalkSDKListener {
+        @Override
+        public void onUserLogin(Result result, String user) {
+            int success = Result.FAILED;
+            String errMsg = null;
+            if (result != null) {
+                success = result.getSuccess();
+                errMsg = result.getErrorMessage();
+            }
+            if (success == Result.SUCCESS) {
+                editor.putString(MConstants.SP_KEY_USERNAME, userName);
+                editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
+                editor.commit();
+
+                LogUtil.i("store username: " + userName + " password: " + userPwd);
+
+                startActivity(new Intent(context, MainActivity.class));
+                context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                context.finish();
+            } else {
+                if (errMsg == null) {
+                    errMsg = getResources().getString(R.string.network_exception);
+                }
+                MUtils.showToast(context, errMsg);
+            }
+        }
+    }
+
+
+    /**
+     * 保存成员到本地
+     *
+     * @param result member_id, member_name, member_image, gender, birth_date, height, weight
+     */
+    private void saveToLocalUser(JSONObject result) {
+        JSONArray data = result.optJSONArray("data");
+        if (data != null) {
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject o = data.optJSONObject(i);
+                User user = new User();
+                user.setId(o.optInt(MConstants.SP_KEY_UID));
+                user.set_name(o.optString("telephone"));
+                user.set_sex(o.optInt("sex"));
+                user.set_platformId("platformId");
+                user.set_location(1);//登录用户默认在左边---初次使用,以后登录不在设置
+                try {
+                    dbManager.saveOrUpdate(user);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onHiddenChanged(boolean hidden) {

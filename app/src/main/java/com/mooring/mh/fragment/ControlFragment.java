@@ -9,14 +9,13 @@ import com.mooring.mh.activity.HeatingControlActivity;
 
 /**
  * 第二个fragment 负责控制仪器的温度
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
-public class ControlFragment extends BaseFragment implements View.OnClickListener {
+public class ControlFragment extends BaseFragment implements View.OnClickListener, SwitchUserObserver {
 
     private View layout_heating;
     private View layout_drying;
-
 
     @Override
     protected int getLayoutId() {
@@ -25,7 +24,6 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     protected void initFragment() {
-
     }
 
     @Override
@@ -53,5 +51,10 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
                 break;
         }
     }
+
+    @Override
+    public void onSwitch(String userId, int location, String fTag) {
+    }
+
 }
 

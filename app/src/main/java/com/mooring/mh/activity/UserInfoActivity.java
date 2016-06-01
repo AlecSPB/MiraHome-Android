@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.mooring.mh.db.DbXUtils;
+import com.mooring.mh.db.User;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.utils.NetworkUtil;
@@ -20,7 +22,9 @@ import com.mooring.mh.views.WheelPicker.widget.WheelHeightSelectPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelWeightSelectPicker;
 
 import org.json.JSONObject;
+import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -41,7 +45,20 @@ public class UserInfoActivity extends BaseActivity {
     private TextView tv_height;
     private TextView tv_weight;
     private String flag = "";
+    private int member_id;
     private int tempSex = 0, sex = 0;
+    private DbManager dbManager;
+    /**
+     * 选择器中所需变量
+     */
+    private TextView male;
+    private TextView female;
+    private int padding;
+    private int textSize;
+    private int itemSpace;
+    private ImageView select_confirm;
+    private String date = "";
+    private Dialog dialog;
 
     @Override
     protected int getLayoutId() {
@@ -57,6 +74,11 @@ public class UserInfoActivity extends BaseActivity {
     protected void initActivity() {
         Intent it = getIntent();
         flag = it.getStringExtra(MConstants.ENTRANCE_FLAG);
+        if ("edit".equals(flag)) {
+            member_id = it.getIntExtra(MConstants.SP_KEY_MEMBER_ID, -1);
+        }
+        DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
+        dbManager = x.getDb(dao);
     }
 
     @Override
@@ -103,13 +125,19 @@ public class UserInfoActivity extends BaseActivity {
     protected void OnClick(View v) {
         switch (v.getId()) {
             case R.id.imgView_act_right:
-//删除
+                //删除
+                deleteUser();
                 break;
             case R.id.tv_confirm:
-//confirm
+                //confirm
+                if ("add".equals(flag)) {
+                    addUser();
+                } else {
+                    editUser();
+                }
                 break;
             case R.id.tv_on_mooring:
-//sleep on mooring
+                //sleep on mooring
                 break;
             case R.id.imgView_add_user:
                 SelectHeadImg();
@@ -129,10 +157,143 @@ public class UserInfoActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 添加成员
+     */
+    private void addUser() {
+        RequestParams params = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.MEMBER);
+        params.addParameter("member_name", edText_name.getText().toString().trim());
+        params.addParameter("gender", sex);
+        params.addParameter("birth_date", tv_birthday.getText().toString().trim());
+        params.addParameter("height", tv_height.getText().toString().trim());
+        params.addParameter("weight", tv_weight.getText().toString().trim());
 
-    private TextView male;
-    private TextView female;
+        x.http().post(params, new Callback.CommonCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                if (result != null && result.optInt("code") == 0) {
+                    JSONObject data = result.optJSONObject("data");
+                    int member_id = data.optInt(MConstants.SP_KEY_MEMBER_ID);
+                    User user = new User();
+                    user.setId(member_id);
+                    user.set_birthday(tv_birthday.getText().toString());
+                    user.set_height(tv_height.getText().toString());
+                    user.set_name(edText_name.getText().toString().trim());
+                    user.set_sex(sex);
+                    user.set_weight(tv_weight.getText().toString());
+                    user.set_location(0);//添加成员默认不在床上
+                    try {
+                        dbManager.saveOrUpdate(user);
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    MUtils.showToast(context, "添加失败,请重试");
+                }
+            }
 
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MUtils.showToast(context, "添加失败,请重试");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                MUtils.showToast(context, "添加已取消");
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
+    /**
+     * 编辑成员
+     */
+    private void editUser() {
+        RequestParams params = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.MANAGE_MEMBER);
+        params.addParameter("member_name", edText_name.getText().toString().trim());
+        params.addParameter("gender", sex);
+        params.addParameter("birth_date", tv_birthday.getText().toString().trim());
+        params.addParameter("height", tv_height.getText().toString().trim());
+        params.addParameter("weight", tv_weight.getText().toString().trim());
+
+        x.http().post(params, new Callback.CommonCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                if (result != null && result.optInt("code") == 0) {
+                    User user = new User();
+                    user.setId(member_id);
+                    user.set_birthday(tv_birthday.getText().toString());
+                    user.set_height(tv_height.getText().toString());
+                    user.set_name(edText_name.getText().toString().trim());
+                    user.set_sex(sex);
+                    user.set_weight(tv_weight.getText().toString());
+                    user.set_header("");//当本地图片有的话设置,没有的话不设置
+                    try {
+                        dbManager.saveOrUpdate(user);
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    MUtils.showToast(context, "编辑失败,请重试");
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MUtils.showToast(context, "编辑失败,请重试");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                MUtils.showToast(context, "编辑已取消");
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
+    /**
+     * 删除成员
+     */
+    private void deleteUser() {
+        RequestParams params = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.MANAGE_MEMBER);
+        x.http().post(params, new Callback.CommonCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                if (result != null && result.optInt("code") == 0) {
+                    MUtils.showToast(context, "删除成功");
+                    context.finish();
+                } else {
+                    MUtils.showToast(context, "删除失败,请重试");
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MUtils.showToast(context, "删除失败,请重试");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                MUtils.showToast(context, "删除已取消");
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
+    /**
+     * 性别选择器,改变被选中文本颜色
+     *
+     * @param sex
+     */
     private void showSexInSelector(int sex) {
         male.setTextColor(getResources().getColor(
                 sex == 0 ? R.color.colorPurple : R.color.colorWhite50));
@@ -184,6 +345,7 @@ public class UserInfoActivity extends BaseActivity {
                     }
                 });
         dialog.show();
+        MUtils.setDialogFullScreen(this, dialog);
     }
 
     /**
@@ -240,16 +402,6 @@ public class UserInfoActivity extends BaseActivity {
         dialog.show();
         MUtils.setDialogFullScreen(this, dialog);
     }
-
-
-    private int padding;
-    private int textSize;
-    private int itemSpace;
-    private ImageView select_confirm;
-    private String date = "";
-
-
-    private Dialog dialog;
 
     /**
      * 选择生日

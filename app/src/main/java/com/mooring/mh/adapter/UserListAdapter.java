@@ -1,7 +1,5 @@
 package com.mooring.mh.adapter;
 
-import android.app.Activity;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.model.UserHeadInfo;
+import com.mooring.mh.db.User;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
+
+import org.xutils.common.util.LogUtil;
 
 import java.util.List;
 
@@ -22,68 +22,55 @@ import java.util.List;
  * <p/>
  * Created by Will on 16/4/7.
  */
-public class UserListAdapter extends RecyclerView
-        .Adapter<UserListAdapter.HorizontalViewHolder> {
+public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.HorizontalViewHolder> {
 
-    public interface AdapterData {
-        String getTitle();
+    private List<User> dataList;
+    private OnRecyclerItemClickListener itemClickListener;
 
-        String getThumbnailUrl();
-    }
-
-    public interface OnClickListener<ImageData> {
-        void onClick(ImageData obj, int position);
-    }
-
-    private List<UserHeadInfo> dataList;
-    private Resources resources;
-    private OnClickListener<UserHeadInfo> listener;
-    private Activity context;
-
-    public UserListAdapter(Activity context, List<UserHeadInfo> dataList) {
-        this.context = context;
+    public UserListAdapter(List<User> dataList) {
         this.dataList = dataList;
-        resources = context.getResources();
     }
 
-    public void setOnClickListener(OnClickListener<UserHeadInfo> listener) {
-        this.listener = listener;
+    public void setOnClickListener(OnRecyclerItemClickListener listener) {
+        this.itemClickListener = listener;
     }
 
     @Override
     public HorizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.horizontal_scroll_item, parent, false);
-        return new HorizontalViewHolder(v);
-    }
-
-    @Override
-    public void onBindViewHolder(HorizontalViewHolder viewHolder, final int position) {
-        final UserHeadInfo data = dataList.get(position);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        View view = LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.horizontal_scroll_item, parent, false);
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.onClick(data, position);
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(v, (Integer) v.getTag());
                 }
             }
         });
+        return new HorizontalViewHolder(view);
+    }
 
-        Bitmap bm = null;
+    @Override
+    public void onBindViewHolder(HorizontalViewHolder viewHolder, int position) {
+        final User data = dataList.get(position);
+        LogUtil.w("viewHolder.getAdapterPosition():    " + viewHolder.getAdapterPosition());
+
         if (position != dataList.size() - 1) {
-            viewHolder.getTextView().setVisibility(View.VISIBLE);
-            viewHolder.getImageHeader().setVisibility(View.VISIBLE);
-            viewHolder.getImageAdd().setVisibility(View.GONE);
+            viewHolder.tv_name.setVisibility(View.VISIBLE);
+            viewHolder.img_header.setVisibility(View.VISIBLE);
+            viewHolder.img_add.setVisibility(View.GONE);
 
-            viewHolder.getTextView().setText(data.getTitle());
-            bm = BitmapFactory.decodeFile(data.getThumbnailUrl());
+            viewHolder.tv_name.setText(data.get_name());
+            Bitmap bm = BitmapFactory.decodeFile(data.get_header());
             if (bm != null) {
-                viewHolder.getImageHeader().setImageBitmap(bm);
+                viewHolder.img_header.setImageBitmap(bm);
             }
         } else {
-            viewHolder.getTextView().setVisibility(View.GONE);
-            viewHolder.getImageHeader().setVisibility(View.GONE);
-            viewHolder.getImageAdd().setVisibility(View.VISIBLE);
+            viewHolder.tv_name.setVisibility(View.GONE);
+            viewHolder.img_header.setVisibility(View.GONE);
+            viewHolder.img_add.setVisibility(View.VISIBLE);
         }
+        viewHolder.v.setTag(position);
     }
 
     @Override
@@ -95,31 +82,19 @@ public class UserListAdapter extends RecyclerView
      * ViewHolder
      */
     public class HorizontalViewHolder extends RecyclerView.ViewHolder {
-        private CircleImageView img_header;
-        private ImageView img_add;
-        private TextView tv_name;
+        public CircleImageView img_header;
+        public ImageView img_add;
+        public TextView tv_name;
+        public View v;
 
         HorizontalViewHolder(View view) {
             super(view);
 
+            v = view;
             img_header = (CircleImageView) view.findViewById(R.id.imgView_horizontal_header);
             img_add = (ImageView) view.findViewById(R.id.imgView_horizontal_add);
             tv_name = (TextView) view.findViewById(R.id.tv_horizontal_name);
         }
-
-        CircleImageView getImageHeader() {
-            return img_header;
-        }
-
-        ImageView getImageAdd() {
-            return img_add;
-        }
-
-        TextView getTextView() {
-            return tv_name;
-        }
-
     }
-
 }
 

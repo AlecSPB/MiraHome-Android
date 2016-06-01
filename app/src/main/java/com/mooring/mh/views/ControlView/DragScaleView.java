@@ -154,8 +154,9 @@ public class DragScaleView extends View implements View.OnTouchListener {
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
 
         //绘制室内温度值
-        drawText(canvas, "Room" + "     " + roomTemp + unit, bedTvSize, Color.WHITE, roomY - MUtils.
-                dp2px(getContext(), 30), viewW / 4 - MUtils.dp2px(getContext(), 10));
+        drawText(canvas, getResources().getString(R.string.tv_room_temp) + roomTemp + unit
+                , bedTvSize, Color.WHITE, roomY - MUtils.dp2px(getContext(), 30),
+                viewW / 4 - MUtils.dp2px(getContext(), 5));
 
         //温度text
         drawText(canvas, currTemperature + unit, dropTvSize, 0X7FFFFFFF, oriTop, viewW * 2 / 3 + dropW / 2);
@@ -184,7 +185,8 @@ public class DragScaleView extends View implements View.OnTouchListener {
         drawText(canvas, lowerBound + currUnit, tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
 
         //bed温度
-        drawText(canvas, "Bed " + bedTemperature, bedTvSize, Color.WHITE, viewH - tempBottom, viewW * 3 / 4);
+        drawText(canvas, getResources().getString(R.string.tv_bed_temp) + bedTemperature,
+                bedTvSize, Color.WHITE, viewH - tempBottom, viewW * 3 / 4);
 
     }
 

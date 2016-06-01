@@ -14,7 +14,6 @@ import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
-import com.mooring.mh.activity.MainActivity;
 import com.mooring.mh.activity.ParameterDetailActivity;
 import com.mooring.mh.activity.SetWifiActivity;
 import com.mooring.mh.utils.MConstants;
@@ -26,11 +25,10 @@ import java.util.List;
 
 /**
  * 参数Fragment,实时更新
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
-public class ParameterFragment extends BaseFragment implements View.OnClickListener,
-        MainActivity.OnSwitchUserListener {
+public class ParameterFragment extends BaseFragment implements View.OnClickListener, SwitchUserObserver {
 
     private View layout_parameter;//有设备页
     private View layout_no_device;//无设备页
@@ -55,10 +53,10 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     private TextView tv_noise;
     private MSDKListener msdkListener;
 
-    private int currUsers;
+    private int currLocation;
     private String deviceId;
     private AlphaAnimation alphaAnimation;
-
+    private boolean isRefresh = false;
 
     @Override
     protected int getLayoutId() {
@@ -69,8 +67,9 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     protected void initFragment() {
         msdkListener = new MSDKListener();
 
-        currUsers = sp.getInt(MConstants.SP_KEY_CURRUSERS, 0);
         deviceId = sp.getString(MConstants.DEVICE_ID, "");
+        currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+
     }
 
     @Override
@@ -112,6 +111,14 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         alphaAnimation.setDuration(1500);
         alphaAnimation.setRepeatCount(-1);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
+
+        startAnimation();
+    }
+
+    /**
+     * 开始动画加载
+     */
+    private void startAnimation() {
         tv_heart_rate.setAnimation(alphaAnimation);
         tv_breathing_rate.setAnimation(alphaAnimation);
         tv_body_movement.setAnimation(alphaAnimation);
@@ -121,10 +128,24 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         tv_light.setAnimation(alphaAnimation);
         tv_noise.setAnimation(alphaAnimation);
         alphaAnimation.start();
+    }
 
-//        //获取当前Device的详细信息
-//        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
-
+    /**
+     * 停止动画加载
+     */
+    private void stopAnimation() {
+        if (alphaAnimation != null) {
+            tv_heart_rate.clearAnimation();
+            tv_breathing_rate.clearAnimation();
+            tv_body_movement.clearAnimation();
+            tv_humidity.clearAnimation();
+            tv_temperature.clearAnimation();
+            tv_bed_temperature.clearAnimation();
+            tv_light.clearAnimation();
+            tv_noise.clearAnimation();
+            alphaAnimation.cancel();
+            alphaAnimation = null;
+        }
     }
 
     @Override
@@ -177,29 +198,25 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         context.startActivity(it);
     }
 
-    @Override
-    public void onSwitch(int position) {
-
-    }
-
     /**
      * 自定义回调监听
      */
     class MSDKListener extends MachtalkSDKListener {
+
         @Override
         public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
             super.onQueryDeviceStatus(result, deviceStatus);
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
+            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
             if (success == Result.SUCCESS && deviceStatus != null
                     && deviceId.equals(deviceStatus.getDeviceId())) {
-                List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
-                parseDvidStatusList(list);
+                parseDvidStatusList(deviceStatus.getDeviceDvidStatuslist());
                 layout_parameter.setVisibility(View.VISIBLE);
                 layout_no_device.setVisibility(View.GONE);
+                isRefresh = true;
             } else {
                 MUtils.showToast(context, getResources().getString(R.string.device_not_online));
                 layout_parameter.setVisibility(View.GONE);
@@ -210,13 +227,16 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
-            LogUtil.e("result  " + result.getSuccess());
-            if (rdm != null) {
-                LogUtil.e("mDeviceId  " + rdm.getDeviceId() + " 操作回复 " + rdm.isRespMsg());
-                if (rdm.isRespMsg()) {
-                    List<DvidStatus> list = rdm.getDvidStatusList();
-                    parseDvidStatusList(list);
-                }
+            if (!isRefresh) {
+                return;
+            }
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            LogUtil.e("onReceiveDeviceMessage  " + result.getSuccess());
+            if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
+                parseDvidStatusList(rdm.getDvidStatusList());
             }
         }
     }
@@ -227,63 +247,65 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
      * @param list
      */
     private void parseDvidStatusList(List<DvidStatus> list) {
-        if (list != null) {
-            if (alphaAnimation != null) {
-                tv_heart_rate.clearAnimation();
-                tv_breathing_rate.clearAnimation();
-                tv_body_movement.clearAnimation();
-                tv_humidity.clearAnimation();
-                tv_temperature.clearAnimation();
-                tv_bed_temperature.clearAnimation();
-                tv_light.clearAnimation();
-                tv_noise.clearAnimation();
-                alphaAnimation.cancel();
-                alphaAnimation = null;
+        if (list == null) {
+            return;
+        }
+
+        stopAnimation();
+
+        for (int i = 0; i < list.size(); i++) {
+            DvidStatus ds = list.get(i);
+            if (MConstants.ATTR_ENVIR_HUMIDITY.equals(ds.getDvid())) {//环境湿度
+                tv_humidity.setText(list.get(i).getValue());
             }
-            for (int i = 0; i < list.size(); i++) {
-                LogUtil.e("  dvid  " + list.get(i).getDvid() + " value  " + list.get(i).getValue());
-                DvidStatus ds = list.get(i);
-                if (MConstants.ATTR_ENVIR_HUMIDITY.equals(ds.getDvid())) {//环境湿度
-                    tv_humidity.setText(list.get(i).getValue());
+            if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(ds.getDvid())) {//环境温度----温度
+                tv_temperature.setText(list.get(i).getValue());
+            }
+            if (MConstants.ATTR_ENVIR_LIGHT.equals(ds.getDvid())) {//环境光照
+                tv_light.setText(list.get(i).getValue());
+            }
+            if (MConstants.ATTR_ENVIR_NOISE.equals(ds.getDvid())) {//环境噪声
+                tv_noise.setText(list.get(i).getValue());
+            }
+            if (currLocation == MConstants.LEFT_USER) {
+                if (MConstants.ATTR_LEFT_HEART_RATE.equals(ds.getDvid())) {//左边心率
+                    tv_heart_rate.setText(list.get(i).getValue());
                 }
-                if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(ds.getDvid())) {//环境温度----温度
-                    tv_temperature.setText(list.get(i).getValue());
+                if (MConstants.ATTR_LEFT_RESP_RATE.equals(ds.getDvid())) {//左边呼吸频率
+                    tv_breathing_rate.setText(list.get(i).getValue());
                 }
-                if (MConstants.ATTR_ENVIR_LIGHT.equals(ds.getDvid())) {//环境光照
-                    tv_light.setText(list.get(i).getValue());
+                if (MConstants.ATTR_LEFT_MOVEMENT.equals(ds.getDvid())) {//左边体动
+                    tv_body_movement.setText(list.get(i).getValue());
                 }
-                if (MConstants.ATTR_ENVIR_NOISE.equals(ds.getDvid())) {//环境噪声
-                    tv_noise.setText(list.get(i).getValue());
-                }
-                if (currUsers == MConstants.LEFT_USER) {
-                    if (MConstants.ATTR_LEFT_HEART_RATE.equals(ds.getDvid())) {//左边心率
-                        tv_heart_rate.setText(list.get(i).getValue());
-                    }
-                    if (MConstants.ATTR_LEFT_RESP_RATE.equals(ds.getDvid())) {//左边呼吸频率
-                        tv_breathing_rate.setText(list.get(i).getValue());
-                    }
-                    if (MConstants.ATTR_LEFT_MOVEMENT.equals(ds.getDvid())) {//左边体动
-                        tv_body_movement.setText(list.get(i).getValue());
-                    }
-                    if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(ds.getDvid())) {//左边实际温度
-                        tv_bed_temperature.setText(list.get(i).getValue());
-                    }
-                }
-                if (currUsers == MConstants.RIGHT_USER) {
-                    if (MConstants.ATTR_RIGHT_HEART_RATE.equals(ds.getDvid())) {//右边心率
-                        tv_heart_rate.setText(list.get(i).getValue());
-                    }
-                    if (MConstants.ATTR_RIGHT_RESP_RATE.equals(ds.getDvid())) {//右边呼吸频率
-                        tv_breathing_rate.setText(list.get(i).getValue());
-                    }
-                    if (MConstants.ATTR_RIGHT_MOVEMENT.equals(ds.getDvid())) {//右边体动
-                        tv_body_movement.setText(list.get(i).getValue());
-                    }
-                    if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(ds.getDvid())) {//右边实际温度
-                        tv_bed_temperature.setText(list.get(i).getValue());
-                    }
+                if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(ds.getDvid())) {//左边实际温度
+                    tv_bed_temperature.setText(list.get(i).getValue());
                 }
             }
+            if (currLocation == MConstants.RIGHT_USER) {
+                if (MConstants.ATTR_RIGHT_HEART_RATE.equals(ds.getDvid())) {//右边心率
+                    tv_heart_rate.setText(list.get(i).getValue());
+                }
+                if (MConstants.ATTR_RIGHT_RESP_RATE.equals(ds.getDvid())) {//右边呼吸频率
+                    tv_breathing_rate.setText(list.get(i).getValue());
+                }
+                if (MConstants.ATTR_RIGHT_MOVEMENT.equals(ds.getDvid())) {//右边体动
+                    tv_body_movement.setText(list.get(i).getValue());
+                }
+                if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(ds.getDvid())) {//右边实际温度
+                    tv_bed_temperature.setText(list.get(i).getValue());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSwitch(String userId, int location, String fTag) {
+        if (fTag.equals(this.getTag())) {//当前fragment为展现
+            //执行切换
+            isRefresh = false;
+            currLocation = location;
+            startAnimation();
+            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
         }
     }
 
@@ -295,6 +317,14 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         } else {
             MachtalkSDK.getInstance().setContext(context);
             MachtalkSDK.getInstance().setSdkListener(msdkListener);
+
+            //获取当前的User,如果没有改变,则不做切换
+            if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
+                isRefresh = false;
+                currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+                startAnimation();
+            }
+            //每次展现的时候请求一次,保证数据最新
             MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
         }
     }
@@ -304,8 +334,14 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
-        //每次跳转回来执行一次请求,防止设备断开
-//        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        //每次跳转回来执行一次请求,获取最新数据
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
     }
 
     @Override
@@ -315,11 +351,5 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             alphaAnimation.cancel();
             alphaAnimation = null;
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
     }
 }

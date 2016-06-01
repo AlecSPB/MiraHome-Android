@@ -137,6 +137,7 @@ public class SetWifiActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.tv_scan_skip:
             case R.id.tv_act_skip:
+                MachtalkSDK.getInstance().setDeviceWiFiCancle();
                 SetWifiActivity.this.finish();
                 break;
             case R.id.tv_send_wifi:

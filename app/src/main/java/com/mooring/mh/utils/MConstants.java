@@ -266,20 +266,25 @@ public class MConstants {
     /**
      * sharedPreferences文件信息
      */
-    public final static String SP_KEY_USERNAME = "username";
-    public final static String SP_KEY_CURRUSERS = "currUsers";
-    public final static String SP_KEY_PASSWORD = "password";
-    public final static String SP_KEY_TOKEN = "token";
-    public final static String SP_KEY_FIRST_START = "appFirstStart";
-    public final static String DEVICE_ID = "deviceId";
-    public final static String DRYING_START_TIME = "drying_start_time";
-    public final static String DRYING_TIMES = "drying_times";
-    public final static String DRYING_OPEN = "drying_open";
-    public final static String LEFT_TARGET_TEMP = "left_target_temp";
-    public final static String RIGHT_TARGET_TEMP = "right_target_temp";
-    public final static String FIRST_ADD_DEVICE = "first_add_device";
-    public final static String ENTRANCE_FLAG = "entrance_flag";
-    public final static String TEMPERATURE_UNIT = "temperature_unit";
+    public final static String SP_KEY_USERNAME = "username";//用户名
+    public final static String SP_KEY_PASSWORD = "password";//密码
+    public final static String SP_KEY_TOKEN = "token";//token
+    public final static String SP_KEY_UID = "uid";//用户ID
+    public final static String SP_KEY_MEMBER_ID = "member_id";//成员ID
+    public final static String SP_KEY_FIRST_START = "appFirstStart";//初次启动
+    public final static String DEVICE_ID = "deviceId";//设备ID
+    public final static String DRYING_START_TIME = "drying_start_time";//烘干开始时间
+    public final static String DRYING_TIMES = "drying_times";//烘干过程时间
+    public final static String DRYING_OPEN = "drying_open";//烘干打开标志
+    public final static String LEFT_TARGET_TEMP = "left_target_temp";//左边目标温度
+    public final static String RIGHT_TARGET_TEMP = "right_target_temp";//右边目标温度
+    public final static String FIRST_ADD_DEVICE = "first_add_device";//初次添加设备标志
+    public final static String ENTRANCE_FLAG = "entrance_flag";//进入标志
+    public final static String TEMPERATURE_UNIT = "temperature_unit";//温度单位
+    public final static String CURR_BLANKET_MODEL = "curr_blanket_model";//当前毯子所处模式
+    public final static String LOGOUT_KICKOFF = "logout_kickoff";//用户被挤下线标志
+    public final static String CURR_USER_ID = "curr_user_id";//当前用户id,用来提取出当前用户使用
+    public final static String CURR_USER_LOCATION = "curr_user_location";//当前用户位置
 
     /**
      * 设备属性值
@@ -309,7 +314,7 @@ public class MConstants {
     public final static String ATTR_IS_CONNECTED = "123";
     public final static String ATTR_SINGLE_OR_DOUBLE = "124";
     public final static String ATTR_ALARM_LEFT = "125";
-    public final static String ATTR_Alarm_RIGHT = "126";
+    public final static String ATTR_ALARM_RIGHT = "126";
     public final static String ATTR_DRYING_ON_TIME = "127";
     public final static String ATTR_LEFT_TARGET_TEMP_SWITCH = "128";
     public final static String ATTR_RIGHT_TARGET_TEMP_SWITCH = "129";
@@ -403,6 +408,21 @@ public class MConstants {
      * 文件读写权限
      */
     public static final int PERMISSIONS_STORAGE = 0X26;
+
+    /**
+     * 双人毯,单个人
+     */
+    public static final int DOUBLE_BLANKET_SINGLE = 0X27;
+
+    /**
+     * 双人毯,多人
+     */
+    public static final int DOUBLE_BLANKET_MULTIPLE = 0X28;
+
+    /**
+     * 单人毯
+     */
+    public static final int SINGLE_BLANKET = 0X29;
 
     /**
      * 工具类常量

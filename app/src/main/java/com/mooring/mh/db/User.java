@@ -5,20 +5,20 @@ import org.xutils.db.annotation.Table;
 
 /**
  * 本地用户类
- * <p/>
+ * <p>
  * Created by Will on 16/3/31.
  */
 @Table(name = "local_user")
 public class User {
 
-    @Column(isId = true, name = "id", autoGen = true)
+    @Column(isId = true, name = "id")
     private int id;
 
     @Column(name = "_name")
     private String _name;
 
     @Column(name = "_sex")
-    private String _sex; //0:male  1:female
+    private int _sex; //0:male  1:female
 
     @Column(name = "_birthday")
     private String _birthday; // 2016-03-31
@@ -32,6 +32,11 @@ public class User {
     @Column(name = "_location")
     private int _location; // 0:out  1:left  2:right
 
+    @Column(name = "_header")
+    private String _header;//成员头像
+
+    @Column(name = "_platformId")
+    private String _platformId;//平台ID
 
     public String get_birthday() {
         return _birthday;
@@ -49,7 +54,7 @@ public class User {
         return _name;
     }
 
-    public String get_sex() {
+    public int get_sex() {
         return _sex;
     }
 
@@ -77,7 +82,7 @@ public class User {
         this._name = _name;
     }
 
-    public void set_sex(String _sex) {
+    public void set_sex(int _sex) {
         this._sex = _sex;
     }
 
@@ -87,5 +92,27 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String get_header() {
+        return _header;
+    }
+
+    public void set_header(String _header) {
+        this._header = _header;
+    }
+
+    public String get_platformId() {
+        return _platformId;
+    }
+
+    public void set_platformId(String _platformId) {
+        this._platformId = _platformId;
+    }
+
+    public String toString() {
+        return "id:  " + id + "  name:  " + _name + "  height:  " + _height + "  weight:  "
+                + _weight + "  sex:  " + _sex + "  header:  " + _header + "  location:  "
+                + _location + "  platformId:  " + _platformId;
     }
 }

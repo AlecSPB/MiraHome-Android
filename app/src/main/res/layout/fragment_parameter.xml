@@ -5,7 +5,7 @@
     android:background="@color/colorMainBg"
     android:orientation="vertical"
     android:paddingTop="?attr/actionBarSize">
-    
+
     <LinearLayout
         android:id="@+id/layout_no_device"
         android:layout_width="match_parent"

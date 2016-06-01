@@ -59,8 +59,8 @@ public class WeatherView extends View {
      */
     private static int NUM_SNOWFLAKES = 30;//雪花数量
     private static final int DELAY = 10;//延迟时间
-    private List<SnowFlake> mSnowFlakes = null; // 碎片
-    private List<Bitmap> snows = null;//存放不同碎片
+    private List<SnowFlake> mSnowFlakes = new ArrayList<>(); // 碎片
+    private List<Bitmap> snows = new ArrayList<>();//存放不同碎片
     /**
      * ------------雷电--------------
      */
@@ -82,7 +82,7 @@ public class WeatherView extends View {
     private int windBig_y = MUtils.dp2px(getContext(), 100);
     private int windSma_x = MUtils.dp2px(getContext(), 30);
     private int windSma_y = MUtils.dp2px(getContext(), 200);
-    private Matrix matrixWind;
+    private Matrix matrixWind = new Matrix();
 
     private int viewW;
     private int viewH;
@@ -104,10 +104,6 @@ public class WeatherView extends View {
      * 初始化
      */
     private void init() {
-        mSnowFlakes = new ArrayList<>();
-        snows = new ArrayList<>();
-
-        matrixWind = new Matrix();
 
         light_left = createBitmap(R.drawable.ic_lightning_1);
         light_right = createBitmap(R.drawable.ic_lightning_2);

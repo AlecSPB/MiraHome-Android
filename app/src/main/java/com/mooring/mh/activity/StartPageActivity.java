@@ -55,12 +55,6 @@ public class StartPageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_startpage);
 
-        sp = InitApplicationHelper.sp;
-        editor = sp.edit();
-        editor.apply();
-
-        baseListener = new BaseListener();
-
         applyForPermission();
 
     }
@@ -69,7 +63,15 @@ public class StartPageActivity extends AppCompatActivity {
      * 执行方法
      */
     private void executeMethod() {
+        sp = InitApplicationHelper.sp;
+        editor = sp.edit();
+        editor.apply();
 
+        //设定Log输出等级以及输出到本地文件
+//        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, true);
+        MachtalkSDK.getInstance().startSDK(context, null);
+
+        baseListener = new BaseListener();
 
         new Handler().postDelayed(new Runnable() {
             public void run() {

@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="10dp">
+    android:orientation="vertical">
 
     <View
         android:id="@+id/other_view"
@@ -14,45 +13,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorMainBg"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/choose_by_camera"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_select_head"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="Camera"
-            android:textColor="@color/colorPurple"
-            android:textSize="@dimen/text_dimen_34pt" />
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorBlack" />
+            <ImageView
+                android:id="@+id/choose_by_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/bg_use_photo" />
 
-        <TextView
-            android:id="@+id/choose_by_local"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/bg_select_head"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="Gallery"
-            android:textColor="@color/colorPurple"
-            android:textSize="@dimen/text_dimen_34pt" />
+            <ImageView
+                android:id="@+id/choose_by_local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/bg_use_gallery" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/dialog_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_select_head"
+            android:layout_margin="20dp"
+            android:background="@drawable/bg_log_out"
             android:gravity="center"
-            android:padding="10dp"
-            android:text="Cancel"
-            android:textColor="@color/colorPurple"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/tv_cancel"
+            android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_34pt" />
     </LinearLayout>
 

@@ -41,7 +41,8 @@ import java.util.Locale;
  * <p/>
  * Created by Will on 16/3/24.
  */
-public class WeatherFragment extends BaseFragment implements View.OnClickListener, AMapLocationListener {
+public class WeatherFragment extends BaseFragment implements View.OnClickListener,
+        AMapLocationListener, SwitchUserObserver {
 
     private CircleDisplay circle_progress_1;
     private CircleDisplay circle_progress_2;
@@ -59,9 +60,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
-    public final static int MSG_LOCATION_START = 0;//开始定位
-    public final static int MSG_LOCATION_FINISH = 1;//定位完成
-    public final static int MSG_LOCATION_STOP = 2;//定位完成
     private double lon;//经度
     private double lat;//纬度
     private int weatherId;
@@ -491,7 +489,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         weather_view.setRuning(true);
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -551,5 +548,11 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                         + amapLocation.getErrorInfo());
             }
         }
+    }
+
+    @Override
+    public void onSwitch(String userId,int location,String fTag) {
+
+        LogUtil.e("________切换了User_________");
     }
 }

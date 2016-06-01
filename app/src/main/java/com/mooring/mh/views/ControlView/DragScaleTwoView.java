@@ -38,13 +38,13 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
     private int dropW = 0;//拖动小球宽度
     private int dropH = 0;//拖动小球高度
     private int roomY;//室内温度y坐标
-    private int roomTemp = 35;//室内温度
+    private int roomTemp = 28;//室内温度
     private int upperBound = 40;//温度上界
     private int lowerBound = 20;//温度下界
     private int bedLeftTemp = 25;//左边床的温度
     private int bedRightTemp = 30;//右边床的温度
     private int currLeftTemp = 30;//当前温度
-    private int currRightTemp = 36;//当前温度
+    private int currRightTemp = 40;//当前温度
     private String unit = "";//床温,拖动温度,Room温度显示单位
     private String currUnit = "℃";//当前系统设置的温度单位,默认为摄氏度--MConstants.DEGREES_C
     private int lastY;
@@ -165,8 +165,9 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         canvas.drawLine(0, roomY, viewW, roomY, tickMarkPaint);
 
         //绘制室内温度值
-        drawText(canvas, "Room" + "     " + roomTemp + unit, bedTvSize, Color.WHITE, roomY -
-                MUtils.dp2px(getContext(), 30), viewW / 2 - MUtils.dp2px(getContext(), 10));
+        drawText(canvas, getResources().getString(R.string.tv_room_temp) + roomTemp + unit,
+                bedTvSize, Color.WHITE, roomY - MUtils.dp2px(getContext(), 30),
+                viewW / 2-MUtils.dp2px(getContext(), 5));
 
         //温度text
         drawText(canvas, currLeftTemp + unit, dropTvSize, (0X7FFFFFFF), oriLeft, viewW / 4);
@@ -180,7 +181,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //bed温度
-        drawText(canvas, "Bed " + bedLeftTemp + unit, bedTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
+        drawText(canvas, getResources().getString(R.string.tv_bed_temp) + bedLeftTemp + unit,
+                bedTvSize, Color.WHITE, viewH - tempBottom, viewW / 4);
 
         /*-------- 绘制右侧 -------*/
 
@@ -196,7 +198,8 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         }
 
         //bed温度
-        drawText(canvas, "Bed " + bedRightTemp + unit, bedTvSize, Color.WHITE, viewH - tempBottom, viewW * 3 / 4);
+        drawText(canvas, getResources().getString(R.string.tv_bed_temp) + bedRightTemp + unit,
+                bedTvSize, Color.WHITE, viewH - tempBottom, viewW * 3 / 4);
 
          /*-------- 绘制公共部分 -------*/
         //刻度直线

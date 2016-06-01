@@ -40,8 +40,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                 }
             }
         });
-        DeviceHolder dh = new DeviceHolder(view);
-        return dh;
+        return new DeviceHolder(view);
     }
 
     @Override

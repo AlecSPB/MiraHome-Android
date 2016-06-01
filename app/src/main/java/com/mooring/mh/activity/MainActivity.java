@@ -5,12 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,7 +21,11 @@ import android.widget.Toast;
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.DeviceStatus;
+import com.machtalk.sdk.domain.DvidStatus;
+import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
+import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.adapter.UserListAdapter;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
@@ -30,13 +34,14 @@ import com.mooring.mh.fragment.ControlFragment;
 import com.mooring.mh.fragment.ParameterFragment;
 import com.mooring.mh.fragment.TimingFragment;
 import com.mooring.mh.fragment.WeatherFragment;
-import com.mooring.mh.model.UserHeadInfo;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
 import com.mooring.mh.views.CircleImgView.ZoomCircleView;
 import com.mooring.mh.views.CustomToggle;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -45,7 +50,7 @@ import java.util.List;
 /**
  * 主界面MainActivity
  */
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends SubjectActivity implements View.OnClickListener {
 
     private ImageView imgView_weather;//tab-天气
     private ImageView imgView_control;//tab-控制
@@ -57,8 +62,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ZoomCircleView circleImg_right;//右边用户
     private CircleImageView circleImg_middle;//单个用户
     public ImageView imgView_title_plus;//添加闹钟
-    private View layout_two_user;//两个用户的布局
-    private View title_layout;//title布局
+    private View layout_two_user;//两个用户时,头像布局
+    private View title_layout;//整个上部分title布局
 
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
@@ -98,7 +103,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private TextView tv_login_out;//退出登陆
 
     private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
-    private List<UserHeadInfo> dataList;//用户list
     private UserListAdapter adapter;//横向滑动适配器
     /**
      * 系统变量相关
@@ -107,9 +111,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private User currUser;//当前展示User
     private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
     private DbManager dbManager;
-    private OnSwitchUserListener listener;
     private SharedPreferences.Editor editor;
     private BaseListener baseListener;
+    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +121,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         setContentView(R.layout.activity_main);
 
         editor = InitApplicationHelper.sp.edit();
+        editor.apply();
+        deviceId = InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, "");
 
         fragmentManager = getSupportFragmentManager();
 
@@ -127,21 +133,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         dbManager = x.getDb(dao);
 
         initView();
+
         initData();
 
         setTabSelection(CONTROL);
 
-    }
-
-    class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                MainActivity.this.finish();
-                return;
-            }
-        }
     }
 
     /**
@@ -171,16 +167,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         imgView_parameter.setOnClickListener(this);
         imgView_timing.setOnClickListener(this);
 
-        if (computeCurrentUsers() == 2) {
-            circleImg_middle.setVisibility(View.GONE);
-            layout_two_user.setVisibility(View.VISIBLE);
-            circleImg_left.setOnClickListener(this);
-            circleImg_right.setOnClickListener(this);
-        } else {
-            circleImg_middle.setVisibility(View.VISIBLE);
-            layout_two_user.setVisibility(View.GONE);
-        }
-
         /**
          * -----------侧边menu-------------
          */
@@ -207,7 +193,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         menu_recyclerView = (RecyclerView) findViewById(R.id.menu_recyclerView);
         menu_recyclerView.setHasFixedSize(true);
-        layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         menu_recyclerView.setLayoutManager(layoutManager);
 
         imgView_switch_user.setOnClickListener(this);
@@ -238,9 +224,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, ""),
                         new String[]{MConstants.ATTR_LEFT_TARGET_TEMP},
                         new String[]{isChecked ? "30" : "80"});
+                //上面的30和80还有待于修改,目前待定
+                //---希望的方式是,增加标志位,以保证当前温度转换过后的准确性
             }
         });
-
     }
 
 
@@ -248,24 +235,42 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      * 初始化相关数据
      */
     private void initData() {
-        dataList = new ArrayList<UserHeadInfo>();
-        for (int i = 0; i < 10; i++) {
-            UserHeadInfo d = new UserHeadInfo("Alex", Environment.getExternalStorageDirectory().getPath()
-                    + "/Download/11223.jpg");
-            dataList.add(d);
+        /**
+         * 判定单双人模式
+         */
+        try {
+            currUser = dbManager.selector(User.class).where("_location", "=", "1").findFirst();
+            currentUsers = dbManager.selector(User.class).findAll();
+        } catch (DbException e) {
+            e.printStackTrace();
         }
-        adapter = new UserListAdapter(this, dataList);
-        adapter.setOnClickListener(new UserListAdapter.OnClickListener<UserHeadInfo>() {
+
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+
+        if (currentUsers == null || currentUsers.size() == 0) {
+            currentUsers = new ArrayList<>();
+            for (int i = 0; i < 8; i++) {
+                User user = new User();
+                user.set_name("Alex");
+                user.set_header(Environment.getExternalStorageDirectory().getPath() + "/Download/11223.jpg");
+                currentUsers.add(user);
+            }
+
+            //始终都有一个空的User存在,作为添加User的item
+            /*currentUsers = new ArrayList<>();
+            currentUsers.add(new User());*/
+        }
+        adapter = new UserListAdapter(currentUsers);
+        adapter.setOnClickListener(new OnRecyclerItemClickListener() {
             @Override
-            public void onClick(UserHeadInfo data, int position) {
+            public void onItemClick(View view, int position) {
                 Intent it = new Intent();
-                if (position != dataList.size() - 1) {
-                    it.setClass(MainActivity.this, UserInfoActivity.class);
+                it.setClass(MainActivity.this, UserInfoActivity.class);
+                if (position != currentUsers.size() - 1) {
                     it.putExtra(MConstants.ENTRANCE_FLAG, "edit");
                     startActivityForResult(it, MConstants.USER_INFO_REQUEST);
                 } else {
                     //添加用户
-                    it.setClass(MainActivity.this, UserInfoActivity.class);
                     it.putExtra(MConstants.ENTRANCE_FLAG, "add");
                     startActivityForResult(it, MConstants.ADD_USER_REQUEST);
                 }
@@ -275,6 +280,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     /**
+     * Tab被选中执行
+     *
      * @param index
      */
     private void setTabSelection(int index) {
@@ -286,11 +293,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } else {
             imgView_title_plus.setVisibility(View.INVISIBLE);
         }
-        hideFragments(fragmentTransaction);
+        //隐藏当前正在显示的fragment
+        if (fragmentManager.getFragments() != null) {
+            fragmentTransaction.hide(getVisibleFragment());
+        }
         switch (index) {
             case WEATHER:
                 if (weatherFragment == null) {
                     weatherFragment = new WeatherFragment();
+                    this.attach(weatherFragment);
                     fragmentTransaction.add(R.id.main_container, weatherFragment, "WeatherFragment");
                 }
                 fragmentTransaction.show(weatherFragment);
@@ -298,6 +309,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case CONTROL:
                 if (controlFragment == null) {
                     controlFragment = new ControlFragment();
+                    this.attach(controlFragment);
                     fragmentTransaction.add(R.id.main_container, controlFragment, "ControlFragment");
                 }
                 fragmentTransaction.show(controlFragment);
@@ -305,6 +317,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case PARAMETER:
                 if (parameterFragment == null) {
                     parameterFragment = new ParameterFragment();
+                    this.attach(parameterFragment);
                     fragmentTransaction.add(R.id.main_container, parameterFragment, "ParameterFragment");
                 }
                 fragmentTransaction.show(parameterFragment);
@@ -312,6 +325,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case TIMING:
                 if (timingFragment == null) {
                     timingFragment = new TimingFragment();
+                    this.attach(timingFragment);
                     fragmentTransaction.add(R.id.main_container, timingFragment, "TimingFragment");
                 }
                 fragmentTransaction.show(timingFragment);
@@ -322,26 +336,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         setTabSelectStatus(index);
     }
 
-
     /**
-     * 隐藏所有fragment
+     * 获取可见Fragment
      *
-     * @param transaction
+     * @return
      */
-    private void hideFragments(FragmentTransaction transaction) {
-
-        if (weatherFragment != null) {
-            transaction.hide(weatherFragment);
+    public Fragment getVisibleFragment() {
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments == null) {
+            return null;
         }
-        if (controlFragment != null) {
-            transaction.hide(controlFragment);
+        for (Fragment fragment : fragments) {
+            if (fragment != null && fragment.isVisible())
+                return fragment;
         }
-        if (parameterFragment != null) {
-            transaction.hide(parameterFragment);
-        }
-        if (timingFragment != null) {
-            transaction.hide(timingFragment);
-        }
+        return null;
     }
 
     /**
@@ -350,16 +359,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      * @param index
      */
     private void setTabSelectStatus(int index) {
-        //恢复状态栏为透明底色
-//        title_layout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        imgView_weather.setImageResource(index != WEATHER ? R.drawable.btn_weather_normal : R.drawable.btn_weather_select);
-        imgView_control.setImageResource(index != CONTROL ? R.drawable.btn_control_normal : R.drawable.btn_control_select);
-        imgView_parameter.setImageResource(index != PARAMETER ? R.drawable.btn_parameter_normal : R.drawable.btn_parameter_select);
-        imgView_timing.setImageResource(index != TIMING ? R.drawable.btn_timing_normal : R.drawable.btn_timing_select);
-
+        imgView_weather.setImageResource(
+                index != WEATHER ? R.drawable.btn_weather_normal : R.drawable.btn_weather_select);
+        imgView_control.setImageResource(
+                index != CONTROL ? R.drawable.btn_control_normal : R.drawable.btn_control_select);
+        imgView_parameter.setImageResource(
+                index != PARAMETER ? R.drawable.btn_parameter_normal : R.drawable.btn_parameter_select);
+        imgView_timing.setImageResource(
+                index != TIMING ? R.drawable.btn_timing_normal : R.drawable.btn_timing_select);
     }
-
 
     /**
      * 切换用户
@@ -367,51 +375,60 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      * @param location LEFT_USER,RIGHT_USER
      */
     public void switchUser(int location) {
+        currLocation = location;
         switch (location) {
             case MConstants.LEFT_USER:
                 //左边用户
-                if (listener != null) {
-                    listener.onSwitch(MConstants.LEFT_USER);
+                try {
+                    currUser = dbManager.selector(User.class).where("_location", "=", "1").findFirst();
+                } catch (DbException e) {
+                    e.printStackTrace();
                 }
                 break;
             case MConstants.RIGHT_USER:
                 //右边用户
-                if (listener != null) {
-                    listener.onSwitch(MConstants.RIGHT_USER);
+                try {
+                    currUser = dbManager.selector(User.class).where("_location", "=", "2").findFirst();
+                } catch (DbException e) {
+                    e.printStackTrace();
                 }
                 break;
         }
+        //更改本地的当前位置和当前user的id
+        editor.putInt(MConstants.CURR_USER_LOCATION, currLocation);
+        editor.putString(MConstants.CURR_USER_ID, currUser.getId() + "");
+        editor.apply();
+        //状态发生改变，通知各个观察者
+        this.notifyObservers(currUser.getId()+"", currLocation, getVisibleFragment().getTag());
     }
 
     /**
      * 根据设备的类型{单人垫,双人垫},以及现在所拥有的用户个数
-     * <p/>
+     * value  0：单人1：双人
+     * <p>
      * 计算当前用户个数
      */
-    public int computeCurrentUsers() {
+    public void computeCurrentUsers(String value) {
 
-//        try {
-//            currentUsers = dbManager.selector(User.class).where("_location", "in", new int[]{1, 2, 3}).findAll();
-//        } catch (DbException e) {
-//            e.printStackTrace();
-//        }
-
-        //单人垫默认发送一个人
-
-        //双人垫发送当前支持的用户
-
-        return 2;
+        int num = Integer.parseInt(value);
+        if (num == 1) {//双人毯
+            if (currentUsers.size() > 1) {//多个人
+                circleImg_middle.setVisibility(View.GONE);
+                layout_two_user.setVisibility(View.VISIBLE);
+                circleImg_left.setOnClickListener(this);
+                circleImg_right.setOnClickListener(this);
+                editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.DOUBLE_BLANKET_MULTIPLE);
+            } else {//单个人
+                circleImg_middle.setVisibility(View.VISIBLE);
+                layout_two_user.setVisibility(View.GONE);
+                editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.DOUBLE_BLANKET_SINGLE);
+            }
+        } else {//单人毯
+            circleImg_middle.setVisibility(View.VISIBLE);
+            layout_two_user.setVisibility(View.GONE);
+            editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.SINGLE_BLANKET);
+        }
     }
-
-    /**
-     * 获取当前用户
-     *
-     * @return
-     */
-    public User getCurrentUser() {
-        return this.currUser;
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -516,14 +533,53 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
-            if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else {
                 return super.onKeyDown(keyCode, event);
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    class BaseListener extends MachtalkSDKListener {
+        @Override
+        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
+            super.onServerConnectStatusChanged(scs);
+            if (scs == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
+                Intent it = new Intent(MainActivity.this, LoginAndSignUpActivity.class);
+                it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.LOGOUT_KICKOFF);
+                startActivity(it);
+//                MainActivity.this.finish();//用户在其它地方登录，用户被踢掉
+                return;
+            }
+            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_BREAK) {
+                LogUtil.e("服务器连接中断,请重试");
+                MainActivity.this.finish();//服务器连接中断
+                return;
+            }
+        }
+
+        @Override
+        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
+            super.onQueryDeviceStatus(result, deviceStatus);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (success == Result.SUCCESS && deviceStatus != null && deviceId.equals(deviceStatus.getDeviceId())) {
+                List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
+                if (list == null) {
+                    return;
+                }
+                for (DvidStatus d : list) {
+                    if (d.getDvid().equals(MConstants.ATTR_SINGLE_OR_DOUBLE)) {
+                        computeCurrentUsers(d.getValue());//得到当前单/双人模式
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -543,21 +599,5 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onDestroy() {
         MachtalkSDK.getInstance().stopSDK();
         super.onDestroy();
-    }
-
-    /**
-     * 切换用户接口
-     */
-    public interface OnSwitchUserListener {
-        void onSwitch(int position);
-    }
-
-    /**
-     * 设置切换用户监听--用于四个fragment
-     *
-     * @param l
-     */
-    public void setOnSwitchUserListener(OnSwitchUserListener l) {
-        this.listener = l;
     }
 }

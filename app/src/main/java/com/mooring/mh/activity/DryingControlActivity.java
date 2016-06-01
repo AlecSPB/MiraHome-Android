@@ -46,6 +46,7 @@ public class DryingControlActivity extends BaseActivity {
     private long times = 30 * 60 * 1000;//默认烘干时间30分钟
     private String deviceId;//设备ID
     private MSDKListener msdkListener;//自定义SDK回调监听
+    private boolean isOperate = false;
 
     @Override
     protected int getLayoutId() {
@@ -54,7 +55,7 @@ public class DryingControlActivity extends BaseActivity {
 
     @Override
     protected String getTitleName() {
-        return getResources().getString(R.string.drying_title);
+        return getResources().getString(R.string.title_drying);
     }
 
     @Override
@@ -97,6 +98,7 @@ public class DryingControlActivity extends BaseActivity {
                     editor.putString(MConstants.DRYING_TIMES, String.valueOf(times));
                     editor.putBoolean(MConstants.DRYING_OPEN, true);
                     editor.commit();
+                    isOperate = true;
                 } else {
                     showDialog(); //弹出提示
                 }
@@ -239,12 +241,14 @@ public class DryingControlActivity extends BaseActivity {
                 time = 0;
                 toggle_drying.setChecked(false);
                 dialog.dismiss();
+                isOperate = true;
             }
         });
         builder.setNegativeButton(true, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                isOperate = false;
             }
         });
 
@@ -259,13 +263,20 @@ public class DryingControlActivity extends BaseActivity {
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
-            LogUtil.w("  " + result.getSuccess() + "  " + (rdm == null));
-            if (result != null && result.getSuccess() == Result.SUCCESS && rdm != null) {
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (!isOperate) {
+                return;
+            }
+            if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
                 //操作成功
-                LogUtil.w("  " + result.getSuccess() + "  " + (rdm.getDvidStatusList().get(0).toString()));
+                LogUtil.e("操作成功+++++++" + rdm.isRespMsg());
             } else {
                 MUtils.showToast(context, getResources().getString(R.string.operate_failed));
             }
+            isOperate = false;
         }
     }
 

@@ -12,10 +12,14 @@ import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.app.InitApplicationHelper;
+import com.mooring.mh.db.DbXUtils;
+
+import org.xutils.DbManager;
+import org.xutils.x;
 
 /**
  * 自定义BaseFragment，支持View预加载，首次展现时数据加载
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
 public abstract class BaseFragment extends Fragment {
@@ -24,6 +28,7 @@ public abstract class BaseFragment extends Fragment {
     private BaseListener baseListener;
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;
+    protected DbManager dbManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,6 +37,9 @@ public abstract class BaseFragment extends Fragment {
         sp = InitApplicationHelper.sp;
         editor = sp.edit();
         editor.apply();
+
+        DbManager.DaoConfig dao = DbXUtils.getDaoConfig(context);
+        dbManager = x.getDb(dao);
 
         MachtalkSDK.getInstance().setContext(context);
         baseListener = new BaseListener();

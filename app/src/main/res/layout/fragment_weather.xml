@@ -73,7 +73,8 @@
             <!--展示界面和数据-->
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -119,7 +120,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="5dp"
-                            android:text="Your scores beat 84% of the uses"
+                            android:text="@string/tv_user_scores"
                             android:textColor="@color/colorWhite50"
                             android:textSize="@dimen/text_dimen_28pt" />
 
@@ -153,7 +154,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
                                         android:layout_marginTop="10dp"
-                                        android:text="Deep sleep"
+                                        android:text="@string/tv_deep_sleep"
                                         android:textColor="@color/colorWhite"
                                         android:textSize="@dimen/text_dimen_24pt" />
 
@@ -182,7 +183,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_gravity="center_horizontal"
                                             android:layout_marginTop="10dp"
-                                            android:text="Light sleep"
+                                            android:text="@string/tv_light_sleep"
                                             android:textColor="@color/colorWhite"
                                             android:textSize="@dimen/text_dimen_24pt" />
 
@@ -206,7 +207,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_gravity="center_horizontal"
                                             android:layout_marginTop="10dp"
-                                            android:text="REM"
+                                            android:text="@string/tv_rem"
                                             android:textColor="@color/colorWhite"
                                             android:textSize="@dimen/text_dimen_24pt" />
 
@@ -231,7 +232,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
                                         android:layout_marginTop="10dp"
-                                        android:text="Wake-up"
+                                        android:text="@string/tv_wake_up"
                                         android:textColor="@color/colorWhite"
                                         android:textSize="@dimen/text_dimen_24pt" />
 
@@ -254,7 +255,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="left"
-                                        android:text="Sleep Duration"
+                                        android:text="@string/tv_sleep_duration"
                                         android:textColor="@color/colorWhite50"
                                         android:textSize="@dimen/text_dimen_24pt" />
 
@@ -273,7 +274,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_marginLeft="20dp"
                                     android:layout_marginRight="20dp"
-                                    android:background="@color/colorWhite" />
+                                    android:background="@color/colorWhite50" />
 
                                 <LinearLayout
                                     android:layout_width="wrap_content"
@@ -284,7 +285,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="left"
-                                        android:text="Sleep Times"
+                                        android:text="@string/tv_sleep_times"
                                         android:textColor="@color/colorWhite50"
                                         android:textSize="@dimen/text_dimen_24pt" />
 
@@ -298,18 +299,22 @@
 
                                 </LinearLayout>
 
-                                <Button
+                                <TextView
                                     android:id="@+id/tv_more"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="20dp"
                                     android:background="@drawable/bg_more_text"
                                     android:gravity="center"
-                                    android:text="More"
+                                    android:paddingBottom="5dp"
+                                    android:paddingLeft="15dp"
+                                    android:paddingRight="15dp"
+                                    android:paddingTop="5dp"
+                                    android:text="@string/tv_more"
                                     android:textColor="@color/colorWhite"
                                     android:textSize="@dimen/text_dimen_34pt" />
 
                             </LinearLayout>
-
                         </LinearLayout>
                     </LinearLayout>
 

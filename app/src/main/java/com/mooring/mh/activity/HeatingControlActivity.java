@@ -78,12 +78,12 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
         setContentView(R.layout.activity_heating_control);
 
         editor = InitApplicationHelper.sp.edit();
+        editor.apply();
+
         deviceId = InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, "");
         temp_unit = InitApplicationHelper.sp.getBoolean(MConstants.TEMPERATURE_UNIT, true);
 
         listener = new BaseListener();
-        MachtalkSDK.getInstance().setContext(this);
-        MachtalkSDK.getInstance().setSdkListener(listener);
 
         left_target_temp = InitApplicationHelper.sp.getString(MConstants.LEFT_TARGET_TEMP, "");
         right_target_temp = InitApplicationHelper.sp.getString(MConstants.RIGHT_TARGET_TEMP, "");

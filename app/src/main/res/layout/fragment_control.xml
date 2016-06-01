@@ -20,7 +20,7 @@
             android:drawablePadding="30dp"
             android:drawableTop="@drawable/ic_heating"
             android:gravity="center_horizontal"
-            android:text="Heating"
+            android:text="@string/title_heating"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_34pt" />
 
@@ -41,7 +41,7 @@
             android:drawablePadding="30dp"
             android:drawableTop="@drawable/ic_drying"
             android:gravity="center_horizontal"
-            android:text="Drying"
+            android:text="@string/title_drying"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_34pt" />
 

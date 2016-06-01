@@ -71,7 +71,7 @@
                     android:layout_height="40dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@color/colorPurple"
+                    android:background="@drawable/bg_button_comm"
                     android:gravity="center"
                     android:text="Send"
                     android:textColor="@color/colorWhite"
