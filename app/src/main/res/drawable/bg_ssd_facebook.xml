@@ -3,7 +3,5 @@
 
     <item android:drawable="@drawable/btn_facebook_select" android:state_pressed="true" />
 
-    <item android:drawable="@drawable/btn_facebook_select" android:state_focused="true" />
-
     <item android:drawable="@drawable/btn_facebook_normal" />
 </selector>
