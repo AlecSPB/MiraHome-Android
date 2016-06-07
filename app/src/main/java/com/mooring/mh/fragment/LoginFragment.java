@@ -1,6 +1,7 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -125,7 +126,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                         LogUtil.i("store username: " + userName + " password: " + userPwd);
 
                         startActivity(new Intent(context, MainActivity.class));
-                        context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                         context.finish();
                     }else{
                         MUtils.showToast(context, getResources().getString(R.string.network_exception));
@@ -156,7 +156,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 //        LogUtil.i("store username: " + userName + " password: " + userPwd);
 //
 //        startActivity(new Intent(context, MainActivity.class));
-//        context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
 //        context.finish();
 
     }
@@ -168,7 +167,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         DbManager.DaoConfig config = DbXUtils.getDaoConfig(getActivity());
         dbManager = x.getDb(config);
 
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         try {
             users = dbManager.findAll(User.class);
             if (users.size() == 0) {
@@ -179,7 +178,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         } catch (DbException e) {
             e.printStackTrace();
         }
-
     }
 
 
@@ -190,15 +188,26 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      */
     private boolean checkLogin() {
         if ("".equals(userName)) {
-            setError(getResources().getString(R.string.error_login_name_empty));
+            setError(getResources().getString(R.string.error_username_empty));
             return false;
         }
         if ("".equals(userPwd)) {
-            setError(getResources().getString(R.string.error_login_psw_empty));
+            setError(getResources().getString(R.string.error_psw_empty));
             return false;
         }
-        if (!(MUtils.isMobileNO(userName) || MUtils.isEmail(userName))) {
-            setError(getResources().getString(R.string.error_with_num_email));
+        if (TextUtils.isDigitsOnly(userName)) {
+            if (!MUtils.isMobileNO(userName)) {
+                setError(getResources().getString(R.string.error_phone_format));
+                return false;
+            }
+        } else {
+            if (!MUtils.isEmail(userName)) {
+                setError(getResources().getString(R.string.error_email_format));
+                return false;
+            }
+        }
+        if (!MUtils.checkPsw(userPwd)) {
+            setError(getResources().getString(R.string.error_psw_format));
             return false;
         }
         return true;
@@ -268,8 +277,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
                 LogUtil.i("store username: " + userName + " password: " + userPwd);
 
+                MUtils.showToast(context, getString(R.string.login_success));
                 startActivity(new Intent(context, MainActivity.class));
-                context.overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 context.finish();
             } else {
                 if (errMsg == null) {
@@ -296,7 +305,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 user.set_name(o.optString("telephone"));
                 user.set_sex(o.optInt("sex"));
                 user.set_platformId("platformId");
-                user.set_location(1);//登录用户默认在左边---初次使用,以后登录不在设置
+                user.set_location(MConstants.BED_LEFT);//登录用户默认在左边---初次使用,以后登录不在设置
                 try {
                     dbManager.saveOrUpdate(user);
                 } catch (DbException e) {

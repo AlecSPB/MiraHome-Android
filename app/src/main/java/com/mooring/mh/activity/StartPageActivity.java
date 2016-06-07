@@ -2,7 +2,7 @@ package com.mooring.mh.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
@@ -34,9 +33,9 @@ import java.util.List;
  * <p/>
  * Created by Will on 16/3/24.
  */
-public class StartPageActivity extends AppCompatActivity {
+public class StartPageActivity extends Activity {
 
-    protected Context context = null;
+    protected Activity context = null;
     private MachtalkSDKListener baseListener;//自定义SDK回调监听
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -77,16 +76,10 @@ public class StartPageActivity extends AppCompatActivity {
             public void run() {
                 try {
 
-              /*      startActivity(new Intent(context, MainActivity.class));
-                    overridePendingTransition(R.anim.fade_big_in, 0);
-                    StartPageActivity.this.finish();*/
-
-
                     if (sp.getBoolean(MConstants.SP_KEY_FIRST_START, true)) {
                         // 引导页
                         startActivity(new Intent(context, GuidePageActivity.class));
-                        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                        StartPageActivity.this.finish();
+                        context.finish();
                     } else {
                         // 自动登录
                         userName = sp.getString(MConstants.SP_KEY_USERNAME, "");
@@ -98,9 +91,7 @@ public class StartPageActivity extends AppCompatActivity {
                             MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
                         } else {
                             startActivity(new Intent(context, LoginAndSignUpActivity.class));
-
-                            StartPageActivity.this.finish();
-                            overridePendingTransition(0, R.anim.fade_big_out);
+                            context.finish();
                         }
                     }
                 } catch (Exception e) {
@@ -109,7 +100,6 @@ public class StartPageActivity extends AppCompatActivity {
             }
         }, 1000);
     }
-
 
     /**
      * 申请权限
@@ -175,25 +165,27 @@ public class StartPageActivity extends AppCompatActivity {
 
 
     /**
+     * 跳转到设置界面的Dialog提示
+     *
      * @param msg
      */
     private void showDialog(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
-        builder.setTitle("权限申请");
-        builder.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.tip_access_request));
+        builder.setPositiveButton(getString(R.string.tip_go_setting), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
-                StartPageActivity.this.finish();
+                context.finish();
             }
         });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.tv_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                StartPageActivity.this.finish();
+                context.finish();
             }
         });
 
@@ -210,7 +202,7 @@ public class StartPageActivity extends AppCompatActivity {
         public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
             super.onServerConnectStatusChanged(serverConnStatus);
             if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                StartPageActivity.this.finish();
+                context.finish();
                 return;
             }
         }
@@ -226,7 +218,7 @@ public class StartPageActivity extends AppCompatActivity {
             if (success == Result.SUCCESS) {
                 editor.putString(MConstants.SP_KEY_USERNAME, userName);
                 editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
-                editor.commit();
+                editor.apply();
 
                 LogUtil.i("store username: " + userName + " password: " + userPwd);
 
@@ -238,10 +230,7 @@ public class StartPageActivity extends AppCompatActivity {
                 MUtils.showToast(context, errMsg);
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
             }
-//            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-            overridePendingTransition(R.anim.fade_big_in, 0);
-            StartPageActivity.this.finish();
-
+            context.finish();
         }
     }
 

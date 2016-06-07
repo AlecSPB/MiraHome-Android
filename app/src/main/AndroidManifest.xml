@@ -38,7 +38,7 @@
 
         <activity
             android:name=".activity.StartPageActivity"
-            android:theme="@style/StartAndGuideTheme">
+            android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,7 +49,7 @@
         <!--导航界面-->
         <activity
             android:name=".activity.GuidePageActivity"
-            android:theme="@style/StartAndGuideTheme" />
+            android:theme="@style/GuideTheme" />
 
         <!--MainActivity-->
         <activity
@@ -58,7 +58,7 @@
             android:screenOrientation="portrait" />
 
         <!--展示更多-->
-        <activity android:name=".activity.MoreActivity" />
+        <activity android:name=".activity.SleepDetailActivity" />
 
         <!--登录和注册-->
         <activity
@@ -105,8 +105,11 @@
         <!--已存在设备Activity-->
         <activity android:name=".activity.ExistingDeviceActivity" />
 
-        <!--已存在设备Activity-->
+        <!--无设备发现设备Activity-->
         <activity android:name=".activity.NotFindDeviceActivity" />
+
+        <!--帮助Activity-->
+        <activity android:name=".activity.HelpActivity" />
     </application>
 
 </manifest>

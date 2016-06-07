@@ -1,33 +1,38 @@
 <resources>
-    <string name="app_name">MiraHome</string>
-
-    <!--导航页面-->
-    <string name="guide_four_start">开始使用</string>
-    <string name="tip_sleep_report">睡眠报告</string>
-    <string name="tip_sleep_one">根据监测睡眠状况为你提供最全面,最准确的睡眠分析,及历史睡眠数据对比,帮助你调整睡眠习惯</string>
-    <string name="tip_temp_control">温度控制</string>
-    <string name="tip_sleep_two">MOORING拥有独立分区的智能温控系统,即便你入睡以后也能通过睡眠监测为你提供最适宜的睡眠温度</string>
-    <string name="tip_sleep_monitor">睡眠监测</string>
-    <string name="tip_sleep_three">实时准确监测你的睡眠心率,呼吸,体动等身体指标及室温,湿度,噪音,光线等环境数据</string>
-    <string name="tip_smart_wake">智能叫醒</string>
-    <string name="tip_sleep_four">通过控制睡毯温度变化,调整你的睡眠阶段,让你在浅睡眠状态伴随着轻微的震动下自然醒来</string>
 
     <!-- 公用String -->
+    <string name="app_name">MiraHome</string>
     <string name="tv_male">男</string>
     <string name="tv_female">女</string>
     <string name="tv_cancel">取消</string>
+    <string name="tv_retry">重试</string>
+    <string name="tv_left">左</string>
+    <string name="tv_right">右</string>
+    <string name="tip_disconnect_blanket">MOORING睡毯与控制器断开，请连接</string>
+
+    <!--GuidePageActivity 导航页面-->
+    <string name="guide_four_start">开始</string>
+    <string name="tip_sleep_report">睡眠报告</string>
+    <string name="tip_sleep_one">根据监测睡眠状况为你提供最全面，准确的睡眠分析，及历史睡眠数据对比，帮助你调整睡眠习惯</string>
+    <string name="tip_temp_control">温度控制</string>
+    <string name="tip_sleep_two">MOORING拥有独立分区域的智能温控系统，即便你入睡以后也能通过睡眠监测数据为你提供最适宜的睡眠温度</string>
+    <string name="tip_sleep_monitor">睡眠监测</string>
+    <string name="tip_sleep_three">实时准确监测你的睡眠心率，呼吸，体动等身体指标及室温，湿度，噪音，光线等环境数据</string>
+    <string name="tip_smart_wake">智能叫醒</string>
+    <string name="tip_sleep_four">通过控制睡毯温度变化，调整你的睡眠阶段，让你在浅睡眠状态伴随的轻微的震动下自然醒来开始</string>
 
     <!--设备相关-->
     <string name="device_not_online">查询状态失败，请查看设备是否在线</string>
     <string name="load_device_list_fail">获取设备列表失败</string>
     <string name="operate_failed">操作失败,请重试</string>
-    <string name="device_connected">MOORING Connected</string>
+    <string name="unbind_success">解绑成功</string>
+    <string name="unbind_failed">解绑失败</string>
 
     <!--AboutActivity 关于页面-->
-    <string name="title_about">关于我们</string>
+    <string name="title_about">关于</string>
     <string name="app_about_1">MiraHome 1.0.1</string>
-    <string name="app_about_2">绵眠(上海)智能科技有限公司 版权所有</string>
-    <string name="app_about_3">Copyright @ 2015 All right reserved</string>
+    <string name="app_about_2">绵眠(上海)智能科技有限公司</string>
+    <string name="app_about_3">Copyright &#064; 2015 All right reserved</string>
 
     <!--SuggestionsActivity 提出建议页面-->
     <string name="title_suggestions">意见反馈</string>
@@ -35,9 +40,11 @@
     <string name="tip_suggest_empty">似乎内容有点少呀&#8230;</string>
 
     <!--StartPageActivity 开始页面-->
-    <string name="network_exception">网络异常，请重试</string>
-    <string name="permission_storage">在设置-应用-MiraHome-权限中开启存储空间权限,以正常使用MiraHome功能</string>
-    <string name="permission_location">在设置-应用-MiraHome-权限中开启位置信息权限,以正常使用所在地的天气信息功能</string>
+    <string name="network_exception">网络连接失败，请重试</string>
+    <string name="tip_access_request">权限申请</string>
+    <string name="tip_go_setting">去设置</string>
+    <string name="permission_storage">在设置-应用-MiraHome-权限中开启存储空间权限，以正常使用MiraHome功能</string>
+    <string name="permission_location">在设置-应用-MiraHome-权限中开启位置信息权限，以正常使用所在地的天气信息功能</string>
     <string name="permission_phone">MiraHome使用电话权限确定本机号码和设备ID，以保障账号登录安全性。MiraHome不会拨打其他电话或终止通话。\n在设置-应用-MiraHome-权限中开启电话权限,以正常登录MiraHome。</string>
 
     <!--TimingFragment 闹钟部分-->
@@ -45,6 +52,7 @@
     <string name="clock_add_success">添加成功</string>
     <string name="clock_edit_success">修改成功</string>
     <string name="clock_delete_success">删除成功</string>
+    <string name="tip_add_clock">你还没有闹钟，点击这里添加吧!</string>
 
     <!--DryingControlActivity 烘干页面-->
     <string name="title_drying">烘干</string>
@@ -57,94 +65,132 @@
     <string name="tv_room_temp">室温&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
     <string name="tv_bed_temp">床温&#160;</string>
 
-    <!--set wifi and search device连接设备-->
-    <string name="set_no_wifi">你的手机不在WIFI环境下请链接WIFI后重试</string>
-    <string name="not_find_device_1">找不到任何设备</string>
-    <string name="not_find_device_2">请检查你的设备路由器</string>
-    <string name="not_find_device_3">或将手机连接到WIFI2.4赫兹频段</string>
-    <string name="chose_existing_device">已有设备存在请选择</string>
-
     <!--ParameterFragment 参数fragment-->
     <string name="wait_loading">&#8230;</string>
     <string name="unit_bmp">BPM</string>
     <string name="unit_celsius">℃</string>
     <string name="unit_fahrenheit">℉</string>
     <string name="unit_percent">%</string>
-    <string name="tv_heart_rate">Heart rate</string>
-    <string name="tv_breathing_rate">Breathing rate</string>
-    <string name="tv_body_movement">Body movement</string>
-    <string name="tv_humidity">Humidity</string>
-    <string name="tv_temperature">Temperature</string>
-    <string name="tv_bed_temperature">Bed Temperature</string>
-    <string name="tv_light">Light</string>
-    <string name="tv_noise">Noise</string>
+    <string name="tv_heart_rate">心率</string>
+    <string name="tv_breathing_rate">呼吸频率</string>
+    <string name="tv_body_movement">体动</string>
+    <string name="tv_humidity">室内湿度</string>
+    <string name="tv_temperature">室温</string>
+    <string name="tv_bed_temperature">床温</string>
+    <string name="tv_light">光线</string>
+    <string name="tv_noise">噪音</string>
     <string name="click_connect_device">点击连接设备</string>
 
     <!--LoginAndSignUpActivity 登录和注册相关-->
-    <string name="title_login">登录</string>
-    <string name="title_sign_up">注册</string>
-    <string name="register_complete">注册成功</string>
-    <string name="error_login_name_empty">用户名不可为空</string>
-    <string name="error_login_psw_empty">密码不可为空</string>
-    <string name="error_with_num_email">Please using the phone number or E-mail</string>
-    <string name="tip_login_error">The account is not registered,please sign up</string>
-    <string name="forget_password">忘记密码?</string>
-    <string name="hint_username">手机号/邮箱</string>
-    <string name="hint_password">密码</string>
-    <string name="tip_or">or</string>
-    <string name="tip_sign_up_error">The account is not registered,please sign up</string>
-    <string name="error_psw_format">Format of password is 8&#8211;12 letters or numbers</string>
-    <string name="tip_kicked_out">你的账号于%1$s在另一客户端登录。如果非本人操作，请关注你的帐号安全，必要时及时修改密码。</string>
-    <string name="btn_retry_login">重新登录</string>
-    <string name="btn_back">退出</string>
     <string name="tip_off_line">下线通知</string>
+    <string name="tv_btn_back">退出</string>
+    <string name="btn_retry_login">重新登录</string>
+    <string name="tip_kicked_out">你的账号于%1$s在另一客户端登录。如果非本人操作，请关注你的帐号安全，必要时及时修改密码。</string>
+
+    <!--SignUpFragment 注册相关-->
+    <string name="hint_username">请输入手机号码或邮箱地址</string>
+    <string name="hint_sign_psw">请设置密码</string>
+    <string name="title_sign_up">注册</string>
+    <string name="error_username_empty">账号不能为空</string>
+    <string name="error_psw_empty">密码不能为空</string>
+    <string name="error_direct_login">此账号已存在，请直接登录</string>
+    <string name="error_email_format">邮箱格式输入错误</string>
+    <string name="error_phone_format">手机号码格式输入错误</string>
+    <string name="error_psw_format">密码格式错误，请输入8&#8211;20位字母和数字</string>
+    <string name="register_complete">注册成功</string>
+    <string name="tip_or">或</string>
+
+    <!--LoginFragment 登录相关-->
+    <string name="title_login">登录</string>
+    <string name="hint_login_psw">请输入密码</string>
+    <string name="tv_forget_psw">忘记密码?</string>
+    <string name="error_unavailable">此账号不存在，请先注册</string>
+    <string name="error_psw">密码错误，请重新输入</string>
+    <string name="login_success">登录成功</string>
 
     <!--VerifyPhoneActivity 发送验证码-->
-    <string name="title_verify_phone">Verify phone number</string>
-    <string name="btn_tv_resend">重新发送</string>
+    <string name="title_verify_phone">验证手机号码</string>
+    <string name="title_verify_email">验证邮箱地址</string>
+    <string name="hint_verify_code">输入验证码</string>
+    <string name="tip_code_time">验证码已发送%1$s</string>
     <string name="btn_tv_send">发送</string>
-    <string name="tv_confirm">提交</string>
-    <string name="error_verify">验证失败,请重试</string>
-    <string name="default_phone_num">186 0000 0000</string>
+    <string name="btn_tv_resend">重新发送</string>
+    <string name="tv_confirm">确认</string>
+    <string name="error_verify">验证失败，请重试</string>
 
-    <!--ConfirmationPswActivity 修改密码-->
-    <string name="modify_success">密码修改成功</string>
+    <!--ConfirmationPswActivity 修改密码页面 -->
+    <string name="modify_success">重置密码成功</string>
+    <string name="title_confirmation_psw">重置密码</string>
+    <string name="tv_next">下一步</string>
+    <string name="tv_new_password">请输入新密码</string>
+    <string name="tv_new_psw_empty">新密码不能为空</string>
 
     <!--SetWifiActivity 配置无线密码,连接设别-->
-    <string name="tip_connect_wifi">设备需要连接的WIFI是:</string>
-    <string name="hint_wifi_password">WiFi密码</string>
+    <string name="set_no_wifi">你的手机不在WIFI环境下\n请连接WIFI后重试</string>
+    <string name="tip_connect_wifi">需要连接的WIFI是:</string>
+    <string name="hint_wifi_password">请输入WiFi密码</string>
+    <string name="tv_btn_search">发送</string>
     <string name="tv_skip">跳过</string>
-    <string name="tip_searching">查找中&#8230;</string>
+    <string name="tip_searching">正在搜索&#8230;</string>
+    <string name="tip_guide_one">① 长按“ • ”将MOORING设置到连网模式</string>
+    <string name="tip_guide_two">② 点选“ ○ ”确认MOORING进入连网模式</string>
+    <string name="tip_guide_three">首先，请将MOORING设置到连网模式</string>
 
-    <!--UserInfoActivity 用户详情页面-->
-    <string name="tv_sleep_on_mooring">Sleep on MOORING</string>
-    <string name="title_user_info">编辑信息</string>
-    <string name="title_add_user">用户信息</string>
-    <string name="hint_name">姓名</string>
-    <string name="hint_sex">性别</string>
+    <!--ExistingDeviceActivity 已存在设备选择使用或忽略-->
+    <string name="chose_existing_device">选择MOORING</string>
+    <string name="tv_btn_add_device">添加\nMOORING</string>
+    <string name="tip_failed_get_list">设备列表获取失败</string>
+    <string name="mooring_conn_success">MOORING连接成功</string>
+    <string name="btn_tv_use">使用</string>
+    <string name="btn_tv_ignore">忽略</string>
+    <string name="tip_unavailable_offline">此MOORING处于离线状态，不可使用</string>
+
+    <!--NotFindDeviceActivity 没有找到设备-->
+    <string name="not_find_device_1">找不到任何设备</string>
+    <string name="not_find_device_2">1 请检查你的路由器是否正常\n2 将手机连接到WIFI2.4赫兹频段\n3 确认WIFI密码是否输入正确\n4 将MOORING设置到联网模式</string>
+
+    <!--UserInfoActivity 用户详情和用户设置页面-->
+    <string name="tv_sleep_on_mooring">放在MOORING上</string>
+    <string name="title_user_info">用户设置</string>
+    <string name="title_add_user">新建用户</string>
+    <string name="hint_name">名称</string>
+    <string name="hint_sex">性别 男/女</string>
     <string name="hint_birthday">生日</string>
     <string name="hint_height">身高</string>
     <string name="hint_weight">体重</string>
+    <string name="add_user_success">添加成功</string>
+    <string name="error_add_failed">添加失败，请重试</string>
+    <string name="error_add_cancel">添加请求已取消</string>
+    <string name="edit_user_success">修改成功</string>
+    <string name="error_edit_failed">修改失败，请重试</string>
+    <string name="error_edit_cancel">修改请求已取消</string>
+    <string name="delete_user_success">删除成功</string>
+    <string name="error_delete_failed">删除失败，请重试</string>
+    <string name="error_delete_cancel">删除请求已取消</string>
+    <string name="tip_sleep_location">请选择将用户放在哪一边?</string>
+    <string name="tip_add_user_success">有新用户加入</string>
 
     <!--AlarmEditActivity 闹钟编辑页面-->
     <string name="title_alarm_edit">闹钟设置</string>
     <string name="tv_repeat">重复</string>
     <string name="tv_smart_alarm">智能闹钟</string>
 
-    <!--ConfirmationPswActivity 修改密码页面 -->
-    <string name="title_confirmation_password">重置密码</string>
-    <string name="tv_next">下一步</string>
-    <string name="tv_new_password">请输入新密码</string>
-
     <!--RepeatAlarmActivity 闹钟日期选择页面-->
     <string name="title_repeat_alarm">闹钟重复</string>
-    <string name="tv_monday">一</string>
-    <string name="tv_tuesday">二</string>
-    <string name="tv_wednesday">三</string>
-    <string name="tv_thursday">四</string>
-    <string name="tv_friday">五</string>
-    <string name="tv_saturday">六</string>
-    <string name="tv_sunday">日</string>
+    <string name="tv_mon">一</string>
+    <string name="tv_tues">二</string>
+    <string name="tv_wed">三</string>
+    <string name="tv_thu">四</string>
+    <string name="tv_fri">五</string>
+    <string name="tv_sat">六</string>
+    <string name="tv_sun">日</string>
+    <string name="tv_monday">周一</string>
+    <string name="tv_tuesday">周二</string>
+    <string name="tv_wednesday">周三</string>
+    <string name="tv_thursday">周四</string>
+    <string name="tv_friday">周五</string>
+    <string name="tv_saturday">周六</string>
+    <string name="tv_sunday">周日</string>
 
     <!--Menu 相关-->
     <string name="tv_log_out">退出登录</string>
@@ -152,24 +198,52 @@
     <string name="tv_google_fit">连接[Google fit]</string>
     <string name="tv_device">设备</string>
     <string name="tv_not_connected">无连接</string>
-    <string name="tv_temperature_setting">温度单位</string>
-    <string name="connect_mooring_tip">点击连接 MOORING</string>
+    <string name="tv_temperature_setting">温度设置</string>
+    <string name="connect_mooring_tip">请连接 MOORING</string>
     <string name="tip_place_users">请选择将用户放在哪一边?</string>
-    <string name="tv_left">左边</string>
-    <string name="tv_right">右边</string>
 
-    <!--MoreActivity 更多页面-->
+    <!--SleepDetailActivity 更多页面-->
     <string name="tv_day">日</string>
     <string name="tv_month">月</string>
 
     <!--WeatherFragment 天气fragment-->
-    <string name="tv_user_scores">你的得分打败了%1$s的用户</string>
-    <string name="tv_deep_sleep">Deep sleep</string>
-    <string name="tv_light_sleep">Light sleep</string>
+    <string name="tv_user_scores">你的睡眠质量已击败%1$s的用户</string>
+    <string name="tv_deep_sleep">深睡眠</string>
+    <string name="tv_light_sleep">浅睡眠</string>
     <string name="tv_rem">REM</string>
-    <string name="tv_wake_up">Wake-up</string>
-    <string name="tv_sleep_duration">Sleep Duration</string>
-    <string name="tv_sleep_times">Sleep Times</string>
-    <string name="tv_more">更多</string>
+    <string name="tv_wake_up">清醒</string>
+    <string name="tv_sleep_duration">睡眠时长</string>
+    <string name="tv_sleep_times">睡眠次数</string>
+    <string name="tv_more">详情</string>
+    <string name="error_no_weather_data">网络连接失败，暂无天气数据</string>
+    <string name="error_no_data_conn_device">暂无数据，请先连接MOORING</string>
+
+    <!-- HelpActivity 帮助页面 -->
+    <string name="title_help">帮助</string>
+    <string name="tv_page_one_switch">切换用户</string>
+    <string name="tv_page_one_score">睡眠评分</string>
+    <string name="tv_page_one_detail">详细数据：包括日报告/月报告</string>
+    <string name="tv_page_two_temp">温度控制</string>
+    <string name="tv_page_two_drying">烘干模式</string>
+    <string name="tv_page_two_heating">加热开关</string>
+    <string name="tv_page_two_drop">上下拉动调整温度</string>
+    <string name="tv_page_two_switch">烘干模式开关</string>
+    <string name="tv_page_three_data">向上滚动查看实时数据</string>
+    <string name="tv_page_four_edit">点击编辑</string>
+    <string name="tv_page_four_new">新建闹钟</string>
+    <string name="tv_page_four_smart">智能闹钟：让你在浅睡眠状态下轻松起床</string>
+
+    <!-- DayFragment 日-数据页面 -->
+    <string name="sleep_time">睡眠时长%1$s</string>
+    <string name="heart_rate_param">心率：%1$s</string>
+    <string name="heartbeat_pause">心跳暂停&#160;%1$s</string>
+    <string name="breath_rate_param">呼吸：%1$s</string>
+    <string name="breath_pause">呼吸暂停&#160;%1$s</string>
+    <string name="body_movement">体动：%1$s</string>
+
+    <!-- DayFragment 日-数据页面 -->
+    <string name="average_sleep_quality">平均睡眠质量：</string>
+    <string name="average_deep_sleep">深睡眠&#160;%1$s</string>
+    <string name="best_sleep_efficiency">最高睡眠质量：</string>
 
 </resources>

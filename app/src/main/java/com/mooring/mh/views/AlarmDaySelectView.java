@@ -45,13 +45,13 @@ public class AlarmDaySelectView extends LinearLayout {
         setOrientation(HORIZONTAL);
 
         text = new String[]{
-                getResources().getString(R.string.tv_monday),
-                getResources().getString(R.string.tv_tuesday),
-                getResources().getString(R.string.tv_wednesday),
-                getResources().getString(R.string.tv_thursday),
-                getResources().getString(R.string.tv_friday),
-                getResources().getString(R.string.tv_saturday),
-                getResources().getString(R.string.tv_sunday)
+                getResources().getString(R.string.tv_mon),
+                getResources().getString(R.string.tv_tues),
+                getResources().getString(R.string.tv_wed),
+                getResources().getString(R.string.tv_thu),
+                getResources().getString(R.string.tv_fri),
+                getResources().getString(R.string.tv_sat),
+                getResources().getString(R.string.tv_sun)
         };
 
         normalColor = getResources().getColor(R.color.colorWhite50);

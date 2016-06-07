@@ -13,14 +13,14 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="240dp">
-
+            <!-- 设备不在线 -->
             <LinearLayout
                 android:id="@+id/layout_connect_mooring"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/imgView_to_connect"
@@ -45,13 +45,14 @@
                     android:textSize="@dimen/text_dimen_34pt" />
             </LinearLayout>
 
+            <!-- 设备存在,切换用户位置 -->
             <LinearLayout
-                android:id="@+id/layout_connected_device"
+                android:id="@+id/layout_exist_device"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/imgView_switch_user"
@@ -61,7 +62,7 @@
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/bg_change_location" />
 
-                <RelativeLayout
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
@@ -75,8 +76,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="20dp"
+                        android:layout_gravity="center"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -86,11 +87,12 @@
                             android:gravity="center_horizontal"
                             android:orientation="vertical">
 
-                            <com.mooring.mh.views.CircleImgView.ZoomCircleView
-                                android:id="@+id/zcView_left"
+                            <com.mooring.mh.views.CircleImgView.CircleImageView
+                                android:id="@+id/menu_zcView_left"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
-                                app:img_src="@drawable/ic_default_avatar" />
+                                android:src="@drawable/ic_default_avatar"
+                                app:civ_border_width="0dp" />
 
                             <ImageView
                                 android:id="@+id/imgView_delete_left"
@@ -102,17 +104,19 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/layout_user_right"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
+                            android:layout_marginLeft="20dp"
                             android:gravity="center_horizontal"
                             android:orientation="vertical">
 
-                            <com.mooring.mh.views.CircleImgView.ZoomCircleView
-                                android:id="@+id/zcView_right"
+                            <com.mooring.mh.views.CircleImgView.CircleImageView
+                                android:id="@+id/menu_zcView_right"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
-                                app:img_src="@drawable/ic_default_avatar" />
+                                android:src="@drawable/ic_default_avatar"
+                                app:civ_border_width="0dp" />
 
                             <ImageView
                                 android:id="@+id/imgView_delete_right"
@@ -123,7 +127,7 @@
                                 android:src="@drawable/bg_delete_user" />
                         </LinearLayout>
                     </LinearLayout>
-                </RelativeLayout>
+                </FrameLayout>
             </LinearLayout>
         </FrameLayout>
 
@@ -229,6 +233,16 @@
 
                 </LinearLayout>
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_help_text"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/title_help"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_28pt" />
 
             <TextView
                 android:id="@+id/tv_about_text"

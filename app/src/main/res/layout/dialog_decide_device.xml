@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/other_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorMainBg"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_ignore_device"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_use_ignore"
+                android:gravity="center"
+                android:text="@string/btn_tv_ignore"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_34pt" />
+
+            <TextView
+                android:id="@+id/tv_use_device"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/bg_use_ignore"
+                android:gravity="center"
+                android:text="@string/btn_tv_use"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_34pt" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/dialog_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/bg_log_out"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/tv_cancel"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_34pt" />
+    </LinearLayout>
+
+</LinearLayout>

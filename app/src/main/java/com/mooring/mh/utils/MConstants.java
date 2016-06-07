@@ -273,12 +273,16 @@ public class MConstants {
     public final static String SP_KEY_MEMBER_ID = "member_id";//成员ID
     public final static String SP_KEY_FIRST_START = "appFirstStart";//初次启动
     public final static String DEVICE_ID = "deviceId";//设备ID
+    public final static String DEVICE_MODEL = "deviceModel";//设备Model
+    public final static String DEVICE_TYPE = "deviceType";//设备type
+    public final static String DEVICE_NAME = "deviceName";//设备name
+    public final static String DEVICE_ONLINE = "deviceOnline";//设备在线
+    public final static String DEVICE_LANONLINE = "deviceLanOnline";//设备局域网在线
     public final static String DRYING_START_TIME = "drying_start_time";//烘干开始时间
     public final static String DRYING_TIMES = "drying_times";//烘干过程时间
     public final static String DRYING_OPEN = "drying_open";//烘干打开标志
     public final static String LEFT_TARGET_TEMP = "left_target_temp";//左边目标温度
     public final static String RIGHT_TARGET_TEMP = "right_target_temp";//右边目标温度
-    public final static String FIRST_ADD_DEVICE = "first_add_device";//初次添加设备标志
     public final static String ENTRANCE_FLAG = "entrance_flag";//进入标志
     public final static String TEMPERATURE_UNIT = "temperature_unit";//温度单位
     public final static String CURR_BLANKET_MODEL = "curr_blanket_model";//当前毯子所处模式
@@ -425,9 +429,20 @@ public class MConstants {
     public static final int SINGLE_BLANKET = 0X29;
 
     /**
+     * 添加用户成功
+     */
+    public static final int ADD_USER_SUCCESS = 0X30;
+
+    /**
      * 工具类常量
      */
     public final static int DEGREES_C = 0X111;//摄氏度
     public final static int DEGREES_F = 0X112;//华氏度
+    /**
+     * 用户在床上的位置
+     */
+    public final static int BED_OUT = 0;
+    public final static int BED_LEFT = 1;
+    public final static int BED_RIGHT = 2;
 
 }

@@ -9,14 +9,14 @@ import android.widget.TextView;
 
 import com.machtalk.sdk.domain.Device;
 import com.mooring.mh.R;
-
-import org.xutils.common.util.LogUtil;
+import com.mooring.mh.app.InitApplicationHelper;
+import com.mooring.mh.utils.MConstants;
 
 import java.util.List;
 
 /**
  * 设备列表适配器
- * <p/>
+ * <p>
  * Created by Will on 16/5/13.
  */
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceHolder> {
@@ -45,11 +45,15 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
     @Override
     public void onBindViewHolder(DeviceHolder holder, int position) {
-        LogUtil.e("position   " + position);
         Device device = data.get(position);
         if (device != null) {
             holder.tv_device_name.setText(device.getName());
-            holder.imgView_check_box.getBackground().setAlpha(0);
+            if (device.getId().equals(InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, ""))) {
+                holder.imgView_check_box.setVisibility(View.VISIBLE);
+            }
+            if (!device.isOnline()) {
+                holder.imgView_device_img.setAlpha(0.5f);
+            }
         }
         holder.v.setTag(position);
     }
@@ -67,7 +71,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     public void setItemClickListener(OnRecyclerItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
-
 
     /**
      * ViewHolder 继承自RecycleView中的ViewHolder

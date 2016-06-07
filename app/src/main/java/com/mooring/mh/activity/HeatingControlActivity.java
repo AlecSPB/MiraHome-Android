@@ -2,15 +2,11 @@ package com.mooring.mh.activity;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
-import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.DeviceStatus;
 import com.machtalk.sdk.domain.DvidStatus;
@@ -35,8 +31,7 @@ import java.util.List;
  * <p/>
  * Created by Will on 16/4/8.
  */
-public class HeatingControlActivity extends AppCompatActivity implements CustomToggle.OnCheckedChangeListener {
-    private ImageView imgView_act_back;
+public class HeatingControlActivity extends BaseActivity implements CustomToggle.OnCheckedChangeListener {
     private View layout_two_header;
     private CircleImageView circleImg_left;
     private CircleImageView circleImg_right;
@@ -73,10 +68,17 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
     private Boolean isInit = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_heating_control);
+    protected int getLayoutId() {
+        return R.layout.activity_heating_control;
+    }
 
+    @Override
+    protected String getTitleName() {
+        return getString(R.string.title_heating);
+    }
+
+    @Override
+    protected void initActivity() {
         editor = InitApplicationHelper.sp.edit();
         editor.apply();
 
@@ -87,17 +89,11 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
 
         left_target_temp = InitApplicationHelper.sp.getString(MConstants.LEFT_TARGET_TEMP, "");
         right_target_temp = InitApplicationHelper.sp.getString(MConstants.RIGHT_TARGET_TEMP, "");
-
-        initView();
-
-//        judgeUser();
-
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
 
-        imgView_act_back = (ImageView) findViewById(R.id.imgView_act_back);
         layout_two_header = findViewById(R.id.layout_two_header);
         circleImg_left = (CircleImageView) findViewById(R.id.circleImg_left);
         circleImg_right = (CircleImageView) findViewById(R.id.circleImg_right);
@@ -111,15 +107,16 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
         toggle_left = (CustomToggle) findViewById(R.id.toggle_left);
         toggle_right = (CustomToggle) findViewById(R.id.toggle_right);
 
-        //判断当前使用户的个数
-        imgView_act_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HeatingControlActivity.this.finish();
-            }
-        });
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
     }
 
+    @Override
+    protected void OnClick(View v) {
+    }
+
+    /**
+     * 判断用户个数
+     */
     private void judgeUser() {
         if (currUsers == 1) {
             layout_two_user.setVisibility(View.GONE);
@@ -304,14 +301,6 @@ public class HeatingControlActivity extends AppCompatActivity implements CustomT
      * 自定义回调监听
      */
     class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                HeatingControlActivity.this.finish();
-                return;
-            }
-        }
 
         @Override
         public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {

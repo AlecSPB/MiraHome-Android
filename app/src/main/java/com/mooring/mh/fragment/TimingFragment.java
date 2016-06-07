@@ -29,12 +29,14 @@ import java.util.List;
 
 /**
  * 闹钟fragment
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
-public class TimingFragment extends BaseFragment implements OnRecyclerItemClickListener, SwitchUserObserver {
+public class TimingFragment extends BaseFragment implements OnRecyclerItemClickListener,
+        SwitchUserObserver {
 
     private RecyclerView param_recyclerView;
+    private View layout_alarm_none;
     private RecyclerView.LayoutManager layoutManager;
     private AlarmClockAdapter adapter;
     private List<String> dataList;
@@ -62,6 +64,7 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     @Override
     protected void initView() {
 
+        layout_alarm_none = rootView.findViewById(R.id.layout_alarm_none);
         param_recyclerView = (RecyclerView) rootView.findViewById(R.id.param_recyclerView);
         param_recyclerView.setItemAnimator(new DefaultItemAnimator());
         layoutManager = new LinearLayoutManager(context);
@@ -79,16 +82,21 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
      * @param alarms
      */
     private void parsingAlarmString(String alarms) {
-        if (!TextUtils.isEmpty(alarms)) {
+        if (!TextUtils.isEmpty(alarms) || !"mirahome".equals(alarms)) {
             String[] alarmArr = alarms.split(";");
             for (int i = 0; i < alarmArr.length - 1; i++) {
                 dataList.add(alarmArr[i]);
             }
+            param_recyclerView.setVisibility(View.VISIBLE);
+            layout_alarm_none.setVisibility(View.GONE);
+            adapter = new AlarmClockAdapter(dataList);
+            adapter.setItemClickListener(this);
+            param_recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        } else {
+            param_recyclerView.setVisibility(View.GONE);
+            layout_alarm_none.setVisibility(View.VISIBLE);
         }
-        adapter = new AlarmClockAdapter(dataList);
-        adapter.setItemClickListener(this);
-        param_recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
 
@@ -134,8 +142,8 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
         for (int i = 0; i < list.size(); i++) {
             a[i] = Integer.parseInt(list.get(i).substring(0, 4));
         }
-        int temp = 0;
-        String str = "";
+        int temp;
+        String str;
         for (int i = a.length - 1; i > 0; --i) {
             for (int j = 0; j < i; ++j) {
                 if (a[j + 1] < a[j]) {
@@ -184,6 +192,10 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
                 MUtils.showToast(context, getResources().getString(R.string.clock_delete_success));
+                if (dataList.size() <= 0) {
+                    param_recyclerView.setVisibility(View.GONE);
+                    layout_alarm_none.setVisibility(View.VISIBLE);
+                }
             }
 
             sendAlarmString(dataList);
@@ -250,7 +262,6 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                         propertyId.equals(rdm.getDvidStatusList().get(0).getDvid())) {
                     LogUtil.w("  操作成功   ");
                 }
-                LogUtil.w("  操作失败   ");
             } else {
                 LogUtil.w("  操作失败   ");
             }

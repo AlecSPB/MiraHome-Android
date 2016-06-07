@@ -46,7 +46,7 @@
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="@string/btn_back"
+            android:text="@string/tv_btn_back"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_28pt" />
 

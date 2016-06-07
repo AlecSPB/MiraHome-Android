@@ -13,9 +13,9 @@ import com.mooring.mh.R;
 
 /**
  * 自定义可动态设置显示message和图片的dialog
- * <p/>
+ * <p>
  * 设置positive和negative才会显示按钮
- * <p/>
+ * <p>
  * Created by Will on 16/4/13.
  */
 public class CommonDialog extends Dialog {
@@ -39,12 +39,18 @@ public class CommonDialog extends Dialog {
         private DialogInterface.OnClickListener cancelClickListener;
         private DialogInterface.OnClickListener okClickListener;
 
-        private boolean isCancel;  //是否有取消按钮
-        private boolean isOk;  //是否有OK按钮
-
         private int logoId; // 中间图标
 
-        private boolean isOtherPlace;//是否触摸其他地方消失dialog
+        private boolean isCancel = false;  //是否有取消按钮
+        private boolean isOk = false;  //是否有OK按钮
+        private boolean isOtherPlace = false;//是否触摸其他地方消失dialog
+        private boolean isTextView = false;//是否带有文字样式
+
+        private ImageView imgView_cancel;
+        private ImageView imgView_ok_middle;
+        private ImageView imgView_ok;
+        private TextView tv_ok;
+        private TextView tv_cancel;
 
 
         public Builder(Context context) {
@@ -52,7 +58,7 @@ public class CommonDialog extends Dialog {
         }
 
         /**
-         * 设置触摸娶她地方取消dialog
+         * 设置触摸其他地方取消dialog
          *
          * @param isOtherPlace
          * @return
@@ -96,14 +102,27 @@ public class CommonDialog extends Dialog {
         }
 
         /**
+         * 设定带有文本的dialog
+         *
+         * @param cancelListener 取消
+         * @param okListener 重试
+         * @return
+         */
+        public Builder setTextDialogListener(OnClickListener cancelListener, OnClickListener okListener) {
+            this.isTextView = true;
+            this.cancelClickListener = cancelListener;
+            this.okClickListener = okListener;
+            return this;
+        }
+
+        /**
          * 设置确认按钮和相应listener
          *
          * @param isOk
          * @param listener
          * @return
          */
-        public Builder setPositiveButton(boolean isOk,
-                                         DialogInterface.OnClickListener listener) {
+        public Builder setPositiveButton(boolean isOk, DialogInterface.OnClickListener listener) {
             this.isOk = isOk;
             this.cancelClickListener = listener;
             return this;
@@ -116,8 +135,7 @@ public class CommonDialog extends Dialog {
          * @param listener
          * @return
          */
-        public Builder setNegativeButton(boolean isCancel,
-                                         DialogInterface.OnClickListener listener) {
+        public Builder setNegativeButton(boolean isCancel, DialogInterface.OnClickListener listener) {
             this.isCancel = isCancel;
             this.okClickListener = listener;
             return this;
@@ -134,14 +152,30 @@ public class CommonDialog extends Dialog {
             dialog.addContentView(layout, new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-            ImageView imgView_cancel = (ImageView) layout.findViewById(R.id.imgView_cancel);
-            ImageView imgView_ok_middle = (ImageView) layout.findViewById(R.id.imgView_ok_middle);
-            ImageView imgView_ok = (ImageView) layout.findViewById(R.id.imgView_ok);
+            imgView_cancel = (ImageView) layout.findViewById(R.id.imgView_cancel);
+            imgView_ok_middle = (ImageView) layout.findViewById(R.id.imgView_ok_middle);
+            imgView_ok = (ImageView) layout.findViewById(R.id.imgView_ok);
+            tv_ok = (TextView) layout.findViewById(R.id.tv_ok);
+            tv_cancel = (TextView) layout.findViewById(R.id.tv_cancel);
 
             if (!isOk && !isCancel) {
                 imgView_cancel.setVisibility(View.GONE);
                 imgView_ok_middle.setVisibility(View.GONE);
                 imgView_ok.setVisibility(View.GONE);
+                if (isTextView) {
+                    tv_ok.setVisibility(View.VISIBLE);
+                    tv_cancel.setVisibility(View.VISIBLE);
+                    tv_cancel.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            cancelClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+                        }
+                    });
+                    tv_ok.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            cancelClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+                        }
+                    });
+                }
             } else if (isOk && !isCancel) {
                 imgView_cancel.setVisibility(View.GONE);
                 imgView_ok_middle.setVisibility(View.VISIBLE);
@@ -149,8 +183,7 @@ public class CommonDialog extends Dialog {
 
                 imgView_ok_middle.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        cancelClickListener.onClick(dialog,
-                                DialogInterface.BUTTON_NEUTRAL);
+                        cancelClickListener.onClick(dialog, DialogInterface.BUTTON_NEUTRAL);
                     }
                 });
             } else if (isOk && isCancel) {
@@ -160,15 +193,13 @@ public class CommonDialog extends Dialog {
 
                 imgView_ok.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        cancelClickListener.onClick(dialog,
-                                DialogInterface.BUTTON_POSITIVE);
+                        cancelClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
                     }
                 });
 
                 imgView_cancel.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        okClickListener.onClick(dialog,
-                                DialogInterface.BUTTON_NEGATIVE);
+                        okClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
                     }
                 });
             }
@@ -189,7 +220,7 @@ public class CommonDialog extends Dialog {
             }
 
             if (logoId != 0) {
-                ((ImageView) layout.findViewById(R.id.imgView_dialog_logo)).setBackgroundResource(logoId);
+                layout.findViewById(R.id.imgView_dialog_logo).setBackgroundResource(logoId);
             }
             dialog.setContentView(layout);
             return dialog;

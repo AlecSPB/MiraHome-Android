@@ -1,9 +1,9 @@
 package com.mooring.mh.fragment;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +19,12 @@ import org.xutils.x;
 
 /**
  * 自定义BaseFragment，支持View预加载，首次展现时数据加载
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public abstract class BaseFragment extends Fragment {
     protected View rootView;
-    protected Activity context;
+    protected FragmentActivity context;
     private BaseListener baseListener;
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;

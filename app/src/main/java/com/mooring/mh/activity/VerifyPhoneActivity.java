@@ -94,7 +94,7 @@ public class VerifyPhoneActivity extends BaseActivity {
     Handler han = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            String ts = "Please wait " + time + "s";
+            String ts = String.format(getString(R.string.tip_code_time), time + "s");
             tv_wait_times.setText(ts);
             time--;
             if (time < 0) {

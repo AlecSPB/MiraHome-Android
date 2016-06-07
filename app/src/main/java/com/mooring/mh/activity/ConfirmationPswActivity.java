@@ -38,7 +38,7 @@ public class ConfirmationPswActivity extends BaseActivity {
 
     @Override
     protected String getTitleName() {
-        return getString(R.string.title_confirmation_password);
+        return getString(R.string.title_confirmation_psw);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ConfirmationPswActivity extends BaseActivity {
         } else {
             phone = edit_confirm_phone.getText().toString();
             if (!(MUtils.isEmail(phone) || MUtils.isMobileNO(phone))) {
-                setError(getString(R.string.error_with_num_email));
+                setError(getString(R.string.error_username_empty));
             } else {
                 Intent it = new Intent();
                 it.setClass(ConfirmationPswActivity.this, VerifyPhoneActivity.class);
@@ -134,7 +134,7 @@ public class ConfirmationPswActivity extends BaseActivity {
     private boolean checkPsw() {
 
         if (TextUtils.isEmpty(newPsw)) {
-            setError(getString(R.string.error_login_psw_empty));
+            setError(getString(R.string.tv_new_psw_empty));
             return false;
         }
         if (!MUtils.checkPsw(newPsw)) {

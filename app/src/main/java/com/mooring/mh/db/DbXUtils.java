@@ -9,7 +9,7 @@ import java.io.File;
 
 /**
  * xutils Db 工具类
- * <p>
+ * <p/>
  * Created by Will on 16/3/31.
  */
 public class DbXUtils {
@@ -17,9 +17,9 @@ public class DbXUtils {
     static DbManager.DaoConfig daoConfig;
 
     public static DbManager.DaoConfig getDaoConfig(Context mContext) {
-        String path = mContext.getFilesDir().getPath().toString();
+        String path = mContext.getFilesDir().getPath();
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            path = mContext.getExternalFilesDir(null).getPath().toString();
+            path = mContext.getExternalFilesDir(null).getPath();
         }
         File f = new File(path + "/dbFile");
         if (!f.exists()) {

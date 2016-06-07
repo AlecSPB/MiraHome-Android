@@ -26,13 +26,15 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="170dp">
+        android:layout_height="170dp"
+        android:layout_marginTop="20dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/device_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="170dp"
-            android:scrollbars="horizontal" />
+            android:scrollbars="horizontal"
+            android:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/layout_single_device"
@@ -41,31 +43,44 @@
             android:layout_gravity="center">
 
             <ImageView
-                android:id="@+id/imgView_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/img_device_check_box"
-                android:contentDescription="@string/app_name"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/imgView_device_img"
+                android:id="@+id/imgView_no_device"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/img_device" />
+                android:src="@drawable/img_device_default"
+                android:visibility="visible" />
 
-            <TextView
-                android:id="@+id/tv_device_name"
+            <FrameLayout
+                android:id="@+id/layout_one_device"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="M01001"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_dimen_24pt" />
+                android:visibility="gone">
 
+                <ImageView
+                    android:id="@+id/imgView_check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_device_check_box"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/imgView_one_device"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_device" />
+
+                <TextView
+                    android:id="@+id/tv_device_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text=""
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_24pt" />
+            </FrameLayout>
         </FrameLayout>
-
     </FrameLayout>
 
     <LinearLayout
@@ -90,7 +105,7 @@
             android:layout_marginRight="20dp"
             android:text="@string/tip_or"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_48pt" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
         <View
             android:layout_width="0dp"
@@ -99,12 +114,27 @@
             android:background="@color/colorWhite50" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imgView_retry_connect"
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_retry_connect"
-        android:contentDescription="@string/app_name" />
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/imgView_retry_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_connect_new_device"
+            android:contentDescription="@string/app_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/tv_btn_add_device"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_28pt" />
+    </FrameLayout>
 </LinearLayout>

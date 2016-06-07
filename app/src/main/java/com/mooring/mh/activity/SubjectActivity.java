@@ -1,6 +1,6 @@
 package com.mooring.mh.activity;
 
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.mooring.mh.fragment.SwitchUserObserver;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 /**
  * 抽象主题角色,观察者模式中被观察者
- * <p>
+ * <p/>
  * Created by Will on 16/5/31.
  */
-public abstract class SubjectActivity extends FragmentActivity {
+public abstract class SubjectActivity extends AppCompatActivity {
     /**
      * 用来保存注册的观察者对象
      */

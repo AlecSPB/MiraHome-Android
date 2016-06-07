@@ -35,7 +35,7 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
                 android:layout_marginTop="10dp"
-                android:hint="@string/hint_password"
+                android:hint="@string/hint_login_psw"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:textColor="@color/colorWhite"
@@ -50,7 +50,7 @@
                 android:clickable="true"
                 android:gravity="center_vertical"
                 android:paddingBottom="10dp"
-                android:text="@string/forget_password"
+                android:text="@string/tv_forget_psw"
                 android:textColor="@color/colorWhite50"
                 android:textSize="@dimen/text_dimen_28pt" />
 
@@ -68,7 +68,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
-                android:text="@string/tip_login_error"
+                android:text=""
                 android:textColor="@color/colorOrange"
                 android:textSize="@dimen/text_dimen_28pt"
                 android:visibility="invisible" />

@@ -18,10 +18,11 @@
             android:src="@drawable/bg_act_back" />
 
         <TextView
+            android:id="@+id/tv_act_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/title_heating"
+            android:text=""
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_34pt" />
 

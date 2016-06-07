@@ -73,14 +73,13 @@
 
     <!--侧滑菜单-->
     <LinearLayout
+        android:id="@+id/activity_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/colorMainBg">
 
-        <include
-            android:id="@+id/activity_menu"
-            layout="@layout/sliding_activity_menu" />
+        <include layout="@layout/sliding_activity_menu" />
 
     </LinearLayout>
 

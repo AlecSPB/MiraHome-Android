@@ -24,6 +24,8 @@ import com.mooring.mh.views.WheelPicker.widget.WheelWeightSelectPicker;
 import org.json.JSONObject;
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.common.util.KeyValue;
+import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -137,7 +139,7 @@ public class UserInfoActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_on_mooring:
-                //sleep on mooring
+                sleepOnMooring();
                 break;
             case R.id.imgView_add_user:
                 SelectHeadImg();
@@ -181,25 +183,28 @@ public class UserInfoActivity extends BaseActivity {
                     user.set_name(edText_name.getText().toString().trim());
                     user.set_sex(sex);
                     user.set_weight(tv_weight.getText().toString());
-                    user.set_location(0);//添加成员默认不在床上
+                    user.set_location(MConstants.BED_OUT);//添加成员默认不在床上
                     try {
                         dbManager.saveOrUpdate(user);
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
+                    Intent it = new Intent(context,CommonSuccessActivity.class);
+                    it.putExtra(MConstants.ENTRANCE_FLAG,MConstants.ADD_USER_SUCCESS);
+                    startActivity(it);
                 } else {
-                    MUtils.showToast(context, "添加失败,请重试");
+                    MUtils.showToast(context, getString(R.string.error_add_failed));
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                MUtils.showToast(context, "添加失败,请重试");
+                MUtils.showToast(context, getString(R.string.error_add_failed));
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                MUtils.showToast(context, "添加已取消");
+                MUtils.showToast(context, getString(R.string.error_add_cancel));
             }
 
             @Override
@@ -237,18 +242,18 @@ public class UserInfoActivity extends BaseActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    MUtils.showToast(context, "编辑失败,请重试");
+                    MUtils.showToast(context, getString(R.string.error_edit_failed));
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                MUtils.showToast(context, "编辑失败,请重试");
+                MUtils.showToast(context, getString(R.string.error_edit_failed));
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                MUtils.showToast(context, "编辑已取消");
+                MUtils.showToast(context, getString(R.string.error_edit_cancel));
             }
 
             @Override
@@ -266,27 +271,62 @@ public class UserInfoActivity extends BaseActivity {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null && result.optInt("code") == 0) {
-                    MUtils.showToast(context, "删除成功");
+                    MUtils.showToast(context, getString(R.string.delete_user_success));
                     context.finish();
                 } else {
-                    MUtils.showToast(context, "删除失败,请重试");
+                    MUtils.showToast(context, getString(R.string.error_delete_failed));
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                MUtils.showToast(context, "删除失败,请重试");
+                MUtils.showToast(context, getString(R.string.error_delete_failed));
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                MUtils.showToast(context, "删除已取消");
+                MUtils.showToast(context, getString(R.string.error_delete_cancel));
             }
 
             @Override
             public void onFinished() {
             }
         });
+    }
+
+    /**
+     * 选择将用户放置在左/右的位置上
+     */
+    private void sleepOnMooring() {
+        dialog = new Dialog(this, R.style.CommonDialogStyle);
+        dialog.setContentView(R.layout.dialog_sleep_on_mooring);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.findViewById(R.id.tv_dialog_left).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //放在左边
+                        try {
+                            dbManager.update(User.class, WhereBuilder.b("id", "=", member_id),
+                                    new KeyValue("_location", MConstants.BED_LEFT));
+                        } catch (DbException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        dialog.findViewById(R.id.tv_dialog_right).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //放在右边
+                        try {
+                            dbManager.update(User.class, WhereBuilder.b("id", "=", member_id),
+                                    new KeyValue("_location", MConstants.BED_RIGHT));
+                        } catch (DbException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     /**

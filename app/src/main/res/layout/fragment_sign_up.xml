@@ -35,7 +35,7 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
                 android:layout_marginTop="10dp"
-                android:hint="@string/hint_password"
+                android:hint="@string/hint_sign_psw"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:textColor="@color/colorWhite"
@@ -56,7 +56,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
-                android:text="@string/tip_sign_up_error"
+                android:text=""
                 android:textColor="@color/colorOrange"
                 android:textSize="@dimen/text_dimen_28pt"
                 android:visibility="invisible" />

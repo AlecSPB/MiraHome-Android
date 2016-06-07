@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="10dp"
                 android:drawableRight="@drawable/shape_white_circle"
-                android:text="Sleep"
+                android:text="@string/tv_light_sleep"
                 android:textColor="@color/colorWhite50"
                 android:textSize="@dimen/text_dimen_24pt" />
 
@@ -65,7 +65,7 @@
                 android:layout_marginLeft="30dp"
                 android:drawablePadding="10dp"
                 android:drawableRight="@drawable/shape_purple_circle"
-                android:text="Deep Sleep"
+                android:text="@string/tv_deep_sleep"
                 android:textColor="@color/colorWhite50"
                 android:textSize="@dimen/text_dimen_24pt" />
 
@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="Average Sleep efficiency:"
+                android:text="@string/average_sleep_quality"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_28pt" />
 
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="Deep Sleep 50%"
+                android:text="@string/average_deep_sleep"
                 android:textColor="@color/colorPurple"
                 android:textSize="@dimen/text_dimen_28pt" />
 
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="20dp"
-                android:text="Best Sleep efficiency:"
+                android:text="@string/best_sleep_efficiency"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_28pt" />
 
@@ -110,10 +110,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="2015 11 11"
+                android:text=""
                 android:textColor="@color/colorPurple"
                 android:textSize="@dimen/text_dimen_28pt" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

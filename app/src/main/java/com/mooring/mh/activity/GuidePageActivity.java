@@ -1,10 +1,10 @@
 package com.mooring.mh.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * <p/>
  * Created by Will on 16/3/24.
  */
-public class GuidePageActivity extends AppCompatActivity {
+public class GuidePageActivity extends Activity {
     // 定义ViewPager对象
     private ViewPager viewPager;
 
@@ -184,7 +184,6 @@ public class GuidePageActivity extends AppCompatActivity {
         editor.putBoolean(MConstants.SP_KEY_FIRST_START, false).apply();
 
         startActivity(new Intent(GuidePageActivity.this, LoginAndSignUpActivity.class));
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         this.finish();
     }
 

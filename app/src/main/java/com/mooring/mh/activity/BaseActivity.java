@@ -1,6 +1,5 @@
 package com.mooring.mh.activity;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +21,7 @@ import com.mooring.mh.app.InitApplicationHelper;
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
-    protected Activity context;
+    protected AppCompatActivity context;
     private MachtalkSDKListener baseListener;
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;
@@ -38,6 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         editor = sp.edit();
         editor.apply();
 
+        MachtalkSDK.getInstance().startSDK(this, null);
         MachtalkSDK.getInstance().setContext(this);
         baseListener = new BaseListener();
 
@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.imgView_act_back) {
-            BaseActivity.this.finish();
+            context.finish();
         }
         OnClick(v);
     }
@@ -102,7 +102,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected abstract void OnClick(View v);
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(baseListener);

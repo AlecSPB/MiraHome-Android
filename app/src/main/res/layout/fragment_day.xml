@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="Sleep Duration:5h10m"
+                    android:text="@string/sleep_time"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_28pt" />
 
@@ -117,7 +117,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="Deep sleep"
+                        android:text="@string/tv_deep_sleep"
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/text_dimen_24pt" />
 
@@ -146,7 +146,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="10dp"
-                            android:text="Light sleep"
+                            android:text="@string/tv_light_sleep"
                             android:textColor="@color/colorWhite"
                             android:textSize="@dimen/text_dimen_24pt" />
 
@@ -195,7 +195,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="Wake-up"
+                        android:text="@string/tv_wake_up"
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/text_dimen_24pt" />
 

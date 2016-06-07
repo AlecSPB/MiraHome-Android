@@ -14,6 +14,58 @@
 
         <include layout="@layout/activity_common_title" />
 
+        <!--设备连接指导层-->
+        <RelativeLayout
+            android:id="@+id/layout_tip_connect"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tip_guide_two"
+                    android:textColor="@color/colorPurple"
+                    android:textSize="@dimen/text_dimen_28pt" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/img_tip_connect_device" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tip_guide_one"
+                    android:textColor="@color/colorPurple"
+                    android:textSize="@dimen/text_dimen_28pt" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:text="@string/tip_guide_three"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_dimen_34pt" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_confirm_guide"
+                style="@style/text_button_comm"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                android:text="@string/tv_confirm" />
+
+        </RelativeLayout>
+
+        <!--输入WIFI密码层-->
         <LinearLayout
             android:id="@+id/layout_setting_wifi"
             android:layout_width="match_parent"
@@ -22,7 +74,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="20dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -56,9 +108,10 @@
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="50dp"
-                android:text="@string/tv_confirm" />
+                android:text="@string/tv_btn_search" />
         </LinearLayout>
 
+        <!--没有搜索到WIFI的展示层-->
         <LinearLayout
             android:id="@+id/layout_no_wifi"
             android:layout_width="match_parent"
@@ -66,6 +119,13 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:visibility="gone">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_shadow" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -89,11 +149,13 @@
                 android:id="@+id/imgView_retry_connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/bg_retry_connect"
                 android:contentDescription="@string/app_name" />
         </LinearLayout>
     </LinearLayout>
 
+    <!--搜索动画加载层-->
     <LinearLayout
         android:id="@+id/layout_scan_wifi"
         android:layout_width="match_parent"

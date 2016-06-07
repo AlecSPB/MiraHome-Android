@@ -46,7 +46,8 @@ public class LoginAndSignUpActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance();
             ((TextView) dialog.findViewById(R.id.tv_tip_time)).setText(
                     String.format(getString(R.string.tip_kicked_out),
-                            doubleTime(cal.get(Calendar.HOUR_OF_DAY)) + ":" + doubleTime(cal.get(Calendar.MINUTE))));
+                            doubleTime(cal.get(Calendar.HOUR_OF_DAY)) + ":" +
+                                    doubleTime(cal.get(Calendar.MINUTE))));
             dialog.findViewById(R.id.tv_back).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:text="Heart Rate:70bmp"
+            android:text="@string/heart_rate_param"
             android:textColor="@color/colorOrange"
             android:textSize="@dimen/text_dimen_28pt" />
 
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Heartbeat pause 0"
+            android:text="@string/heartbeat_pause"
             android:textColor="@color/colorWhite50"
             android:textSize="@dimen/text_dimen_24pt" />
 
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:text="Breathing Rate:18/min"
+            android:text="@string/breath_rate_param"
             android:textColor="@color/colorPurple"
             android:textSize="@dimen/text_dimen_28pt" />
 
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Apnea 2 11s"
+            android:text="@string/breath_pause"
             android:textColor="@color/colorWhite50"
             android:textSize="@dimen/text_dimen_24pt" />
 
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:text="Body movement:8"
+            android:text="@string/body_movement"
             android:textColor="@android:color/holo_green_light"
             android:textSize="@dimen/text_dimen_28pt" />
 
@@ -162,5 +162,4 @@
                 chart:chart_y="10" />
         </RelativeLayout>
     </LinearLayout>
-
 </LinearLayout>

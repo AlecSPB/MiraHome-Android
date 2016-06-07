@@ -32,7 +32,7 @@
                 android:layout_marginTop="20dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                android:text="@string/default_phone_num"
+                android:text=""
                 android:textColor="@color/colorPurple"
                 android:textSize="@dimen/text_dimen_60pt" />
 
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Verification code"
+                android:hint="@string/hint_verify_code"
                 android:inputType="phone|textEmailAddress"
                 android:singleLine="true"
                 android:textColor="@color/colorWhite"
@@ -73,7 +73,7 @@
                     android:layout_centerVertical="true"
                     android:background="@drawable/bg_button_comm"
                     android:gravity="center"
-                    android:text="Send"
+                    android:text="@string/btn_tv_send"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_34pt" />
             </RelativeLayout>

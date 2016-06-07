@@ -1,6 +1,7 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -80,16 +81,23 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
      */
     private boolean checkSignUp() {
         if ("".equals(phone)) {
-            setError(getResources().getString(R.string.error_login_name_empty));
+            setError(getResources().getString(R.string.error_username_empty));
             return false;
         }
         if ("".equals(psw)) {
-            setError(getResources().getString(R.string.error_login_psw_empty));
+            setError(getResources().getString(R.string.error_psw_empty));
             return false;
         }
-        if (!(MUtils.isMobileNO(phone) || MUtils.isEmail(phone))) {
-            setError(getResources().getString(R.string.error_with_num_email));
-            return false;
+        if (TextUtils.isDigitsOnly(phone)) {
+            if (!MUtils.isMobileNO(phone)) {
+                setError(getResources().getString(R.string.error_phone_format));
+                return false;
+            }
+        } else {
+            if (!MUtils.isEmail(phone)) {
+                setError(getResources().getString(R.string.error_email_format));
+                return false;
+            }
         }
         if (!MUtils.checkPsw(psw)) {
             setError(getResources().getString(R.string.error_psw_format));

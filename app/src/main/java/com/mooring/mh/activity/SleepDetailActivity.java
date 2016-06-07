@@ -11,14 +11,14 @@ import com.mooring.mh.R;
 import com.mooring.mh.adapter.DayAndMonthPagerAdapter;
 
 /**
- * 更多Activity 页面  展现Day或Month的所有数据
+ * 睡眠数据详情Activity 页面  展现Day或Month的所有数据
  *
  * @see com.mooring.mh.fragment.DayFragment
  * @see com.mooring.mh.fragment.MonthFragment
  * <p/>
  * Created by Will on 16/3/28.
  */
-public class MoreActivity extends AppCompatActivity implements View.OnClickListener {
+public class SleepDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager more_viewPager;
     private TabLayout more_tabLayout;
@@ -28,7 +28,7 @@ public class MoreActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more);
+        setContentView(R.layout.activity_sleep_detail);
 
         initView();
 

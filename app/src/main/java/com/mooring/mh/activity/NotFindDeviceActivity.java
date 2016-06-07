@@ -8,6 +8,8 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 
 /**
+ * 没有发现设备页面
+ * <p/>
  * Created by Will on 16/5/13.
  */
 public class NotFindDeviceActivity extends BaseActivity {
@@ -41,9 +43,9 @@ public class NotFindDeviceActivity extends BaseActivity {
     @Override
     protected void OnClick(View v) {
         if (v.getId() == R.id.imgView_retry_connect) {
-            startActivity(new Intent(NotFindDeviceActivity.this, SetWifiActivity.class));
+            startActivity(new Intent(context, SetWifiActivity.class));
         } else if (v.getId() == R.id.tv_act_skip) {
         }
-        NotFindDeviceActivity.this.finish();
+        context.finish();
     }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/img_help_four" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="150dp"
+        android:text="@string/tv_page_four_edit"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_28pt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="95dp"
+        android:text="@string/tv_page_four_new"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_28pt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="90dp"
+        android:text="@string/tv_page_four_smart"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_dimen_28pt" />
+</FrameLayout>

@@ -10,6 +10,29 @@
         android:id="@+id/param_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" />
+        android:scrollbars="none"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/layout_alarm_none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_alarm_default" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="55dp"
+            android:text="@string/tip_add_clock"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_dimen_28pt" />
+    </FrameLayout>
 
 </FrameLayout>

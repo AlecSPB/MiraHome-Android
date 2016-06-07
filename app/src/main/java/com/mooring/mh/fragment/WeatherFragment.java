@@ -19,7 +19,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.mooring.mh.R;
-import com.mooring.mh.activity.MoreActivity;
+import com.mooring.mh.activity.SleepDetailActivity;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
@@ -277,7 +277,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         switch (v.getId()) {
             case R.id.tv_more:
                 Intent it = new Intent();
-                it.setClass(getActivity(), MoreActivity.class);
+                it.setClass(getActivity(), SleepDetailActivity.class);
                 getActivity().startActivity(it);
                 break;
         }

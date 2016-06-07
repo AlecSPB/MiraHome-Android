@@ -8,7 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/img_device_check_box"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="@string/app_name"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/imgView_device_img"
@@ -22,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="M01001"
+        android:text=""
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_dimen_24pt" />
 
