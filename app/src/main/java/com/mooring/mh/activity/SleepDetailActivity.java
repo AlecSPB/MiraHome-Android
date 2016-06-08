@@ -1,11 +1,8 @@
 package com.mooring.mh.activity;
 
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.DayAndMonthPagerAdapter;
@@ -18,7 +15,7 @@ import com.mooring.mh.adapter.DayAndMonthPagerAdapter;
  * <p/>
  * Created by Will on 16/3/28.
  */
-public class SleepDetailActivity extends AppCompatActivity implements View.OnClickListener {
+/*public class SleepDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager more_viewPager;
     private TabLayout more_tabLayout;
@@ -60,5 +57,41 @@ public class SleepDetailActivity extends AppCompatActivity implements View.OnCli
                 this.finish();
                 break;
         }
+    }
+}*/
+
+public class SleepDetailActivity extends BaseActivity implements View.OnClickListener {
+
+    private ViewPager more_viewPager;
+    private TabLayout more_tabLayout;
+    private DayAndMonthPagerAdapter pagerAdapter;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_sleep_detail;
+    }
+
+    @Override
+    protected String getTitleName() {
+        return null;
+    }
+
+    @Override
+    protected void initActivity() {
+    }
+
+    @Override
+    protected void initView() {
+        more_viewPager = (ViewPager) findViewById(R.id.more_viewPager);
+        more_tabLayout = (TabLayout) findViewById(R.id.more_tabLayout);
+
+        pagerAdapter = new DayAndMonthPagerAdapter(this, getSupportFragmentManager());
+        more_viewPager.setAdapter(pagerAdapter);
+        more_tabLayout.setupWithViewPager(more_viewPager);
+        more_tabLayout.setTabMode(TabLayout.MODE_FIXED);
+    }
+
+    @Override
+    protected void OnClick(View v) {
     }
 }

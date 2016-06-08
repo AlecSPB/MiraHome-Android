@@ -63,8 +63,8 @@
         <!--登录和注册-->
         <activity
             android:name=".activity.LoginAndSignUpActivity"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <!--修改密码-->
         <activity android:name=".activity.ConfirmationPswActivity" />

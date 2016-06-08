@@ -73,14 +73,10 @@ public class ZoomCircleView extends View {
         TypedArray mTypedArray = getContext().obtainStyledAttributes(attrs,
                 R.styleable.ZoomCircleView, defStyleAttr, 0);
 
-        Boolean zoom = mTypedArray.getBoolean(R.styleable.ZoomCircleView_img_zoom_out, false);
-        if (zoom) {
-            this.isZoomIn = false;
-            this.isZoomOut = true;
-        } else {
-            this.isZoomIn = true;
-            this.isZoomOut = false;
-        }
+        Boolean zoomOut = mTypedArray.getBoolean(R.styleable.ZoomCircleView_img_zoom_out, false);
+
+        this.isZoomIn = !zoomOut;
+        this.isZoomOut = zoomOut;
 
         Drawable srcDrawable = mTypedArray.getDrawable(R.styleable.ZoomCircleView_img_src);
         if (srcDrawable instanceof BitmapDrawable) {
@@ -100,6 +96,9 @@ public class ZoomCircleView extends View {
      * @param out 放大
      */
     public void setZoomInOrOut(boolean in, boolean out) {
+        if (in && out) {
+            throw new RuntimeException("Do not set the zoom in and out at the same time");
+        }
         this.isZoomIn = in;
         this.isZoomOut = out;
     }
@@ -188,10 +187,12 @@ public class ZoomCircleView extends View {
         paint.setColor(color);
 
         // 以下有两种方法画圆,drawRounRect和drawCircle
-        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);// 画圆角矩形，第一个参数为图形显示区域，第二个参数和第三个参数分别是水平圆角半径和垂直圆角半径。
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        // 画圆角矩形，第一个参数为图形显示区域，第二个参数和第三个参数分别是水平圆角半径和垂直圆角半径。
         canvas.drawCircle(roundPx, roundPx, roundPx, paint);
 
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));// 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
+        // 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, src, dst, paint); //以Mode.SRC_IN模式合并bitmap和已经draw了的Circle
 
         return output;
@@ -243,7 +244,6 @@ public class ZoomCircleView extends View {
             /*图片缩放view同等大小*/
         mScale = (float) getWidth() / (float) mBitmap.getWidth();
         matrix.setScale(mScale, mScale);
-
     }
 
 }

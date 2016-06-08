@@ -69,12 +69,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         OnClick(v);
     }
 
-
-    /**
-     * 初始化Activity相关参数和变量,和view无关
-     */
-    protected abstract void initActivity();
-
     /**
      * 获取布局文件
      *
@@ -88,6 +82,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      * @return
      */
     protected abstract String getTitleName();
+
+    /**
+     * 初始化Activity相关参数和变量,和view无关
+     */
+    protected abstract void initActivity();
 
     /**
      * 初始化View控件

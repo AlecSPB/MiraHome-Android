@@ -1,6 +1,9 @@
 package com.mooring.mh.views.CircleProgress;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -68,10 +71,6 @@ public class DryingCircleView extends View {
      * object animator for doing the drawing animations
      */
     private ObjectAnimator mDrawAnimator;
-//    /**
-//     * 动画加载过程监听
-//     */
-//    private MyAnimatorUpdateListener updateListener;
     /**
      * 充满加载过程回调
      */
@@ -119,9 +118,23 @@ public class DryingCircleView extends View {
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
         mDrawAnimator.setInterpolator(new LinearInterpolator());
-//        updateListener = new MyAnimatorUpdateListener();
-//        mDrawAnimator.addUpdateListener(updateListener);
-
+        mDrawAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                if (listener != null) {
+                    listener.onLoading(animation.getCurrentPlayTime());
+                }
+            }
+        });
+        mDrawAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (listener != null) {
+                    listener.onLoading(-1);
+                }
+            }
+        });
     }
 
 
@@ -148,11 +161,6 @@ public class DryingCircleView extends View {
         //绘制进度条
         rateRect.set(delta, delta, viewW - delta, viewH - delta);
         canvas.drawArc(rateRect, 90f, 360f * mPhase, false, ratePaint);
-
-        if (listener != null) {
-            listener.onLoading(mPhase);
-        }
-
     }
 
 
@@ -184,33 +192,19 @@ public class DryingCircleView extends View {
         this.mPhase = phase;
         mDrawAnimator.setFloatValues(mPhase, 1f);
         mDrawAnimator.start();
-        invalidate();
     }
 
     /**
      * 开始动画
      */
     public void startAnim() {
-//        if (updateListener.isPause) {
-//            updateListener.play();
-//        } else {
-        mPhase = 0f;
-        mDrawAnimator.start();
-//        }
+        this.startAnim(0f);
     }
-
-//    /**
-//     * 停止动画
-//     */
-//    public void pauseAnim() {
-//        updateListener.pause();
-//    }
 
     /**
      * 停止动画
      */
     public void stopAnim() {
-//        updateListener.play();
         mDrawAnimator.end();
     }
 
@@ -249,95 +243,16 @@ public class DryingCircleView extends View {
     }
 
     /**
-     * 自定义动画加载过程的监听,实现对动画的暂停和继续加载
-     */
-    /*class MyAnimatorUpdateListener implements ValueAnimator.AnimatorUpdateListener {
-        *//**
-     * 暂停状态
-     *//*
-        private boolean isPause = false;
-        *//**
-     * 是否已经暂停，如果一已经暂停，那么就不需要再次设置停止的一些事件和监听器了
-     *//*
-        private boolean isPaused = false;
-        *//**
-     * 当前的动画的播放位置
-     *//*
-        private float fraction = 0.0f;
-        *//**
-     * 当前动画的播放运行时间
-     *//*
-        private long mCurrentPlayTime = 0l;
-
-        *//**
-     * 是否是暂停状态
-     *
-     * @return
-     *//*
-        public boolean isPause() {
-            return isPause;
-        }
-
-        *//**
-     * 停止方法，只是设置标志位，剩余的工作会根据状态位置在onAnimationUpdate进行操作
-     *//*
-        public void pause() {
-            isPause = true;
-        }
-
-        public void play() {
-            isPause = false;
-            isPaused = false;
-        }
-
-        @Override
-        public void onAnimationUpdate(ValueAnimator animation) {
-            *//**
-     * 如果是暂停则将状态保持下来，并每个刷新动画的时间了；来设置当前时间，让动画
-     * 在时间上处于暂停状态，同时要设置一个静止的时间加速器，来保证动画不会抖动
-     *//*
-            if (isPause) {
-                if (!isPaused) {
-                    mCurrentPlayTime = animation.getCurrentPlayTime();
-                    fraction = animation.getAnimatedFraction();
-                    animation.setInterpolator(new TimeInterpolator() {
-                        @Override
-                        public float getInterpolation(float input) {
-                            return fraction;
-                        }
-                    });
-                    isPaused = true;
-                }
-                //每隔动画播放的时间，我们都会将播放时间往回调整，以便重新播放的时候接着使用这个时间,同时也为了让整个动画不结束
-                new CountDownTimer(ValueAnimator.getFrameDelay(), ValueAnimator.getFrameDelay()) {
-
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        mDrawAnimator.setCurrentPlayTime(mCurrentPlayTime);
-                    }
-                }.start();
-            } else {
-                //将时间拦截器恢复成线性的，如果您有自己的，也可以在这里进行恢复
-                animation.setInterpolator(null);
-            }
-        }
-    }*/
-
-    /**
      * 环形加载回调监听
      */
     public interface LoadingListener {
 
         /**
-         * 动画没执行一次调用一次,不宜有大内存消耗的动作
+         * 动画每执行一次调用一次,不宜有大内存消耗的动作
          *
          * @param value
          */
-        void onLoading(float value);
+        void onLoading(long value);
     }
 
     /**
@@ -348,5 +263,4 @@ public class DryingCircleView extends View {
     public void setOnLoadingListener(LoadingListener l) {
         this.listener = l;
     }
-
 }

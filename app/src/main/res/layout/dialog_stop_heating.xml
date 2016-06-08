@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="155dp"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/img_close_heating" />
+        android:contentDescription="@string/app_name" />
 
     <TextView
         android:id="@+id/tv_dialog_message"
@@ -20,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="25dp"
-        android:text="@string/stop_drying"
+        android:text="@string/tip_stop_drying"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_dimen_34pt" />
 

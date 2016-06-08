@@ -56,7 +56,8 @@
 
     <!--DryingControlActivity 烘干页面-->
     <string name="title_drying">烘干</string>
-    <string name="stop_drying">停止烘干?</string>
+    <string name="tip_stop_drying">停止烘干?</string>
+    <string name="tip_drying_success">完成烘干</string>
     <string name="blank_time">00:00:00</string>
 
     <!--HeatingControlActivity 加热页面-->
@@ -217,6 +218,7 @@
     <string name="tv_more">详情</string>
     <string name="error_no_weather_data">网络连接失败，暂无天气数据</string>
     <string name="error_no_data_conn_device">暂无数据，请先连接MOORING</string>
+    <string name="error_permission_failed">权限请求失败</string>
 
     <!-- HelpActivity 帮助页面 -->
     <string name="title_help">帮助</string>

@@ -7,9 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -18,6 +18,7 @@ import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Result;
+import com.mooring.mh.BuildConfig;
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
@@ -30,7 +31,7 @@ import java.util.List;
 
 /**
  * 起始页--执行动画,判断是否首次使用,是否自动登录
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
 public class StartPageActivity extends Activity {
@@ -52,8 +53,6 @@ public class StartPageActivity extends Activity {
         super.onCreate(savedInstanceState);
         context = this;
 
-        setContentView(R.layout.activity_startpage);
-
         applyForPermission();
 
     }
@@ -67,38 +66,29 @@ public class StartPageActivity extends Activity {
         editor.apply();
 
         //设定Log输出等级以及输出到本地文件
-//        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, true);
+        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, true);
         MachtalkSDK.getInstance().startSDK(context, null);
 
         baseListener = new BaseListener();
 
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                try {
+        if (sp.getBoolean(MConstants.SP_KEY_FIRST_START, true)) {
+            // 引导页
+            startActivity(new Intent(context, GuidePageActivity.class));
+            context.finish();
+        } else {
+            // 自动登录
+            userName = sp.getString(MConstants.SP_KEY_USERNAME, "");
+            userPwd = sp.getString(MConstants.SP_KEY_PASSWORD, "");
 
-                    if (sp.getBoolean(MConstants.SP_KEY_FIRST_START, true)) {
-                        // 引导页
-                        startActivity(new Intent(context, GuidePageActivity.class));
-                        context.finish();
-                    } else {
-                        // 自动登录
-                        userName = sp.getString(MConstants.SP_KEY_USERNAME, "");
-                        userPwd = sp.getString(MConstants.SP_KEY_PASSWORD, "");
+            LogUtil.e("userName  " + userName + "  userPwd  " + userPwd);
 
-                        LogUtil.e("userName  " + userName + "  userPwd  " + userPwd);
-
-                        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPwd)) {
-                            MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
-                        } else {
-                            startActivity(new Intent(context, LoginAndSignUpActivity.class));
-                            context.finish();
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPwd)) {
+                MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
+            } else {
+                startActivity(new Intent(context, LoginAndSignUpActivity.class));
+                context.finish();
             }
-        }, 1000);
+        }
     }
 
     /**
@@ -110,8 +100,7 @@ public class StartPageActivity extends Activity {
             if (permissions.size() > 0) {
                 this.requestPermissions(
                         permissions.toArray(new String[permissions.size()]),
-                        MConstants.PERMISSIONS_STORAGE
-                );
+                        MConstants.PERMISSIONS_STORAGE);
                 return;
             }
         }
@@ -163,7 +152,6 @@ public class StartPageActivity extends Activity {
         }
     }
 
-
     /**
      * 跳转到设置界面的Dialog提示
      *
@@ -177,7 +165,12 @@ public class StartPageActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                intent.setData(uri);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 context.finish();
             }
         });
@@ -188,11 +181,8 @@ public class StartPageActivity extends Activity {
                 context.finish();
             }
         });
-
         builder.create().show();
-
     }
-
 
     /**
      * 自定义回调监听

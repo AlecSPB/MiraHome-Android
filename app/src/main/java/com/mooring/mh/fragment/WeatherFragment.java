@@ -1,12 +1,16 @@
 package com.mooring.mh.fragment;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
@@ -18,6 +22,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.mooring.mh.BuildConfig;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.SleepDetailActivity;
 import com.mooring.mh.app.InitApplicationHelper;
@@ -48,12 +53,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private CircleDisplay circle_progress_2;
     private CircleDisplay circle_progress_3;
     private CircleDisplay circle_progress_4;
-
-    private TextView tv_more;
+    private TextView tv_sleep_detail;
 
     private View layout_show;
     private View layout_data_fail;
-
 
     /**
      * --------------天气---------------
@@ -118,8 +121,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         setmCircleDisplay(circle_progress_3, 68f);
         setmCircleDisplay(circle_progress_4, 90f);
 
-        tv_more = (TextView) rootView.findViewById(R.id.tv_more);
-        tv_more.setOnClickListener(this);
+        tv_sleep_detail = (TextView) rootView.findViewById(R.id.tv_sleep_detail);
+        tv_sleep_detail.setOnClickListener(this);
 
 //        initCloud();
 
@@ -275,7 +278,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_more:
+            case R.id.tv_sleep_detail:
                 Intent it = new Intent();
                 it.setClass(getActivity(), SleepDetailActivity.class);
                 getActivity().startActivity(it);
@@ -491,26 +494,55 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MConstants.PERMISSIONS_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //允许
-                    getLatAndLon();
-                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(
-                            context, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                        //弹出Dialog,告知用户为什么要去申请该权限
-
-
-                    } else {
-                        MUtils.showToast(context, "位置权限请求失败");
-                    }
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                break;
+        if (requestCode != MConstants.PERMISSIONS_LOCATION) {
+            return;
         }
+        if (grantResults.length <= 0) {
+            LogUtil.v(getString(R.string.error_permission_failed));
+            return;
+        }
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //允许
+            getLatAndLon();
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    context, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                //弹出Dialog,告知用户为什么要去申请该权限
+                showDialog(getString(R.string.permission_location));
+            } else {
+                MUtils.showToast(context, getString(R.string.error_permission_failed));
+            }
+        }
+    }
+
+    /**
+     * 跳转到设置界面的Dialog提示
+     *
+     * @param msg
+     */
+    private void showDialog(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(msg);
+        builder.setTitle(getString(R.string.tip_access_request));
+        builder.setPositiveButton(getString(R.string.tip_go_setting), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                intent.setData(uri);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton(getString(R.string.tv_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     /**
@@ -551,7 +583,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onSwitch(String userId,int location,String fTag) {
+    public void onSwitch(String userId, int location, String fTag) {
 
         LogUtil.e("________切换了User_________");
     }

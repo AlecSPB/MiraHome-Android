@@ -7,34 +7,28 @@
         <item name="android:windowContentOverlay">@null</item>
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+        <item name="android:windowBackground">@drawable/bg_activity_base</item>
     </style>
 
     <!--Start和Guide页面使用的Theme-->
     <style name="ActivityAnimation" parent="@android:style/Animation.Activity">
-        <!--<item name="android:windowEnterAnimation">@anim/slide_right_in</item>-->
-        <!--<item name="android:windowExitAnimation">@anim/slide_right_out</item>-->
         <item name="android:activityOpenEnterAnimation">@anim/slide_right_in</item>
         <item name="android:activityOpenExitAnimation">@anim/anim_blank</item>
         <item name="android:activityCloseEnterAnimation">@anim/anim_blank</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_right_out</item>
     </style>
 
-    <style name="ActivityTranslucentAnimation" parent="@android:style/Animation.Translucent">
-        <item name="android:windowEnterAnimation">@anim/slide_right_in</item>
-        <item name="android:windowExitAnimation">@anim/slide_right_out</item>
-        <item name="android:activityOpenEnterAnimation">@anim/slide_right_in</item>
-        <item name="android:activityOpenExitAnimation">@anim/slide_left_out</item>
-        <item name="android:activityCloseEnterAnimation">@anim/slide_left_in</item>
-        <item name="android:activityCloseExitAnimation">@anim/slide_right_out</item>
-    </style>
-
     <!--Start页面使用的Theme-->
-    <style name="StartTheme" parent="android:Theme.Light.NoTitleBar.Fullscreen">
+    <style name="StartTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@drawable/img_about_mooring</item>
     </style>
 
     <!--Guide页面使用的Theme-->
-    <style name="GuideTheme" parent="android:Theme.Light.NoTitleBar.Fullscreen">
+    <style name="GuideTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
     </style>
     <!-- 从底部弹出dialog主题 -->
@@ -47,6 +41,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@style/AnimBottom</item>
         <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <!-- AnimBottom -->

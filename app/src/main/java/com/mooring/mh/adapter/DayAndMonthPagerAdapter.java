@@ -10,6 +10,8 @@ import com.mooring.mh.fragment.DayFragment;
 import com.mooring.mh.fragment.MonthFragment;
 
 /**
+ * FragmentPagerAdapter 日/月数据详情适配器
+ * <p/>
  * Created by Will on 16/3/28.
  */
 public class DayAndMonthPagerAdapter extends FragmentPagerAdapter {
