@@ -34,6 +34,7 @@ public class CommonDialog extends Dialog {
 
     public static class Builder {
 
+        private CommonDialog dialog;
         private Context context;
         private String message; // message
         private DialogInterface.OnClickListener cancelClickListener;
@@ -146,7 +147,7 @@ public class CommonDialog extends Dialog {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             // instantiate the dialog with the custom Theme
-            final CommonDialog dialog = new CommonDialog(context, R.style.CommonDialogStyle);
+            dialog = new CommonDialog(context, R.style.CommonDialogStyle);
 
             View layout = inflater.inflate(R.layout.dialog_stop_heating, null);
             dialog.addContentView(layout, new ViewGroup.LayoutParams(
@@ -193,13 +194,13 @@ public class CommonDialog extends Dialog {
 
                 imgView_ok.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        cancelClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+                        okClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
                     }
                 });
 
                 imgView_cancel.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        okClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+                        cancelClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
                     }
                 });
             }

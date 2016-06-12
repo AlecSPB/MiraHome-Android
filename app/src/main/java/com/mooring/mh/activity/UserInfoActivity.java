@@ -46,7 +46,7 @@ public class UserInfoActivity extends BaseActivity {
     private TextView tv_birthday;
     private TextView tv_height;
     private TextView tv_weight;
-    private String flag = "";
+    private int flag ;
     private int member_id;
     private int tempSex = 0, sex = 0;
     private DbManager dbManager;
@@ -75,8 +75,8 @@ public class UserInfoActivity extends BaseActivity {
     @Override
     protected void initActivity() {
         Intent it = getIntent();
-        flag = it.getStringExtra(MConstants.ENTRANCE_FLAG);
-        if ("edit".equals(flag)) {
+        flag = it.getIntExtra(MConstants.ENTRANCE_FLAG,-1);
+        if (flag == MConstants.USER_INFO_REQUEST) {
             member_id = it.getIntExtra(MConstants.SP_KEY_MEMBER_ID, -1);
         }
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
@@ -111,12 +111,12 @@ public class UserInfoActivity extends BaseActivity {
         tv_height.setOnClickListener(this);
         tv_weight.setOnClickListener(this);
 
-        if ("edit".equals(flag)) {
+        if (flag == MConstants.USER_INFO_REQUEST) {
             tv_on_mooring.setVisibility(View.VISIBLE);
             imgView_act_right.setVisibility(View.VISIBLE);
             tv_act_title.setText(getString(R.string.title_user_info));
         }
-        if ("add".equals(flag)) {
+        if (flag == MConstants.ADD_USER_REQUEST) {
             tv_on_mooring.setVisibility(View.GONE);
             imgView_act_right.setVisibility(View.GONE);
             tv_act_title.setText(getString(R.string.title_add_user));
@@ -132,7 +132,7 @@ public class UserInfoActivity extends BaseActivity {
                 break;
             case R.id.tv_confirm:
                 //confirm
-                if ("add".equals(flag)) {
+                if (flag == MConstants.ADD_USER_REQUEST) {
                     addUser();
                 } else {
                     editUser();

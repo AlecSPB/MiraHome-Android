@@ -1,5 +1,6 @@
 package com.mooring.mh.views.CircleImgView;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 
 import com.mooring.mh.R;
 
@@ -53,8 +55,36 @@ public class ZoomCircleView extends View {
     /**
      * 图片的缩放比例
      */
-    private float mScale = 1.0f;
+    private float mScale = 0.0f;
+    private float targetScale = 0.5f;//目标比例
+    public static final int SCALE_BIG = 0X11;
+    public static final int SCALE_SMALL = 0X22;
+    private int currMode = SCALE_BIG;
+    private int currW, currH, left, top, right, bottom;
 
+    public float getScale() {
+        return mScale;
+    }
+
+    public void setScale(float scale) {
+        this.mScale = scale;
+
+        int l, t, r, b;
+        if (currMode == SCALE_BIG) {
+            l = (int) (left - currW * mScale);
+            t = (int) (top - currH * mScale);
+            r = (int) (right + currW * mScale);
+            b = (int) (bottom + currH * mScale);
+        } else {
+            l = (int) (left + currW * mScale / 2);
+            t = (int) (top + currH * mScale / 2);
+            r = (int) (right - currW * mScale / 2);
+            b = (int) (bottom - currH * mScale / 2);
+        }
+        layout(l, t, r, b);
+    }
+
+    private ObjectAnimator animator;
 
     public ZoomCircleView(Context context) {
         this(context, null);
@@ -67,6 +97,10 @@ public class ZoomCircleView extends View {
     public ZoomCircleView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         obtainStyledAttributes(attrs, defStyleAttr);
+
+        animator = ObjectAnimator.ofFloat(this, "scale", mScale, targetScale);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.setDuration(400);
     }
 
     private void obtainStyledAttributes(AttributeSet attrs, int defStyleAttr) {
@@ -106,33 +140,34 @@ public class ZoomCircleView extends View {
     /**
      * 执行缩放
      *
-     * @param mScale
+     * @param mode
      */
-    public void executeScale(float mScale) {
-
+    public void executeScale(int mode) {
         isZoom = false;
+        this.currMode = mode;
 
-        if (mScale > 1.0f && isZoomOut && !isZoomIn) {
+        if (mode == SCALE_BIG && isZoomOut && !isZoomIn) {
             isZoom = true;
             isZoomOut = false;
             isZoomIn = true;
+            mScale = 0.0f;
         }
-        if (mScale < 1.0f && isZoomIn && !isZoomOut) {
+        if (mode == SCALE_SMALL && isZoomIn && !isZoomOut) {
             isZoom = true;
             isZoomIn = false;
             isZoomOut = true;
+            mScale = 0.0f;
         }
 
+        left = getLeft();
+        top = getTop();
+        right = getRight();
+        bottom = getBottom();
+        currW = getWidth();
+        currH = getHeight();
+
         if (isZoom) {
-            int l = (int) (getLeft() - getWidth() * (mScale - 1f) / 2);
-            int t = (int) (getTop() - getHeight() * (mScale - 1f) / 2);
-            int r = (int) (getRight() + getWidth() * (mScale - 1f) / 2);
-            int b = (int) (getBottom() + getHeight() * (mScale - 1f) / 2);
-
-                /*View  同步缩放*/
-            layout(l, t, r, b);
-
-            invalidate();
+            animator.start();
         }
     }
 

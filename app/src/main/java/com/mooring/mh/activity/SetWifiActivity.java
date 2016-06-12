@@ -13,12 +13,8 @@ import android.widget.TextView;
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
-import com.machtalk.sdk.domain.DeviceListInfo;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
-import com.mooring.mh.utils.DeviceManager;
-import com.mooring.mh.utils.MConstants;
-import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.utils.NetworkUtil;
 
 /**
@@ -81,8 +77,6 @@ public class SetWifiActivity extends BaseActivity {
         imgView_retry_connect = (ImageView) findViewById(R.id.imgView_retry_connect);
         tv_scan_skip = (TextView) findViewById(R.id.tv_scan_skip);
         imgView_search_mid = (ImageView) findViewById(R.id.imgView_search_mid);
-
-//        judgeWifiConnected();
 
         imgView_act_back.setVisibility(View.GONE);
         tv_act_skip.setVisibility(View.VISIBLE);
@@ -168,7 +162,7 @@ public class SetWifiActivity extends BaseActivity {
             }
             if (success == Result.SUCCESS) {
 
-                MachtalkSDK.getInstance().queryDeviceList();
+//                MachtalkSDK.getInstance().queryDeviceList();
 //                InitApplicationHelper.sp.edit().putString(MConstants.DEVICE_ID, deviceId).commit();
 
                 //添加成功之后,跳转到已有设备列表界面
@@ -181,30 +175,30 @@ public class SetWifiActivity extends BaseActivity {
             }
         }
 
-        @Override
-        public void onQueryDeviceList(Result result, DeviceListInfo dli) {
-            super.onQueryDeviceList(result, dli);
-            int success = Result.FAILED;
-            String errorMsg = null;
-            if (result != null) {
-                success = result.getSuccess();
-                errorMsg = result.getErrorMessage();
-            }
-            if (dli != null && success == Result.SUCCESS) {
-                DeviceManager.getInstance().setDeviceList(dli.getDeviceList());
-                Intent it = new Intent(context, CommonSuccessActivity.class);
-                it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.CONNECTED_SUCCESS);
-                startActivity(it);
-            } else {
-                if (errorMsg == null) {
-                    errorMsg = getResources().getString(R.string.load_device_list_fail);
-                }
-                MUtils.showToast(context, errorMsg);
-                //添加失败直接跳转错误界面
-                startActivity(new Intent(context, NotFindDeviceActivity.class));
-            }
-            context.finish();
-        }
+//        @Override
+//        public void onQueryDeviceList(Result result, DeviceListInfo dli) {
+//            super.onQueryDeviceList(result, dli);
+//            int success = Result.FAILED;
+//            String errorMsg = null;
+//            if (result != null) {
+//                success = result.getSuccess();
+//                errorMsg = result.getErrorMessage();
+//            }
+//            if (dli != null && success == Result.SUCCESS) {
+//                DeviceManager.getInstance().setDeviceList(dli.getDeviceList());
+//                Intent it = new Intent(context, CommonSuccessActivity.class);
+//                it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.CONNECTED_SUCCESS);
+//                startActivity(it);
+//            } else {
+//                if (errorMsg == null) {
+//                    errorMsg = getResources().getString(R.string.load_device_list_fail);
+//                }
+//                MUtils.showToast(context, errorMsg);
+//                //添加失败直接跳转错误界面
+//                startActivity(new Intent(context, NotFindDeviceActivity.class));
+//            }
+//            context.finish();
+//        }
     }
 
 

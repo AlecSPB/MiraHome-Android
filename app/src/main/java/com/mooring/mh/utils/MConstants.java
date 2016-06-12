@@ -277,7 +277,7 @@ public class MConstants {
     public final static String DEVICE_TYPE = "deviceType";//设备type
     public final static String DEVICE_NAME = "deviceName";//设备name
     public final static String DEVICE_ONLINE = "deviceOnline";//设备在线
-    public final static String DEVICE_LANONLINE = "deviceLanOnline";//设备局域网在线
+    public final static String DEVICE_LAN_ONLINE = "deviceLanOnline";//设备局域网在线
     public final static String DRYING_START_TIME = "drying_start_time";//烘干开始时间
     public final static String DRYING_TIMES = "drying_times";//烘干过程时间
     public final static String DRYING_OPEN = "drying_open";//烘干打开标志
@@ -325,6 +325,13 @@ public class MConstants {
     public final static String ATTR_SUMMER_SEASON = "130";
 
     /**
+     * 用户在床上的位置
+     */
+    public final static int BED_OUT = 0;
+    public final static int BED_LEFT = 1;
+    public final static int BED_RIGHT = 2;
+
+    /**
      * 注册成功
      */
     public static final int SIGN_UP_SUCCESS = 0X11;
@@ -353,96 +360,92 @@ public class MConstants {
      * 添加用户finish标识
      */
     public static final int ADD_USER_RESULT = 0X16;
+
     /**
      * 跳转添加用户
      */
-    public static final int USER_INFO_REQUEST = 0X15;
+    public static final int USER_INFO_REQUEST = 0X17;
 
     /**
      * 添加用户finish标识
      */
-    public static final int USER_INFO_RESULT = 0X16;
+    public static final int USER_INFO_RESULT = 0X18;
 
     /**
      * 编辑闹钟跳转标识
      */
-    public static final int ALARM_EDIT_REQUEST = 0X17;
+    public static final int ALARM_EDIT_REQUEST = 0X19;
 
     /**
      * 编辑闹钟回调标识
      */
-    public static final int ALARM_EDIT_RESULT = 0X18;
+    public static final int ALARM_EDIT_RESULT = 0X20;
 
     /**
      * 闹钟重复次数跳转标识
      */
-    public static final int REPEAT_ALARM_REQUEST = 0X19;
+    public static final int REPEAT_ALARM_REQUEST = 0X21;
 
     /**
      * 闹钟重复次数回调标识
      */
-    public static final int REPEAT_ALARM_RESULT = 0X20;
+    public static final int REPEAT_ALARM_RESULT = 0X22;
 
     /**
      * 设备连接成功
      */
-    public static final int CONNECTED_SUCCESS = 0X21;
+    public static final int CONNECTED_SUCCESS = 0X23;
 
     /**
      * 跳转照相机
      */
-    public static final int CAMERA_PHOTO = 0X22;
+    public static final int CAMERA_PHOTO = 0X24;
 
     /**
      * 跳转相册
      */
-    public static final int GALLERY_PHOTO = 0X23;
+    public static final int GALLERY_PHOTO = 0X25;
 
     /**
      * 跳转相册
      */
-    public static final int CROP_PHOTO = 0X24;
+    public static final int CROP_PHOTO = 0X26;
 
     /**
      * 位置权限
      */
-    public static final int PERMISSIONS_LOCATION = 0X25;
+    public static final int PERMISSIONS_LOCATION = 0X27;
 
     /**
      * 文件读写权限
      */
-    public static final int PERMISSIONS_STORAGE = 0X26;
+    public static final int PERMISSIONS_STORAGE = 0X28;
 
     /**
      * 双人毯,单个人
      */
-    public static final int DOUBLE_BLANKET_SINGLE = 0X27;
+    public static final int DOUBLE_BLANKET_SINGLE = 0X29;
 
     /**
      * 双人毯,多人
      */
-    public static final int DOUBLE_BLANKET_MULTIPLE = 0X28;
+    public static final int DOUBLE_BLANKET_MULTIPLE = 0X30;
 
     /**
      * 单人毯
      */
-    public static final int SINGLE_BLANKET = 0X29;
+    public static final int SINGLE_BLANKET = 0X31;
 
     /**
      * 添加用户成功
      */
-    public static final int ADD_USER_SUCCESS = 0X30;
+    public static final int ADD_USER_SUCCESS = 0X32;
 
     /**
      * 工具类常量
      */
-    public final static int DEGREES_C = 0X111;//摄氏度
-    public final static int DEGREES_F = 0X112;//华氏度
-    /**
-     * 用户在床上的位置
-     */
-    public final static int BED_OUT = 0;
-    public final static int BED_LEFT = 1;
-    public final static int BED_RIGHT = 2;
+    public final static int DEGREES_C = 0X33;//摄氏度
+    public final static int DEGREES_F = 0X34;//华氏度
+
 
 }

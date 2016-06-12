@@ -1,6 +1,7 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ import java.util.List;
 public class TimingFragment extends BaseFragment implements OnRecyclerItemClickListener,
         SwitchUserObserver {
 
+    private SwipeRefreshLayout swipe_refresh;
     private RecyclerView param_recyclerView;
     private View layout_alarm_none;
     private RecyclerView.LayoutManager layoutManager;
@@ -64,8 +66,13 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     @Override
     protected void initView() {
 
+        swipe_refresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         layout_alarm_none = rootView.findViewById(R.id.layout_alarm_none);
         param_recyclerView = (RecyclerView) rootView.findViewById(R.id.param_recyclerView);
+
+        swipe_refresh.setColorSchemeResources(R.color.colorWhite50);
+        swipe_refresh.setProgressBackgroundColorSchemeResource(R.color.colorPurple);
+        swipe_refresh.setOnRefreshListener(MOnRefreshListener);
         param_recyclerView.setItemAnimator(new DefaultItemAnimator());
         layoutManager = new LinearLayoutManager(context);
         param_recyclerView.setLayoutManager(layoutManager);
@@ -98,7 +105,6 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
             layout_alarm_none.setVisibility(View.VISIBLE);
         }
     }
-
 
     @Override
     public void onItemClick(View view, int position) {
@@ -160,6 +166,102 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
         return list;
     }
 
+    /**
+     * 发送改变后的闹钟
+     *
+     * @param dataList
+     */
+    private void sendAlarmString(List<String> dataList) {
+        String temp = "";
+        for (int i = 0; i < dataList.size(); i++) {
+            temp += dataList.get(i) + ";";
+        }
+        if (!TextUtils.isEmpty(temp)) {
+            temp += "^";
+            MachtalkSDK.getInstance().operateDevice(deviceId,
+                    new String[]{propertyId},
+                    new String[]{temp});
+            isOperate = true;
+        }
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener MOnRefreshListener = new SwipeRefreshLayout.
+            OnRefreshListener() {
+
+        @Override
+        public void onRefresh() {
+            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        }
+    };
+
+    /**
+     * 自定义回调监听
+     */
+    class TimingSDKListener extends MachtalkSDKListener {
+        @Override
+        public void onQueryDeviceStatus(Result result, DeviceStatus ds) {
+            super.onQueryDeviceStatus(result, ds);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
+            if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
+                List<DvidStatus> list = ds.getDeviceDvidStatuslist();
+                if (list != null) {
+                    for (DvidStatus DS : list) {
+                        if (propertyId.equals(DS.getDvid())) {
+                            parsingAlarmString(DS.getValue());
+                        }
+                    }
+                }
+            } else {
+                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
+            }
+            swipe_refresh.setRefreshing(false);
+        }
+
+        @Override
+        public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
+            super.onReceiveDeviceMessage(result, rdm);
+            if (!isOperate) {
+                return;
+            }
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            LogUtil.e(""+success+"   "+result.getErrorMessage()+"  "+result.getErrorCode());
+            if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
+                if (rdm.getDvidStatusList() != null &&
+                        propertyId.equals(rdm.getDvidStatusList().get(0).getDvid())) {
+                    LogUtil.w("  操作成功   ");
+                }
+            } else {
+                LogUtil.w("  操作失败   ");
+            }
+            isOperate = false;
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        } else {
+            MachtalkSDK.getInstance().setContext(context);
+            MachtalkSDK.getInstance().setSdkListener(msdkListener);
+            //判断执行切换
+            if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
+                currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+                propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
+                        : MConstants.ATTR_ALARM_RIGHT;
+                MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -199,91 +301,6 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
             }
 
             sendAlarmString(dataList);
-        }
-    }
-
-    /**
-     * 发送改变后的闹钟
-     *
-     * @param dataList
-     */
-    private void sendAlarmString(List<String> dataList) {
-        String temp = "";
-        for (int i = 0; i < dataList.size(); i++) {
-            temp += dataList.get(i) + ";";
-        }
-        if (!TextUtils.isEmpty(temp)) {
-            temp += "^";
-            MachtalkSDK.getInstance().operateDevice(deviceId,
-                    new String[]{propertyId},
-                    new String[]{temp});
-            isOperate = true;
-        }
-    }
-
-    /**
-     * 自定义回调监听
-     */
-    class TimingSDKListener extends MachtalkSDKListener {
-        @Override
-        public void onQueryDeviceStatus(Result result, DeviceStatus ds) {
-            super.onQueryDeviceStatus(result, ds);
-            int success = Result.FAILED;
-            if (result != null) {
-                success = result.getSuccess();
-            }
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
-            if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
-                List<DvidStatus> list = ds.getDeviceDvidStatuslist();
-                if (list != null) {
-                    for (DvidStatus DS : list) {
-                        if (propertyId.equals(DS.getDvid())) {
-                            parsingAlarmString(DS.getValue());
-                        }
-                    }
-                }
-            } else {
-                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
-            }
-        }
-
-        @Override
-        public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
-            super.onReceiveDeviceMessage(result, rdm);
-            if (!isOperate) {
-                return;
-            }
-            int success = Result.FAILED;
-            if (result != null) {
-                success = result.getSuccess();
-            }
-            if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
-                if (rdm.getDvidStatusList() != null &&
-                        propertyId.equals(rdm.getDvidStatusList().get(0).getDvid())) {
-                    LogUtil.w("  操作成功   ");
-                }
-            } else {
-                LogUtil.w("  操作失败   ");
-            }
-            isOperate = false;
-        }
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {
-            MachtalkSDK.getInstance().removeSdkListener(msdkListener);
-        } else {
-            MachtalkSDK.getInstance().setContext(context);
-            MachtalkSDK.getInstance().setSdkListener(msdkListener);
-            //判断执行切换
-            if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
-                currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
-                propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
-                        : MConstants.ATTR_ALARM_RIGHT;
-                MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
-            }
         }
     }
 

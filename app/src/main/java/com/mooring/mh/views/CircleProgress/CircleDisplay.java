@@ -11,7 +11,7 @@ import android.graphics.RectF;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MUtils;
@@ -123,7 +123,7 @@ public class CircleDisplay extends View {
         mTextPaint.setTextSize(MUtils.sp2px(getContext(), 10));
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
-        mDrawAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        mDrawAnimator.setInterpolator(new AccelerateInterpolator());
 
     }
 

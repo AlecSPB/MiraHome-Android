@@ -31,7 +31,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Horizo
         this.dataList = dataList;
     }
 
-    public void setOnClickListener(OnRecyclerItemClickListener listener) {
+    public void setOnItemClickListener(OnRecyclerItemClickListener listener) {
         this.itemClickListener = listener;
     }
 

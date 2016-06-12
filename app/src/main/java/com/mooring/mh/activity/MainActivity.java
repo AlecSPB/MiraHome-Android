@@ -11,13 +11,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -114,7 +111,6 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
      * ---------侧边滑动栏相关--------
      */
     private DrawerLayout mDrawerLayout;//侧边menu可滑动布局
-
     private View activity_menu;//侧边menu整个布局,帮助消费点击事件
     private RecyclerView menu_recyclerView;//横向滑动view
     private ImageView imgView_switch_user;//切换用户按钮
@@ -132,11 +128,10 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     private View layout_device; // device设备连接状态整个布局
     private TextView tv_not_connected;//device设备连接状态
     private TextView tv_connect_health; // 链接Health kit
-    private TextView tv_help_text;
+    private TextView tv_help_text;//帮助
     private TextView tv_about_text; // 关于我们
     private TextView tv_suggestions_text;// 建议
     private TextView tv_login_out;//退出登陆
-
     private RecyclerView.LayoutManager layoutManager;//横向滑动用户列表布局
     private UserListAdapter adapter;//横向滑动适配器
     /**
@@ -150,7 +145,10 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
     private BaseListener baseListener;
-    private String deviceId;
+    private String deviceId;//设备ID
+    private java.lang.Class<?> cls;//跳转对象Activity
+    private boolean isStartAct = false;//是否启动StartActivity
+    private int entrance_flag = -1;//即作为flag参数,有作为跳转标志
 
     /**
      * google fit
@@ -216,6 +214,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerLayout);
         activity_menu = findViewById(R.id.activity_menu);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);//开启关闭模式
+        mDrawerLayout.addDrawerListener(MDrawerListener);
         imgView_switch_user = (ImageView) findViewById(R.id.imgView_switch_user);
         layout_connect_mooring = findViewById(R.id.layout_connect_mooring);
         layout_exist_device = findViewById(R.id.layout_exist_device);
@@ -236,6 +235,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         tv_suggestions_text = (TextView) findViewById(R.id.tv_suggestions_text);
         tv_login_out = (TextView) findViewById(R.id.tv_login_out);
 
+        //横向滑动的用户头像列表
         menu_recyclerView = (RecyclerView) findViewById(R.id.menu_recyclerView);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         menu_recyclerView.setHasFixedSize(true);
@@ -252,7 +252,6 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         toggle_temp.setChecked(true);
         toggle_temp.setOnCheckedChange(this);
     }
-
 
     /**
      * 初始化相关数据
@@ -285,7 +284,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
          */
         currentUsers.add(new User());
         adapter = new UserListAdapter(currentUsers);
-        adapter.setOnClickListener(this);
+        adapter.setOnItemClickListener(this);
         menu_recyclerView.setAdapter(adapter);
 
         MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
@@ -294,7 +293,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     /**
      * 根据设备的类型{单人垫,双人垫},以及现在所拥有的用户个数
      * value  0：单人1：双人
-     * <p>
+     * <p/>
      * 计算当前用户个数
      */
     public void computeCurrentUsers(String value) {
@@ -317,7 +316,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             layout_two_user.setVisibility(View.GONE);
             editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.SINGLE_BLANKET);
         }
-        //根绝设备是否在线,决定当前Menu中显示内容
+        //根据设备是否在线,决定当前Menu中显示内容
         if (sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
             layout_exist_device.setVisibility(View.VISIBLE);
             layout_connect_mooring.setVisibility(View.GONE);
@@ -500,6 +499,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         }
     }
 //--------------------**********************************----------------------------------------
+
     /**
      * 连接Google Fit
      */
@@ -551,7 +551,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             builder.addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE));
             builder.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
-                public void onConnected(@Nullable Bundle bundle) {
+                public void onConnected(Bundle bundle) {
                     LogUtil.i("Connected!!!");
                     // Now you can make calls to the Fitness APIs.
 
@@ -573,7 +573,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             });
             builder.enableAutoManage(this, 0, new GoogleApiClient.OnConnectionFailedListener() {
                 @Override
-                public void onConnectionFailed(@NonNull ConnectionResult result) {
+                public void onConnectionFailed(ConnectionResult result) {
                     LogUtil.i("Google Play services 连接失败: " + result.toString());
                 }
             });
@@ -772,6 +772,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         }
     }
 //--------------------**********************************----------------------------------------
+
     /**
      * 跳转到设置界面的Dialog提示
      *
@@ -809,9 +810,37 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         MUtils.showToast(this, "退出登录");
     }
 
+    /**
+     * menuDrawer监听
+     */
+    private DrawerLayout.DrawerListener MDrawerListener = new DrawerLayout.SimpleDrawerListener() {
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            if (!isStartAct) {
+                return;
+            }
+            if (entrance_flag == -1) {
+                startActivity(new Intent(MainActivity.this, cls));
+            } else {
+                Intent it = new Intent(MainActivity.this, cls);
+                it.putExtra(MConstants.ENTRANCE_FLAG, entrance_flag);
+                startActivityForResult(it, entrance_flag);
+            }
+
+            entrance_flag = -1;
+            isStartAct = false;
+        }
+    };
+
     @Override
     public void onClick(View v) {
-        Intent it = new Intent();
+
         switch (v.getId()) {
             case R.id.imgView_weather:
                 setTabSelection(WEATHER);
@@ -826,24 +855,24 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                 setTabSelection(TIMING);
                 break;
             case R.id.circleImg_left:
-                circleImg_left.executeScale(2f);
-                circleImg_right.executeScale(0.5f);
+                circleImg_left.executeScale(ZoomCircleView.SCALE_BIG);
+                circleImg_right.executeScale(ZoomCircleView.SCALE_SMALL);
                 if (currLocation == MConstants.RIGHT_USER) {
-                    switchUser(MConstants.LEFT_USER);
+//                    switchUser(MConstants.LEFT_USER);
                 }
                 break;
             case R.id.circleImg_right:
-                circleImg_right.executeScale(2f);
-                circleImg_left.executeScale(0.5f);
+                circleImg_right.executeScale(ZoomCircleView.SCALE_BIG);
+                circleImg_left.executeScale(ZoomCircleView.SCALE_SMALL);
                 if (currLocation == MConstants.LEFT_USER) {
-                    switchUser(MConstants.RIGHT_USER);
+//                    switchUser(MConstants.RIGHT_USER);
                 }
                 break;
             case R.id.imgView_title_menu:
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                mDrawerLayout.openDrawer(activity_menu);
                 break;
             case R.id.imgView_title_plus:
-                mDrawerLayout.closeDrawer(activity_menu);
+                Intent it = new Intent();
                 it.putExtra("flag", "add");
                 it.setClass(MainActivity.this, AlarmEditActivity.class);
                 startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
@@ -852,9 +881,9 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                 switchUserLocation();
                 break;
             case R.id.imgView_to_connect:
+                isStartAct = true;
+                cls = SetWifiActivity.class;
                 mDrawerLayout.closeDrawer(activity_menu);
-                it.setClass(MainActivity.this, SetWifiActivity.class);
-                startActivity(it);
                 break;
             case R.id.imgView_delete_left:
                 deleteLocationUser(MConstants.LEFT_USER);
@@ -866,27 +895,27 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                 connectGoogleFit();
                 break;
             case R.id.tv_help_text:
+                isStartAct = true;
+                cls = HelpActivity.class;
                 mDrawerLayout.closeDrawer(activity_menu);
-                it.setClass(MainActivity.this, HelpActivity.class);
-                startActivity(it);
                 break;
             case R.id.tv_about_text:
+                isStartAct = true;
+                cls = AboutActivity.class;
                 mDrawerLayout.closeDrawer(activity_menu);
-                it.setClass(MainActivity.this, AboutActivity.class);
-                startActivity(it);
                 break;
             case R.id.tv_suggestions_text:
+                isStartAct = true;
+                cls = SuggestionsActivity.class;
                 mDrawerLayout.closeDrawer(activity_menu);
-                it.setClass(MainActivity.this, SuggestionsActivity.class);
-                startActivity(it);
                 break;
             case R.id.tv_login_out:
                 logOut();
                 break;
             case R.id.layout_device:
+                isStartAct = true;
+                cls = ExistingDeviceActivity.class;
                 mDrawerLayout.closeDrawer(activity_menu);
-                it.setClass(MainActivity.this, ExistingDeviceActivity.class);
-                startActivity(it);
                 break;
             case R.id.activity_menu:
                 //不做任何处理,目的是消费menu上层的点击事件
@@ -896,17 +925,14 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
 
     @Override
     public void onItemClick(View view, int position) {
-        mDrawerLayout.closeDrawer(activity_menu);
-        Intent it = new Intent();
-        it.setClass(MainActivity.this, UserInfoActivity.class);
+        isStartAct = true;
+        cls = UserInfoActivity.class;
         if (position != currentUsers.size() - 1) {
-            it.putExtra(MConstants.ENTRANCE_FLAG, "edit");
-            startActivityForResult(it, MConstants.USER_INFO_REQUEST);
+            entrance_flag = MConstants.USER_INFO_REQUEST;
         } else {
-            //添加用户
-            it.putExtra(MConstants.ENTRANCE_FLAG, "add");
-            startActivityForResult(it, MConstants.ADD_USER_REQUEST);
+            entrance_flag = MConstants.ADD_USER_REQUEST;
         }
+        mDrawerLayout.closeDrawer(activity_menu);
     }
 
     @Override
@@ -989,7 +1015,8 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             if (result != null) {
                 success = result.getSuccess();
             }
-            if (success == Result.SUCCESS && deviceStatus != null && deviceId.equals(deviceStatus.getDeviceId())) {
+            if (success == Result.SUCCESS && deviceStatus != null &&
+                    deviceId.equals(deviceStatus.getDeviceId())) {
                 List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
                 if (list == null) {
                     return;
@@ -999,6 +1026,28 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                         computeCurrentUsers(d.getValue());//得到当前单/双人模式
                     }
                 }
+            }
+        }
+
+        @Override
+        public void onDeviceOnOffline(String dvId, MachtalkSDKConstant.DeviceOnOffline dool) {
+            super.onDeviceOnOffline(dvId, dool);
+
+            if (deviceId.equals(dvId)) {
+                LogUtil.w("onDeviceOnOffline:" + dool + "," + dvId);
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {
+                    editor.putBoolean(MConstants.DEVICE_ONLINE, true);
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
+                    editor.putBoolean(MConstants.DEVICE_ONLINE, false);
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {
+                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true);
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
+                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false);
+                }
+                return;
             }
         }
     }

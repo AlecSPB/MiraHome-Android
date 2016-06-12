@@ -37,11 +37,12 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
     private CustomToggle toggle_drying;
 
     private long time = 0;//记录上次
-    private long times = 10 * 1000;//默认烘干时间30分钟
+    private long times = 30 * 60 * 1000;//默认烘干时间30分钟
     private String deviceId;//设备ID
     private MSDKListener msdkListener;//自定义SDK回调监听
-    private boolean isOperate = false;
-    private boolean isDestory = false;
+    private boolean isOperate = false;//是否是手动操作
+    private boolean isDestroy = false;//是否关闭当前Activity
+    private boolean isFingerCancel = false;//是否手动取消当前烘干
 
     @Override
     protected int getLayoutId() {
@@ -149,6 +150,7 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
                 editor.putBoolean(MConstants.DRYING_OPEN, false);
                 editor.apply();
 
+                isFingerCancel = true;
                 drying.resetView();
                 time = 0;
                 toggle_drying.setChecked(false);
@@ -161,6 +163,7 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                isFingerCancel = false;
                 isOperate = false;
             }
         });
@@ -168,7 +171,9 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
         builder.create().show();
     }
 
-
+    /**
+     * 完成烘干
+     */
     private void showCompleteDialog() {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.tip_drying_success));
@@ -185,6 +190,7 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
 
     @Override
     public void onCheckedChanged(View v, boolean isChecked) {
+        isFingerCancel = false;
         if (isChecked) {
             MachtalkSDK.getInstance().operateDevice(deviceId,
                     new String[]{MConstants.ATTR_DRYING_SWITCH, MConstants.ATTR_DRYING_TIME},
@@ -207,7 +213,7 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
 
     @Override
     public void onLoading(long value) {
-        if (!isDestory && value == -1) {
+        if (!isDestroy && value == -1 && !isFingerCancel) {
             //加载完毕执行重置
             drying.resetView();
             toggle_drying.setChecked(false);
@@ -261,7 +267,7 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
 
     @Override
     protected void onDestroy() {
-        isDestory = true;
+        isDestroy = true;
         drying.resetView();
         time = 0;
         super.onDestroy();

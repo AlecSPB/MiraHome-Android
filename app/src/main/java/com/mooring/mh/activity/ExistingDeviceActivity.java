@@ -15,6 +15,7 @@ import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Device;
 import com.machtalk.sdk.domain.DeviceListInfo;
 import com.machtalk.sdk.domain.Result;
+import com.machtalk.sdk.domain.SearchedLanDevice;
 import com.machtalk.sdk.domain.UnbindDeviceResult;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.DeviceListAdapter;
@@ -171,7 +172,7 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                         editor.putString(MConstants.DEVICE_MODEL, device.getModel());
                         editor.putString(MConstants.DEVICE_TYPE, device.getType());
                         editor.putBoolean(MConstants.DEVICE_ONLINE, device.isOnline());
-                        editor.putBoolean(MConstants.DEVICE_LANONLINE, device.isLanOnline());
+                        editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, device.isLanOnline());
                         editor.apply();
 
                         Intent it = new Intent(context, CommonSuccessActivity.class);
@@ -195,6 +196,8 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
             case R.id.imgView_retry_connect:
                 startActivity(new Intent(context, SetWifiActivity.class));
                 context.finish();
+
+//                MachtalkSDK.getInstance().startSearchLanDevices(3000, true);
                 break;
             case R.id.layout_one_device:
                 decideDevice(singleDevice);
@@ -286,6 +289,20 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                 MUtils.showToast(context, errorMsg);
             }
         }
+
+        @Override
+        public void onSearchLanDevice(SearchedLanDevice sld) {
+            super.onSearchLanDevice(sld);
+            LogUtil.e("检索当前的局域网设备  :  " + sld.getDeviceId());
+            MachtalkSDK.getInstance().connectLanDevice(sld.getDeviceId(), sld.getIp(), true);
+        }
+
+        @Override
+        public void onConnectLanDevice(Result result, String deviceId) {
+            super.onConnectLanDevice(result, deviceId);
+            LogUtil.e("连接上的局域网设备  :  " + deviceId);
+
+        }
     }
 
     @Override
@@ -299,6 +316,8 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     protected void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+
+//        MachtalkSDK.getInstance().stopSearchLanDevices();
     }
 
     @Override
