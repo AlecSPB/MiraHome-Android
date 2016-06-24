@@ -27,11 +27,9 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
     }
 
     @Override
     protected void OnClick(View v) {
-
     }
 }

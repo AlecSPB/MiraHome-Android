@@ -84,7 +84,6 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         initScreen();
     }
 
-
     /**
      * 初始化
      */
@@ -217,6 +216,23 @@ public class DragScaleTwoView extends View implements View.OnTouchListener {
         //温度下界
         drawText(canvas, lowerBound + currUnit, tempTvSize, Color.WHITE, viewH - tempBottom, viewW / 2);
 
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(200, 200);
+        } else if (widthSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(200, heightSpecSize);
+        } else if (heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(widthSpecSize, 200);
+        }
     }
 
     /**

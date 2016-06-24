@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
@@ -27,26 +28,24 @@ import org.xutils.common.util.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * 闹钟fragment
  * <p/>
  * Created by Will on 16/3/24.
  */
 public class TimingFragment extends BaseFragment implements OnRecyclerItemClickListener,
-        SwitchUserObserver {
+        SwitchUserObserver, SwipeRefreshLayout.OnRefreshListener, AlarmClockAdapter.OnToggleBtnChange {
 
-    private SwipeRefreshLayout swipe_refresh;
-    private RecyclerView param_recyclerView;
-    private View layout_alarm_none;
-    private RecyclerView.LayoutManager layoutManager;
+    private SwipeRefreshLayout swipe_refresh;//下拉刷新
+    private RecyclerView param_recyclerView;//闹钟列表
+    private View layout_alarm_none;//无闹钟界面
+    private RecyclerView.LayoutManager layoutManager;//RecycleView对应的布局管理器
     private AlarmClockAdapter adapter;
-    private List<String> dataList;
-    private TimingSDKListener msdkListener;
-    private String deviceId;
-    private int currLocation;
-    private String propertyId;
-    private boolean isOperate = false;
+    private List<String> dataList;//闹钟数据
+    private TimingSDKListener timingSDKListener;
+    private int currLocation;//当前位置
+    private String propertyId;//左右属性ID--对应125:126
+    private boolean isOperate = false;//是否是手动操作
 
     @Override
     protected int getLayoutId() {
@@ -56,11 +55,10 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     @Override
     protected void initFragment() {
         dataList = new ArrayList<>();
-        msdkListener = new TimingSDKListener();
-        deviceId = sp.getString(MConstants.DEVICE_ID, "");
+        timingSDKListener = new TimingSDKListener();
         currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
-        propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
-                : MConstants.ATTR_ALARM_RIGHT;
+        propertyId = (currLocation == MConstants.LEFT_USER) ?
+                MConstants.ATTR_ALARM_LEFT : MConstants.ATTR_ALARM_RIGHT;
     }
 
     @Override
@@ -72,7 +70,7 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
 
         swipe_refresh.setColorSchemeResources(R.color.colorWhite50);
         swipe_refresh.setProgressBackgroundColorSchemeResource(R.color.colorPurple);
-        swipe_refresh.setOnRefreshListener(MOnRefreshListener);
+        swipe_refresh.setOnRefreshListener(this);
         param_recyclerView.setItemAnimator(new DefaultItemAnimator());
         layoutManager = new LinearLayoutManager(context);
         param_recyclerView.setLayoutManager(layoutManager);
@@ -80,6 +78,8 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
         param_recyclerView.addItemDecoration(new AlarmClockAdapter.SpaceItemDecoration(
                 MUtils.dp2px(getContext(), 5)));
 
+        swipe_refresh.setProgressViewOffset(true, 0, MUtils.dp2px(context, 30));
+        swipe_refresh.setRefreshing(true);
         MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
     }
 
@@ -90,39 +90,27 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
      */
     private void parsingAlarmString(String alarms) {
         if (!TextUtils.isEmpty(alarms) || !"mirahome".equals(alarms)) {
+            dataList.clear();
             String[] alarmArr = alarms.split(";");
             for (int i = 0; i < alarmArr.length - 1; i++) {
                 dataList.add(alarmArr[i]);
             }
-            param_recyclerView.setVisibility(View.VISIBLE);
+            swipe_refresh.setVisibility(View.VISIBLE);
             layout_alarm_none.setVisibility(View.GONE);
             adapter = new AlarmClockAdapter(dataList);
             adapter.setItemClickListener(this);
+            adapter.setOnToggleBtnChange(this);
             param_recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         } else {
-            param_recyclerView.setVisibility(View.GONE);
+            swipe_refresh.setVisibility(View.INVISIBLE);
             layout_alarm_none.setVisibility(View.VISIBLE);
         }
     }
 
-    @Override
-    public void onItemClick(View view, int position) {
-        ToggleButton smart = (ToggleButton) view.findViewById(R.id.tglBtn_wake_up);
-        ToggleButton set = (ToggleButton) view.findViewById(R.id.tglBtn_clock_set);
-        Intent it = new Intent();
-        it.putExtra("flag", "edit");
-        it.putExtra("time", dataList.get(position).substring(0, 4));
-        it.putExtra("repeat", dataList.get(position).substring(4, 11));
-        it.putExtra("smart", smart.isChecked());
-        it.putExtra("set", set.isChecked());
-        it.putExtra("position", position);
-        it.setClass(context, AlarmEditActivity.class);
-        startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
-    }
-
     /**
      * ArrayList  to  String
+     * 闹钟重复list->String
      *
      * @param list
      * @return
@@ -130,8 +118,8 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     private String paringArrayList(ArrayList<String> list) {
         String result = "";
         if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                result += list.get(i);
+            for (String s : list) {
+                result += s;
             }
         }
         return result;
@@ -185,14 +173,40 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
         }
     }
 
-    private SwipeRefreshLayout.OnRefreshListener MOnRefreshListener = new SwipeRefreshLayout.
-            OnRefreshListener() {
+    @Override
+    public void onRefresh() {
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    }
 
-        @Override
-        public void onRefresh() {
-            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    @Override
+    public void onChanged(CompoundButton cb, boolean isChecked, int position) {
+        String temp = dataList.get(position);
+        switch (cb.getId()) {
+            case R.id.tglBtn_wake_up:
+                temp = temp.substring(0, 11) + (isChecked ? "1" : "0") + temp.substring(12);
+                break;
+            case R.id.tglBtn_clock_set:
+                temp = temp.substring(0, 12) + (isChecked ? "1" : "0");
+                break;
         }
-    };
+        dataList.set(position, temp);
+        sendAlarmString(dataList);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        ToggleButton smart = (ToggleButton) view.findViewById(R.id.tglBtn_wake_up);
+        ToggleButton set = (ToggleButton) view.findViewById(R.id.tglBtn_clock_set);
+        Intent it = new Intent();
+        it.putExtra("flag", "edit");
+        it.putExtra("time", dataList.get(position).substring(0, 4));
+        it.putExtra("repeat", dataList.get(position).substring(4, 11));
+        it.putExtra("smart", smart.isChecked());
+        it.putExtra("set", set.isChecked());
+        it.putExtra("position", position);
+        it.setClass(context, AlarmEditActivity.class);
+        startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
+    }
 
     /**
      * 自定义回调监听
@@ -205,18 +219,19 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
             if (result != null) {
                 success = result.getSuccess();
             }
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
+            LogUtil.e("onQueryDeviceStatus  " + success);
             if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
                 List<DvidStatus> list = ds.getDeviceDvidStatuslist();
                 if (list != null) {
                     for (DvidStatus DS : list) {
                         if (propertyId.equals(DS.getDvid())) {
+                            LogUtil.w("所有闹钟:   " + DS.getValue());
                             parsingAlarmString(DS.getValue());
                         }
                     }
                 }
             } else {
-                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
+                MUtils.showToast(context, context.getString(R.string.device_not_online));
             }
             swipe_refresh.setRefreshing(false);
         }
@@ -231,7 +246,7 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
             if (result != null) {
                 success = result.getSuccess();
             }
-            LogUtil.e(""+success+"   "+result.getErrorMessage()+"  "+result.getErrorCode());
+            LogUtil.e("onReceiveDeviceMessage  " + success);
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
                 if (rdm.getDvidStatusList() != null &&
                         propertyId.equals(rdm.getDvidStatusList().get(0).getDvid())) {
@@ -248,10 +263,10 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (hidden) {
-            MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+            MachtalkSDK.getInstance().removeSdkListener(timingSDKListener);
         } else {
             MachtalkSDK.getInstance().setContext(context);
-            MachtalkSDK.getInstance().setSdkListener(msdkListener);
+            MachtalkSDK.getInstance().setSdkListener(timingSDKListener);
             //判断执行切换
             if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
                 currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
@@ -295,7 +310,7 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                 adapter.notifyDataSetChanged();
                 MUtils.showToast(context, getResources().getString(R.string.clock_delete_success));
                 if (dataList.size() <= 0) {
-                    param_recyclerView.setVisibility(View.GONE);
+                    swipe_refresh.setVisibility(View.INVISIBLE);
                     layout_alarm_none.setVisibility(View.VISIBLE);
                 }
             }
@@ -308,13 +323,13 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     public void onResume() {
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
-        MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        MachtalkSDK.getInstance().setSdkListener(timingSDKListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        MachtalkSDK.getInstance().removeSdkListener(timingSDKListener);
     }
 
     @Override

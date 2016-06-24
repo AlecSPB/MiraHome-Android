@@ -14,7 +14,7 @@
             android:id="@+id/data_select"
             layout="@layout/date_select_layout" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
@@ -23,15 +23,14 @@
                 android:id="@+id/imgView_left_middle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="left|center_vertical"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/bg_left_arrow" />
+                android:src="@drawable/btn_left_unavailable" />
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
+                android:layout_gravity="center">
 
                 <com.mooring.mh.views.CircleProgress.DoubleCircleView
                     android:id="@+id/dcv_day"
@@ -43,22 +42,21 @@
                     android:id="@+id/tv_middle_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
                     android:text="74"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_168pt" />
-            </RelativeLayout>
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/imgView_right_middle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="right|center_vertical"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/bg_right_arrow" />
+                android:src="@drawable/btn_right_unavailable" />
 
-        </RelativeLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,7 +65,7 @@
             android:background="@color/transparent_2"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -78,7 +76,7 @@
                     android:id="@+id/tv_sleep_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="left"
                     android:text="@string/sleep_time"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_28pt" />
@@ -87,22 +85,23 @@
                     android:id="@+id/tv_sleep_range"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_gravity="right"
                     android:text="24:00-05:10"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_28pt" />
-            </RelativeLayout>
+            </FrameLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -123,64 +122,61 @@
 
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:layout_width="164dp"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                    <LinearLayout
+                    <com.mooring.mh.views.CircleProgress.CircleDisplay
+                        android:id="@+id/circle_progress_2"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="5dp"
+                        pre:pre_finishColor="@color/colorOrange" />
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:orientation="vertical">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/tv_light_sleep"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/text_dimen_24pt" />
 
-                        <com.mooring.mh.views.CircleProgress.CircleDisplay
-                            android:id="@+id/circle_progress_2"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_marginLeft="5dp"
-                            pre:pre_finishColor="@color/colorOrange" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/tv_light_sleep"
-                            android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/text_dimen_24pt" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:orientation="vertical">
-
-                        <com.mooring.mh.views.CircleProgress.CircleDisplay
-                            android:id="@+id/circle_progress_3"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_marginLeft="5dp"
-                            pre:pre_finishColor="@android:color/holo_green_light" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
-                            android:text="REM"
-                            android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/text_dimen_24pt" />
-
-                    </LinearLayout>
-                </RelativeLayout>
+                </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.mooring.mh.views.CircleProgress.CircleDisplay
+                        android:id="@+id/circle_progress_3"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="5dp"
+                        pre:pre_finishColor="@android:color/holo_green_light" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="REM"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/text_dimen_24pt" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <com.mooring.mh.views.CircleProgress.CircleDisplay
@@ -200,7 +196,7 @@
                         android:textSize="@dimen/text_dimen_24pt" />
 
                 </LinearLayout>
-            </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <include

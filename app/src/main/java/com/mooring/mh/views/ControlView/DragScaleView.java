@@ -136,7 +136,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -190,6 +189,23 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(200, 200);
+        } else if (widthSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(200, heightSpecSize);
+        } else if (heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(widthSpecSize, 200);
+        }
+    }
+
     /**
      * 公用绘制文本方法
      *
@@ -212,7 +228,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
         commonPaint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(text, targetRect.centerX(), baseline, commonPaint);
     }
-
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -314,7 +329,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
         }
         return false;
     }
-
 
     /**
      * 设置温度的上下界

@@ -13,6 +13,7 @@ import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
+import com.mooring.mh.utils.MConstants;
 
 import org.xutils.DbManager;
 import org.xutils.x;
@@ -29,6 +30,7 @@ public abstract class BaseFragment extends Fragment {
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;
     protected DbManager dbManager;
+    protected String deviceId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public abstract class BaseFragment extends Fragment {
         sp = InitApplicationHelper.sp;
         editor = sp.edit();
         editor.apply();
+
+        deviceId = sp.getString(MConstants.DEVICE_ID, "");
 
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(context);
         dbManager = x.getDb(dao);

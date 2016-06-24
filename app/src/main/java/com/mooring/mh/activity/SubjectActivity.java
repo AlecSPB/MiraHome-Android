@@ -1,7 +1,5 @@
 package com.mooring.mh.activity;
 
-import android.support.v7.app.AppCompatActivity;
-
 import com.mooring.mh.fragment.SwitchUserObserver;
 
 import org.xutils.common.util.LogUtil;
@@ -11,10 +9,10 @@ import java.util.List;
 
 /**
  * 抽象主题角色,观察者模式中被观察者
- * <p/>
+ * <p>
  * Created by Will on 16/5/31.
  */
-public abstract class SubjectActivity extends AppCompatActivity {
+public abstract class SubjectActivity extends BaseActivity {
     /**
      * 用来保存注册的观察者对象
      */

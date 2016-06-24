@@ -14,7 +14,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_shadow" />
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -60,5 +60,5 @@
 
         <include layout="@layout/common_text_mirahome" />
 
-    </RelativeLayout>
+    </FrameLayout>
 </LinearLayout>

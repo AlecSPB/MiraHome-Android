@@ -1,22 +1,13 @@
 package com.mooring.mh.activity;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -24,30 +15,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.Bucket;
-import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.DeviceStatus;
 import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.Result;
-import com.mooring.mh.BuildConfig;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.adapter.UserListAdapter;
-import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.fragment.ControlFragment;
@@ -65,27 +44,27 @@ import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static java.text.DateFormat.getDateInstance;
-import static java.text.DateFormat.getTimeInstance;
 
 /**
  * 主界面MainActivity
+ * <p>
+ * Created by Will on 16/4/27.
  */
-public class MainActivity extends SubjectActivity implements View.OnClickListener,
-        OnRecyclerItemClickListener, CustomToggle.OnCheckedChangeListener {
+public class MainActivity extends SubjectActivity implements OnRecyclerItemClickListener,
+        CustomToggle.OnCheckedChangeListener {
 
+    /**
+     * ---------主布局相关--------
+     */
+    private View layout_main_help;//主页help层
+    private ImageView imgView_help_bg;//背景图片
+    private ImageView imgView_help_menu;//menu按钮
     private ImageView imgView_weather;//tab-天气
     private ImageView imgView_control;//tab-控制
     private ImageView imgView_parameter;//tab-参数
     private ImageView imgView_timing;//tab-闹钟
-
     private ImageView imgView_title_menu;//菜单
     private ZoomCircleView circleImg_left;//左边用户
     private ZoomCircleView circleImg_right;//右边用户
@@ -93,20 +72,10 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     public ImageView imgView_title_plus;//添加闹钟
     private View layout_two_user;//两个用户时,头像布局
     private View title_layout;//整个上部分title布局
-
-    private FragmentManager fragmentManager;
-    private FragmentTransaction fragmentTransaction;
     private WeatherFragment weatherFragment;  //WeatherFragment
     private ControlFragment controlFragment;  //ControlFragment
     private ParameterFragment parameterFragment;  //ParameterFragment
     private TimingFragment timingFragment;  //TimingFragment
-    /**
-     * fragment 标签ID
-     */
-    public final int WEATHER = 1;
-    public final int CONTROL = 2;
-    public final int PARAMETER = 3;
-    public final int TIMING = 4;
     /**
      * ---------侧边滑动栏相关--------
      */
@@ -137,84 +106,86 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     /**
      * 系统变量相关
      */
+    private String deviceId;//设备ID
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+    private BaseListener baseListener;
+    private DbManager dbManager;
     private int currLocation = MConstants.LEFT_USER;//当前用户的位置
     private User currLeftUser;//当前左侧User
     private User currRightUser;//当前右侧User
     private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
-    private DbManager dbManager;
-    private SharedPreferences sp;
-    private SharedPreferences.Editor editor;
-    private BaseListener baseListener;
-    private String deviceId;//设备ID
     private java.lang.Class<?> cls;//跳转对象Activity
     private boolean isStartAct = false;//是否启动StartActivity
     private int entrance_flag = -1;//即作为flag参数,有作为跳转标志
-
+    private GoogleApiClient mClient = null;//Google fit
     /**
-     * google fit
+     * fragment 标签ID
      */
-    private GoogleApiClient mClient = null;
+    private final int WEATHER = 1;
+    private final int CONTROL = 2;
+    private final int PARAMETER = 3;
+    private final int TIMING = 4;
+    private int currFragmentIndex = 0;//当前显示的Fragment
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
 
-        sp = InitApplicationHelper.sp;
-        editor = sp.edit();
-        editor.apply();
+    @Override
+    protected String getTitleName() {
+        return null;
+    }
+
+    @Override
+    protected void initActivity() {
         deviceId = sp.getString(MConstants.DEVICE_ID, "");
 
         fragmentManager = getSupportFragmentManager();
 
-        baseListener = new BaseListener();
-        MachtalkSDK.getInstance().setContext(this);
-
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
         dbManager = x.getDb(dao);
 
-        initView();
-
-        initData();
-
-        setTabSelection(WEATHER);
-
+        baseListener = new BaseListener();
+        MachtalkSDK.getInstance().setContext(this);
     }
 
-    /**
-     * 初始化
-     */
-    private void initView() {
+    @Override
+    protected void initView() {
+        /**
+         * -----------主布局-------------
+         */
+        layout_main_help = findViewById(R.id.layout_main_help);
+        imgView_help_bg = (ImageView) findViewById(R.id.imgView_help_bg);
+        imgView_help_menu = (ImageView) findViewById(R.id.imgView_help_menu);
         imgView_weather = (ImageView) findViewById(R.id.imgView_weather);
         imgView_control = (ImageView) findViewById(R.id.imgView_control);
         imgView_parameter = (ImageView) findViewById(R.id.imgView_parameter);
         imgView_timing = (ImageView) findViewById(R.id.imgView_timing);
         title_layout = findViewById(R.id.title_layout);
-
         circleImg_left = (ZoomCircleView) findViewById(R.id.circleImg_left);
         circleImg_right = (ZoomCircleView) findViewById(R.id.circleImg_right);
         circleImg_middle = (CircleImageView) findViewById(R.id.circleImg_middle);
         imgView_title_plus = (ImageView) findViewById(R.id.imgView_title_plus);
         layout_two_user = findViewById(R.id.layout_two_user);
         imgView_title_menu = (ImageView) findViewById(R.id.imgView_title_menu);
-
+        //设置监听
         circleImg_left.setOnClickListener(this);
         circleImg_right.setOnClickListener(this);
         imgView_title_plus.setOnClickListener(this);
         imgView_title_menu.setOnClickListener(this);
-
         imgView_weather.setOnClickListener(this);
         imgView_control.setOnClickListener(this);
         imgView_parameter.setOnClickListener(this);
         imgView_timing.setOnClickListener(this);
-
+        layout_main_help.setOnClickListener(this);
+        imgView_help_menu.setOnClickListener(this);
         /**
          * -----------侧边menu-------------
          */
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerLayout);
         activity_menu = findViewById(R.id.activity_menu);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);//开启关闭模式
-        mDrawerLayout.addDrawerListener(MDrawerListener);
         imgView_switch_user = (ImageView) findViewById(R.id.imgView_switch_user);
         layout_connect_mooring = findViewById(R.id.layout_connect_mooring);
         layout_exist_device = findViewById(R.id.layout_exist_device);
@@ -234,13 +205,15 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         tv_about_text = (TextView) findViewById(R.id.tv_about_text);
         tv_suggestions_text = (TextView) findViewById(R.id.tv_suggestions_text);
         tv_login_out = (TextView) findViewById(R.id.tv_login_out);
-
+        //对DrawLayout设置开启关闭模式,同时增加开闭监听
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);//开启关闭模式
+        mDrawerLayout.addDrawerListener(MDrawerListener);
         //横向滑动的用户头像列表
         menu_recyclerView = (RecyclerView) findViewById(R.id.menu_recyclerView);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         menu_recyclerView.setHasFixedSize(true);
         menu_recyclerView.setLayoutManager(layoutManager);
-
+        //设置监听
         tv_connect_health.setOnClickListener(this);
         tv_help_text.setOnClickListener(this);
         tv_about_text.setOnClickListener(this);
@@ -248,15 +221,20 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         tv_login_out.setOnClickListener(this);
         activity_menu.setOnClickListener(this);
         layout_device.setOnClickListener(this);
-
-        toggle_temp.setChecked(true);
         toggle_temp.setOnCheckedChange(this);
+
+        initData();
+
+        setTabSelection(WEATHER);
+        currFragmentIndex = WEATHER;
     }
 
     /**
-     * 初始化相关数据
+     * 初始化数据加载
      */
     private void initData() {
+        //温度开关调制默认打开状态
+        toggle_temp.setChecked(sp.getBoolean(MConstants.TEMPERATURE_UNIT, true));
         /**
          * 以下操作和当前用户数/单双毯没有关联性---------------------
          */
@@ -291,71 +269,16 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     }
 
     /**
-     * 根据设备的类型{单人垫,双人垫},以及现在所拥有的用户个数
-     * value  0：单人1：双人
-     * <p/>
-     * 计算当前用户个数
-     */
-    public void computeCurrentUsers(String value) {
-        int num = Integer.parseInt(value);
-        if (num == 1) {//双人毯
-            if (currentUsers.size() > 1) {//多个人
-                circleImg_middle.setVisibility(View.GONE);
-                layout_two_user.setVisibility(View.VISIBLE);
-                circleImg_left.setOnClickListener(this);
-                circleImg_right.setOnClickListener(this);
-                editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.DOUBLE_BLANKET_MULTIPLE);
-            } else {//单个人
-                circleImg_middle.setVisibility(View.VISIBLE);
-                layout_two_user.setVisibility(View.GONE);
-                editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.DOUBLE_BLANKET_SINGLE);
-            }
-        }
-        if (num == 0) {//单人毯
-            circleImg_middle.setVisibility(View.VISIBLE);
-            layout_two_user.setVisibility(View.GONE);
-            editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.SINGLE_BLANKET);
-        }
-        //根据设备是否在线,决定当前Menu中显示内容
-        if (sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
-            layout_exist_device.setVisibility(View.VISIBLE);
-            layout_connect_mooring.setVisibility(View.GONE);
-            tv_not_connected.setText(sp.getString(MConstants.DEVICE_NAME, ""));
-
-            int curr_blanket_model = sp.getInt(MConstants.CURR_BLANKET_MODEL, -1);
-            if (curr_blanket_model == MConstants.SINGLE_BLANKET ||
-                    curr_blanket_model == MConstants.DOUBLE_BLANKET_SINGLE) {
-                //单人毯切换床的图片
-                imgView_switch_user.setEnabled(false);
-                imgView_switch_user.setAlpha(0.5f);
-                layout_user_right.setVisibility(View.GONE);
-                imgView_delete_left.setOnClickListener(this);
-                menu_zcView_left.setImageBitmap(BitmapFactory.decodeFile(currLeftUser.get_header()));
-            }
-            if (curr_blanket_model == MConstants.DOUBLE_BLANKET_MULTIPLE) {
-                imgView_switch_user.setEnabled(true);
-                imgView_switch_user.setAlpha(1f);
-                layout_user_right.setVisibility(View.VISIBLE);
-                imgView_switch_user.setOnClickListener(this);
-                imgView_delete_left.setOnClickListener(this);
-                menu_zcView_left.setImageBitmap(BitmapFactory.decodeFile(currLeftUser.get_header()));
-                imgView_delete_right.setOnClickListener(this);
-                menu_zcView_right.setImageBitmap(BitmapFactory.decodeFile(currRightUser.get_header()));
-            }
-        } else {
-            layout_exist_device.setVisibility(View.GONE);
-            layout_connect_mooring.setVisibility(View.VISIBLE);
-            imgView_to_connect.setOnClickListener(this);
-            tv_not_connected.setText(getString(R.string.tv_not_connected));
-        }
-    }
-
-    /**
      * Tab被选中执行
      *
      * @param index
      */
     private void setTabSelection(int index) {
+        if (currFragmentIndex == index) {
+            return;
+        }
+        currFragmentIndex = index;
+
         fragmentTransaction = fragmentManager.beginTransaction();
 
         //添加闹钟按钮,只在闹钟界面起作用
@@ -441,39 +364,6 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
     }
 
     /**
-     * 切换用户
-     *
-     * @param location LEFT_USER,RIGHT_USER
-     */
-    public void switchUser(int location) {
-        currLocation = location;
-        switch (location) {
-            case MConstants.LEFT_USER:
-                //左边用户
-                try {
-                    currLeftUser = dbManager.selector(User.class).where("_location", "=", "1").findFirst();
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case MConstants.RIGHT_USER:
-                //右边用户
-                try {
-                    currLeftUser = dbManager.selector(User.class).where("_location", "=", "2").findFirst();
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-                break;
-        }
-        //更改本地的当前位置和当前user的id
-        editor.putInt(MConstants.CURR_USER_LOCATION, currLocation);
-        editor.putString(MConstants.CURR_USER_ID, currLeftUser.getId() + "");
-        editor.apply();
-        //状态发生改变，通知各个观察者
-        this.notifyObservers(currLeftUser.getId() + "", currLocation, getVisibleFragment().getTag());
-    }
-
-    /**
      * 交换用户位置
      */
     private void switchUserLocation() {
@@ -498,7 +388,66 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                 break;
         }
     }
-//--------------------**********************************----------------------------------------
+
+    /**
+     * 根据设备的类型{单人垫,双人垫},以及现在所拥有的用户个数
+     * value  0：单人1：双人
+     * <p>
+     * 计算当前用户个数
+     */
+    public void computeCurrentUsers(String value) {
+        int num = Integer.parseInt(value);
+        if (num == 1) {//双人毯
+            if (currentUsers.size() > 1) {//多个人
+                circleImg_middle.setVisibility(View.GONE);
+                layout_two_user.setVisibility(View.VISIBLE);
+                circleImg_left.setOnClickListener(this);
+                circleImg_right.setOnClickListener(this);
+                editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.DOUBLE_BLANKET_MULTIPLE);
+            } else {//单个人
+                circleImg_middle.setVisibility(View.VISIBLE);
+                layout_two_user.setVisibility(View.GONE);
+                editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.DOUBLE_BLANKET_SINGLE);
+            }
+        }
+        if (num == 0) {//单人毯
+            circleImg_middle.setVisibility(View.VISIBLE);
+            layout_two_user.setVisibility(View.GONE);
+            editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.SINGLE_BLANKET);
+        }
+        //根据设备是否在线,决定当前Menu中显示内容
+        if (sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+            layout_exist_device.setVisibility(View.VISIBLE);
+            layout_connect_mooring.setVisibility(View.GONE);
+            tv_not_connected.setText(sp.getString(MConstants.DEVICE_NAME, ""));
+
+            int curr_blanket_model = sp.getInt(MConstants.CURR_BLANKET_MODEL, -1);
+            if (curr_blanket_model == MConstants.SINGLE_BLANKET ||
+                    curr_blanket_model == MConstants.DOUBLE_BLANKET_SINGLE) {
+                //单人毯切换床的图片
+                imgView_switch_user.setEnabled(false);
+                imgView_switch_user.setAlpha(0.5f);
+                layout_user_right.setVisibility(View.GONE);
+                imgView_delete_left.setOnClickListener(this);
+                menu_zcView_left.setImageBitmap(BitmapFactory.decodeFile(currLeftUser.get_header()));
+            }
+            if (curr_blanket_model == MConstants.DOUBLE_BLANKET_MULTIPLE) {
+                imgView_switch_user.setEnabled(true);
+                imgView_switch_user.setAlpha(1f);
+                layout_user_right.setVisibility(View.VISIBLE);
+                imgView_switch_user.setOnClickListener(this);
+                imgView_delete_left.setOnClickListener(this);
+                menu_zcView_left.setImageBitmap(BitmapFactory.decodeFile(currLeftUser.get_header()));
+                imgView_delete_right.setOnClickListener(this);
+                menu_zcView_right.setImageBitmap(BitmapFactory.decodeFile(currRightUser.get_header()));
+            }
+        } else {
+            layout_exist_device.setVisibility(View.GONE);
+            layout_connect_mooring.setVisibility(View.VISIBLE);
+            imgView_to_connect.setOnClickListener(this);
+            tv_not_connected.setText(getString(R.string.tv_not_connected));
+        }
+    }
 
     /**
      * 连接Google Fit
@@ -507,43 +456,43 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
 
         LogUtil.e("connect google fit");
 
-        if (!checkPermissions()) {
-            requestPermissions();
-            return;
-        }
-
-        buildFitnessClient();
+//        if (!checkPermissions()) {
+//            requestPermissions();
+//            return;
+//        }
+//
+//        buildFitnessClient();
     }
 
     /**
      * 检查权限是否已赋予
-     */
+     *//*
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
-    /**
+    *//**
      * 请求位置权限
-     */
+     *//*
     private void requestPermissions() {
         boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (shouldProvideRationale) {
             //弹出Dialog,进行选择
-            showDialog(getString(R.string.permission_location));
+            MUtils.showGoSettingDialog(this, getString(R.string.permission_location));
         } else {
             //直接申请
-            ActivityCompat.requestPermissions(MainActivity.this,
+            ActivityCompat.requestPermissions(context,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MConstants.PERMISSIONS_LOCATION);
         }
     }
 
-    /**
+    *//**
      * 实例化Fitness
-     */
+     *//*
     private void buildFitnessClient() {
         if (mClient == null && checkPermissions()) {
             GoogleApiClient.Builder builder = new GoogleApiClient.Builder(this);
@@ -557,7 +506,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
 
 //                    new InsertAndVerifyDataTask().execute();
 
-                    MUtils.showToast(MainActivity.this, "绑定成功");
+                    MUtils.showToast(context, "绑定成功");
                 }
 
                 @Override
@@ -581,9 +530,9 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         }
     }
 
-    /**
+    *//**
      * 插入数据
-     */
+     *//*
     private class InsertAndVerifyDataTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             // Create a new dataset and insertion request.
@@ -632,10 +581,10 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         }
     }
 
-    /**
+    *//**
      * Create and return a {@link DataSet} of heart count data for insertion using the History API.
      * 创建一个心跳数据集
-     */
+     *//*
     private DataSet insertFitnessData() {
         LogUtil.i("Creating a new data insert request.");
 
@@ -670,10 +619,10 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         return dataSet;
     }
 
-    /**
+    *//**
      * Return a {@link DataReadRequest} for all heart count changes in the past week.
      * 返回心跳总数集
-     */
+     *//*
     public static DataReadRequest queryFitnessData() {
         // [START build_read_data_request]
         // Setting a start and end date using a range of 1 week before this moment.
@@ -706,32 +655,14 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         return readRequest;
     }
 
-    /**
-     * 权限申请回调
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MConstants.PERMISSIONS_LOCATION) {
-            if (grantResults.length <= 0) {
-                LogUtil.i(getString(R.string.error_permission_failed));
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted.
-                buildFitnessClient();
-            } else {
-                // Permission denied.
-                showDialog(getString(R.string.permission_location));
-            }
-        }
-    }
-
-    /**
+    *//**
      * Log a record of the query result. It's possible to get more constrained data sets by
      * specifying a data source or data type, but for demonstrative purposes here's how one would
      * dump all the data. In this sample, logging also prints to the device screen, so we can see
      * what the query returns, but your app should not log fitness information as a privacy
      * consideration. A better option would be to dump the data you receive to a local data
      * directory to avoid exposing it to other applications.
-     */
+     *//*
     public static void printData(DataReadResult dataReadResult) {
         // [START parse_read_data_result]
         // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
@@ -755,7 +686,6 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         // [END parse_read_data_result]
     }
 
-    // [START parse_dataset]
     private static void dumpDataSet(DataSet dataSet) {
         LogUtil.i("Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = getTimeInstance();
@@ -770,54 +700,30 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                         " Value: " + dp.getValue(field));
             }
         }
-    }
-//--------------------**********************************----------------------------------------
-
-    /**
-     * 跳转到设置界面的Dialog提示
-     *
-     * @param msg
-     */
-    private void showDialog(String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(msg);
-        builder.setTitle(getString(R.string.tip_access_request));
-        builder.setPositiveButton(getString(R.string.tip_go_setting), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-                intent.setData(uri);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
-        builder.setNegativeButton(getString(R.string.tv_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-    }
+    }*/
 
     /**
      * 退出登录
      */
     private void logOut() {
         MUtils.showToast(this, "退出登录");
+
+        // MachtalkSDK.getInstance().userLogout();
+        /**
+         * 退出登录状态
+         * 清空本地密码和用户
+         * 清空所有boolean行数据
+         * finish当前Activity
+         */
     }
 
     /**
      * menuDrawer监听
      */
-    private DrawerLayout.DrawerListener MDrawerListener = new DrawerLayout.SimpleDrawerListener() {
+    private DrawerLayout.DrawerListener MDrawerListener = new SimpleDrawerListener() {
 
         @Override
         public void onDrawerOpened(View drawerView) {
-
         }
 
         @Override
@@ -826,9 +732,9 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
                 return;
             }
             if (entrance_flag == -1) {
-                startActivity(new Intent(MainActivity.this, cls));
+                startActivity(new Intent(context, cls));
             } else {
-                Intent it = new Intent(MainActivity.this, cls);
+                Intent it = new Intent(context, cls);
                 it.putExtra(MConstants.ENTRANCE_FLAG, entrance_flag);
                 startActivityForResult(it, entrance_flag);
             }
@@ -838,9 +744,57 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         }
     };
 
-    @Override
-    public void onClick(View v) {
+    /**
+     * 自定义智成云监听
+     */
+    class BaseListener extends MachtalkSDKListener {
 
+        @Override
+        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
+            super.onQueryDeviceStatus(result, deviceStatus);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (success == Result.SUCCESS && deviceStatus != null &&
+                    deviceId.equals(deviceStatus.getDeviceId())) {
+                List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
+                if (list == null) {
+                    return;
+                }
+                for (DvidStatus d : list) {
+                    if (d.getDvid().equals(MConstants.ATTR_SINGLE_OR_DOUBLE)) {
+                        computeCurrentUsers(d.getValue());//得到当前单/双人模式
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onDeviceOnOffline(String dvId, MachtalkSDKConstant.DeviceOnOffline dool) {
+            super.onDeviceOnOffline(dvId, dool);
+
+            if (deviceId.equals(dvId)) {
+                LogUtil.w("onDeviceOnOffline:" + dool + "," + dvId);
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {
+                    editor.putBoolean(MConstants.DEVICE_ONLINE, true);
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
+                    editor.putBoolean(MConstants.DEVICE_ONLINE, false);
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {
+                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true);
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
+                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false);
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void OnClick(View v) {
         switch (v.getId()) {
             case R.id.imgView_weather:
                 setTabSelection(WEATHER);
@@ -874,7 +828,7 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             case R.id.imgView_title_plus:
                 Intent it = new Intent();
                 it.putExtra("flag", "add");
-                it.setClass(MainActivity.this, AlarmEditActivity.class);
+                it.setClass(context, AlarmEditActivity.class);
                 startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
                 break;
             case R.id.imgView_switch_user:
@@ -920,19 +874,14 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             case R.id.activity_menu:
                 //不做任何处理,目的是消费menu上层的点击事件
                 break;
+            case R.id.layout_main_help:
+                layout_main_help.setVisibility(View.GONE);
+                break;
+            case R.id.imgView_help_menu:
+                layout_main_help.setVisibility(View.GONE);
+                mDrawerLayout.openDrawer(activity_menu);
+                break;
         }
-    }
-
-    @Override
-    public void onItemClick(View view, int position) {
-        isStartAct = true;
-        cls = UserInfoActivity.class;
-        if (position != currentUsers.size() - 1) {
-            entrance_flag = MConstants.USER_INFO_REQUEST;
-        } else {
-            entrance_flag = MConstants.ADD_USER_REQUEST;
-        }
-        mDrawerLayout.closeDrawer(activity_menu);
     }
 
     @Override
@@ -945,13 +894,25 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
             tv_celsius.setTextColor(getResources().getColor(R.color.colorWhite));
             tv_fahrenheit.setTextColor(getResources().getColor(R.color.colorPurple));
         }
-        editor.putBoolean(MConstants.TEMPERATURE_UNIT, isChecked).commit();
+        editor.putBoolean(MConstants.TEMPERATURE_UNIT, isChecked).apply();
         MachtalkSDK.getInstance().operateDevice(
                 sp.getString(MConstants.DEVICE_ID, ""),
                 new String[]{MConstants.ATTR_LEFT_TARGET_TEMP},
                 new String[]{isChecked ? "30" : "80"});
         //上面的30和80还有待于修改,目前待定
         //---希望的方式是,增加标志位,以保证当前温度转换过后的准确性
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        isStartAct = true;
+        cls = UserInfoActivity.class;
+        if (position != currentUsers.size() - 1) {
+            entrance_flag = MConstants.USER_INFO_REQUEST;
+        } else {
+            entrance_flag = MConstants.ADD_USER_REQUEST;
+        }
+        mDrawerLayout.closeDrawer(activity_menu);
     }
 
     @Override
@@ -990,66 +951,28 @@ public class MainActivity extends SubjectActivity implements View.OnClickListene
         return super.onKeyDown(keyCode, event);
     }
 
-    class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
-            super.onServerConnectStatusChanged(scs);
-            if (scs == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                Intent it = new Intent(MainActivity.this, LoginAndSignUpActivity.class);
-                it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.LOGOUT_KICKOFF);
-                startActivity(it);
-//                MainActivity.this.finish();//用户在其它地方登录，用户被踢掉
-                return;
-            }
-            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_BREAK) {
-                LogUtil.e("服务器连接中断,请重试");
-                MainActivity.this.finish();//服务器连接中断
-                return;
-            }
-        }
-
-        @Override
-        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
-            super.onQueryDeviceStatus(result, deviceStatus);
-            int success = Result.FAILED;
-            if (result != null) {
-                success = result.getSuccess();
-            }
-            if (success == Result.SUCCESS && deviceStatus != null &&
-                    deviceId.equals(deviceStatus.getDeviceId())) {
-                List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
-                if (list == null) {
-                    return;
-                }
-                for (DvidStatus d : list) {
-                    if (d.getDvid().equals(MConstants.ATTR_SINGLE_OR_DOUBLE)) {
-                        computeCurrentUsers(d.getValue());//得到当前单/双人模式
-                    }
-                }
+    /**
+     * 权限申请回调
+     */
+   /* @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == MConstants.PERMISSIONS_LOCATION) {
+            if (grantResults.length <= 0) {
+                LogUtil.i(getString(R.string.error_permission_failed));
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted.
+                buildFitnessClient();
+            } else {
+                // Permission denied.
+                MUtils.showGoSettingDialog(this, getString(R.string.permission_location));
             }
         }
+    }*/
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
-        @Override
-        public void onDeviceOnOffline(String dvId, MachtalkSDKConstant.DeviceOnOffline dool) {
-            super.onDeviceOnOffline(dvId, dool);
-
-            if (deviceId.equals(dvId)) {
-                LogUtil.w("onDeviceOnOffline:" + dool + "," + dvId);
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {
-                    editor.putBoolean(MConstants.DEVICE_ONLINE, true);
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
-                    editor.putBoolean(MConstants.DEVICE_ONLINE, false);
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {
-                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true);
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
-                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false);
-                }
-                return;
-            }
-        }
+        LogUtil.w("_____此时为MainActivity的SingleTask模式下启动_______");
     }
 
     @Override

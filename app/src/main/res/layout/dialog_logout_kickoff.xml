@@ -25,7 +25,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/tip_kicked_out"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_28pt" />
+            android:textSize="@dimen/text_dimen_34pt" />
     </LinearLayout>
 
     <View
@@ -48,7 +48,7 @@
             android:paddingTop="10dp"
             android:text="@string/tv_btn_back"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_28pt" />
+            android:textSize="@dimen/text_dimen_34pt" />
 
         <View
             android:layout_width="1dp"
@@ -65,6 +65,6 @@
             android:paddingTop="10dp"
             android:text="@string/btn_retry_login"
             android:textColor="@color/colorPurple"
-            android:textSize="@dimen/text_dimen_28pt" />
+            android:textSize="@dimen/text_dimen_34pt" />
     </LinearLayout>
 </LinearLayout>

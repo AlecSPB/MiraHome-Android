@@ -3,9 +3,9 @@
     <color name="colorPrimary">@color/colorMainBg</color>
     <color name="colorPrimaryDark">#14141C</color>
     <color name="colorAccent">@color/colorPurple</color>
-    <color name="colorWhite">@android:color/white</color>
-    <color name="colorBlack">@android:color/black</color>
-
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorWhite50">#7FFFFFFF</color>
+    <color name="colorBlack">#FF000000</color>
     <color name="colorMainBg">#191923</color>
     <color name="colorOrange">#FF9A86</color>
     <color name="colorOrangeDeep">#FF694B</color>
@@ -17,13 +17,8 @@
     <color name="transparent_4">#40000000</color>
     <color name="transparent_2">#20000000</color>
 
-    <color name="colorWhite50">#7FFFFFFF</color>
-
+    <!--总得分的字体颜色-->
     <color name="colorTotalPoint">#262C3A</color>
-
-    <color name="colorLightGrey">#919196</color>
-
-    <color name="colorDeepBlue">#0F0F1B</color>
 
     <!--闹钟日期选择背景颜色-->
     <color name="color_day_select">#35353E</color>

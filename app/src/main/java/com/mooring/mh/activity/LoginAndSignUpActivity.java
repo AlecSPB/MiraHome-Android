@@ -12,6 +12,7 @@ import com.mooring.mh.adapter.LoginAndSignUpPagerAdapter;
 import com.mooring.mh.utils.MConstants;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * 登录和注册Activity
@@ -24,7 +25,6 @@ public class LoginAndSignUpActivity extends BaseActivity {
     private LoginAndSignUpPagerAdapter pagerAdapter;
     private String flag;
     private Dialog dialog;
-
 
     @Override
     protected int getLayoutId() {
@@ -52,6 +52,9 @@ public class LoginAndSignUpActivity extends BaseActivity {
         login_tabLayout.setupWithViewPager(login_viewPager);//在设定Adapter之后才可执行
         login_tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
+        /**
+         * 若是用户登录被挤掉,弹出被迫下线dialog
+         */
         if (MConstants.LOGOUT_KICKOFF.equals(flag)) {
             dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_logout_kickoff);
@@ -59,8 +62,8 @@ public class LoginAndSignUpActivity extends BaseActivity {
             Calendar cal = Calendar.getInstance();
             ((TextView) dialog.findViewById(R.id.tv_tip_time)).setText(
                     String.format(getString(R.string.tip_kicked_out),
-                            doubleTime(cal.get(Calendar.HOUR_OF_DAY)) + ":" +
-                                    doubleTime(cal.get(Calendar.MINUTE))));
+                            String.format(Locale.getDefault(), "%02d", cal.get(Calendar.HOUR_OF_DAY))
+                                    + ":" + String.format(Locale.getDefault(), "%02d", cal.get(Calendar.MINUTE))));
             dialog.findViewById(R.id.tv_back).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -80,15 +83,7 @@ public class LoginAndSignUpActivity extends BaseActivity {
         }
     }
 
-    private String doubleTime(int data) {
-        if (data < 10) {
-            return "0" + data;
-        }
-        return "" + data;
-    }
-
     @Override
     protected void OnClick(View v) {
-
     }
 }

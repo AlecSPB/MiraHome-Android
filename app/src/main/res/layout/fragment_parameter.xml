@@ -1,48 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorMainBg"
-    android:orientation="vertical"
     android:paddingTop="?attr/actionBarSize">
-
-    <LinearLayout
-        android:id="@+id/layout_no_device"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-56dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/img_no_device_connect" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_arrow" />
-
-        <ImageView
-            android:id="@+id/imgView_device_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/img_device_not_connect" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/click_connect_device"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_34pt" />
-
-    </LinearLayout>
 
     <ScrollView
         android:id="@+id/layout_parameter"
@@ -142,15 +103,27 @@
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/text_dimen_34pt" />
 
-                    <TextView
-                        android:id="@+id/tv_breathing_rate"
-                        android:layout_width="120dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/wait_loading"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="@dimen/text_dimen_142pt" />
-                </LinearLayout>
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:id="@+id/tv_breathing_rate"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/wait_loading"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/text_dimen_142pt" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/unit_min"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/text_dimen_28pt" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -192,7 +165,6 @@
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/text_dimen_142pt" />
                 </LinearLayout>
-
             </LinearLayout>
 
             <LinearLayout
@@ -440,4 +412,12 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <!--无设备,点击去连接-->
+    <ViewStub
+        android:id="@+id/VStub_no_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/no_device_to_conn"
+        android:layout="@layout/stub_no_device_to_conn" />
+</FrameLayout>

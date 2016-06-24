@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- 公用String -->
@@ -9,6 +10,7 @@
     <string name="tv_left">左</string>
     <string name="tv_right">右</string>
     <string name="tip_disconnect_blanket">MOORING睡毯与控制器断开，请连接</string>
+    <string name="tip_server_conn_failed">服务器连接中断</string>
 
     <!--GuidePageActivity 导航页面-->
     <string name="guide_four_start">开始</string>
@@ -69,6 +71,7 @@
     <!--ParameterFragment 参数fragment-->
     <string name="wait_loading">&#8230;</string>
     <string name="unit_bmp">BPM</string>
+    <string name="unit_min">/min</string>
     <string name="unit_celsius">℃</string>
     <string name="unit_fahrenheit">℉</string>
     <string name="unit_percent">%</string>
@@ -92,14 +95,13 @@
     <string name="hint_username">请输入手机号码或邮箱地址</string>
     <string name="hint_sign_psw">请设置密码</string>
     <string name="title_sign_up">注册</string>
-    <string name="error_username_empty">账号不能为空</string>
-    <string name="error_psw_empty">密码不能为空</string>
+    <string name="error_account_psw_empty">账号和密码不能为空</string>
     <string name="error_direct_login">此账号已存在，请直接登录</string>
-    <string name="error_email_format">邮箱格式输入错误</string>
-    <string name="error_phone_format">手机号码格式输入错误</string>
+    <string name="error_account_format">账号格式错误</string>
     <string name="error_psw_format">密码格式错误，请输入8&#8211;20位字母和数字</string>
     <string name="register_complete">注册成功</string>
     <string name="tip_or">或</string>
+    <string name="tv_or_third_party">或第三方账号登录</string>
 
     <!--LoginFragment 登录相关-->
     <string name="title_login">登录</string>
@@ -108,6 +110,8 @@
     <string name="error_unavailable">此账号不存在，请先注册</string>
     <string name="error_psw">密码错误，请重新输入</string>
     <string name="login_success">登录成功</string>
+    <string name="login_failed">登录失败,请重试</string>
+    <string name="error_with_account_psw">账号或密码错误,请重新输入</string>
 
     <!--VerifyPhoneActivity 发送验证码-->
     <string name="title_verify_phone">验证手机号码</string>
@@ -117,7 +121,8 @@
     <string name="btn_tv_send">发送</string>
     <string name="btn_tv_resend">重新发送</string>
     <string name="tv_confirm">确认</string>
-    <string name="error_verify">验证失败，请重试</string>
+    <string name="error_verify">验证码输入错误</string>
+    <string name="error_code_empty">验证码不能为空</string>
 
     <!--ConfirmationPswActivity 修改密码页面 -->
     <string name="modify_success">重置密码成功</string>
@@ -125,6 +130,7 @@
     <string name="tv_next">下一步</string>
     <string name="tv_new_password">请输入新密码</string>
     <string name="tv_new_psw_empty">新密码不能为空</string>
+    <string name="error_account_empty">账号不能为空</string>
 
     <!--SetWifiActivity 配置无线密码,连接设别-->
     <string name="set_no_wifi">你的手机不在WIFI环境下\n请连接WIFI后重试</string>
@@ -132,10 +138,11 @@
     <string name="hint_wifi_password">请输入WiFi密码</string>
     <string name="tv_btn_search">发送</string>
     <string name="tv_skip">跳过</string>
-    <string name="tip_searching">正在搜索&#8230;</string>
+    <string name="tip_searching">正在搜索</string>
     <string name="tip_guide_one">① 长按“ • ”将MOORING设置到连网模式</string>
     <string name="tip_guide_two">② 点选“ ○ ”确认MOORING进入连网模式</string>
     <string name="tip_guide_three">首先，请将MOORING设置到连网模式</string>
+    <string name="error_no_wifi_psw">WIFI密码不能为空</string>
 
     <!--ExistingDeviceActivity 已存在设备选择使用或忽略-->
     <string name="chose_existing_device">选择MOORING</string>
@@ -213,12 +220,15 @@
     <string name="tv_light_sleep">浅睡眠</string>
     <string name="tv_rem">REM</string>
     <string name="tv_wake_up">清醒</string>
-    <string name="tv_sleep_duration">睡眠时长</string>
-    <string name="tv_sleep_times">睡眠次数</string>
+    <string name="tv_sleep_duration">睡眠时长：</string>
+    <string name="tv_sleep_times">睡眠次数：</string>
     <string name="tv_more">详情</string>
+    <string name="error_no_network_data">数据获取失败</string>
     <string name="error_no_weather_data">网络连接失败，暂无天气数据</string>
     <string name="error_no_data_conn_device">暂无数据，请先连接MOORING</string>
+    <string name="error_no_mooring_data">暂无数据</string>
     <string name="error_permission_failed">权限请求失败</string>
+    <string name="unit_km_h">km/h</string>
 
     <!-- HelpActivity 帮助页面 -->
     <string name="title_help">帮助</string>

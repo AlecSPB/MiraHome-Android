@@ -7,8 +7,11 @@ import com.mooring.mh.views.WheelPicker.WheelStraightPicker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
+ * 小时选择器
+ *
  * Created by Will on 16/5/5.
  */
 public class WheelHourPicker extends WheelStraightPicker {
@@ -17,7 +20,7 @@ public class WheelHourPicker extends WheelStraightPicker {
 
     static {
         for (int i = 0; i < 24; i++) {
-            HOURS.add(String.format("%02d", i));
+            HOURS.add(String.format(Locale.getDefault(), "%02d", i));
         }
     }
 

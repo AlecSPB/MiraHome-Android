@@ -1,50 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorMainBg"
-    android:orientation="vertical"
     android:paddingTop="?attr/actionBarSize">
 
-    <RelativeLayout
-        android:id="@+id/layout_heating"
+    <LinearLayout
+        android:id="@+id/layout_control"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_heating_control">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:drawablePadding="30dp"
-            android:drawableTop="@drawable/ic_heating"
-            android:gravity="center_horizontal"
-            android:text="@string/title_heating"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_34pt" />
+        <FrameLayout
+            android:id="@+id/layout_heating"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_heating_control">
 
-    </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="30dp"
+                android:drawableTop="@drawable/ic_heating"
+                android:gravity="center_horizontal"
+                android:text="@string/title_heating"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_34pt" />
 
-    <RelativeLayout
-        android:id="@+id/layout_drying"
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/layout_drying"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_drying_control">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="30dp"
+                android:drawableTop="@drawable/ic_drying"
+                android:gravity="center_horizontal"
+                android:text="@string/title_drying"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_34pt" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <!--无设备,点击去连接-->
+    <ViewStub
+        android:id="@+id/VStub_no_device"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_drying_control">
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/no_device_to_conn"
+        android:layout="@layout/stub_no_device_to_conn" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:drawablePadding="30dp"
-            android:drawableTop="@drawable/ic_drying"
-            android:gravity="center_horizontal"
-            android:text="@string/title_drying"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_34pt" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</FrameLayout>

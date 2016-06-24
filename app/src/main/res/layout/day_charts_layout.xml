@@ -29,7 +29,7 @@
             android:textColor="@color/colorWhite50"
             android:textSize="@dimen/text_dimen_24pt" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -54,9 +54,9 @@
                 android:id="@+id/allChart1"
                 android:layout_width="50dp"
                 android:layout_height="200dp"
-                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
                 chart:chart_y="10" />
-        </RelativeLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -85,7 +85,7 @@
             android:textColor="@color/colorWhite50"
             android:textSize="@dimen/text_dimen_24pt" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -110,9 +110,9 @@
                 android:id="@+id/allChart2"
                 android:layout_width="50dp"
                 android:layout_height="200dp"
-                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
                 chart:chart_y="10" />
-        </RelativeLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -133,7 +133,7 @@
             android:textColor="@android:color/holo_green_light"
             android:textSize="@dimen/text_dimen_28pt" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -158,8 +158,8 @@
                 android:id="@+id/allChart3"
                 android:layout_width="50dp"
                 android:layout_height="200dp"
-                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
                 chart:chart_y="10" />
-        </RelativeLayout>
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>

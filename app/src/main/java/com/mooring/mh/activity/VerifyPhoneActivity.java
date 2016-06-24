@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,6 +18,7 @@ import com.mooring.mh.utils.MUtils;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.common.util.LogUtil;
+import org.xutils.ex.HttpException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -22,10 +26,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * 获取手机验证码
- * <p/>
- * 1.从忘记密码跳转过来
- * 2.从注册页面条转过来
+ * 获取手机/邮箱验证码
+ * <p>
+ * 1.从忘记密码跳转过来,只是获取验证码则返回原界面
+ * 2.从注册页面条转过来,获取验证码之后,在当前界面直接执行注册
+ * <p>
  * Created by Will on 16/3/30.
  */
 public class VerifyPhoneActivity extends BaseActivity {
@@ -78,13 +83,35 @@ public class VerifyPhoneActivity extends BaseActivity {
 
         tv_verify_send.setOnClickListener(this);
         tv_verify_confirm.setOnClickListener(this);
+        edit_verify_code.addTextChangedListener(EditTextChangeListener);
 
         initData();
     }
 
+    /**
+     * 文本改变监听
+     */
+    private TextWatcher EditTextChangeListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (edit_verify_code.getText().length() != 0) {
+                tv_verify_error.setText("");
+            }
+        }
+    };
+
     private void initData() {
         tv_verify_phone.setText(phone);
-
     }
 
     /**
@@ -147,7 +174,7 @@ public class VerifyPhoneActivity extends BaseActivity {
     }
 
     /**
-     * 发送获取验证码
+     * 注册时,发送获取验证码
      */
     private void sendIdentify() {
 
@@ -159,20 +186,26 @@ public class VerifyPhoneActivity extends BaseActivity {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null) {
-                    MUtils.showToast(VerifyPhoneActivity.this, result.toString());
+                    MUtils.showToast(context, result.toString());
 
                     //成功之后进行保存验证码  sms_code
+                    sms_code = result.optString("code");
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                LogUtil.e(ex.getMessage(), ex);
+                if (ex instanceof HttpException) { // 网络错误
+                    //提示网络原因导致错误
+                    MUtils.showToast(context, getString(R.string.network_exception));
+                } else { // 其他错误
+                    LogUtil.e("onError message: " + ex.getMessage());
+                }
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                LogUtil.e(cex.getMessage(), cex);
+                LogUtil.w(cex.getMessage(), cex);
             }
 
             @Override
@@ -186,7 +219,6 @@ public class VerifyPhoneActivity extends BaseActivity {
      * 执行注册
      */
     private void executeSignUp() {
-
         RequestParams params = MUtils.getBaseParams(MConstants.MOBILE_PHONE_USER);
         params.addParameter("password", psw);
         params.addHeader("mobile_phone", phone);
@@ -195,19 +227,26 @@ public class VerifyPhoneActivity extends BaseActivity {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null) {
-
-
-                    //注册成功,跳转成功展示界面
-
-//                    showSuccess();
-
-
+                    String code = result.optString("code");
+                    if ("0".equals(code)) {
+                        //注册成功,跳转成功展示界面
+                        showSuccess();
+                    } else if ("1".equals(code)) {
+                        setError(getString(R.string.error_verify));
+                    } else {
+                        LogUtil.e("智成云错误");
+                    }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                LogUtil.e(ex.getMessage(), ex);
+                if (ex instanceof HttpException) { // 网络错误
+                    //提示网络原因导致错误
+                    MUtils.showToast(context, getString(R.string.network_exception));
+                } else { // 其他错误
+                    LogUtil.e("onError message: " + ex.getMessage());
+                }
             }
 
             @Override
@@ -223,28 +262,27 @@ public class VerifyPhoneActivity extends BaseActivity {
     }
 
     /**
-     * 执行重置密码
+     * 获取重置密码的验证码
      */
-    private void executeResetPassword() {
+    private void sendConfirmationIdentify() {
         RequestParams params = MUtils.getBaseParams(MConstants.SEND_RESET_PASSWORD_SMS_CODE);
         params.addParameter("mobile_phone", phone);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null) {
-
-
-                    //重置密码获取验证码成功,回转修改界面
-
-//                    returnToConfirmation();
-
-
+                    sms_code = result.optString("code");
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                LogUtil.e(ex.getMessage(), ex);
+                if (ex instanceof HttpException) { // 网络错误
+                    //提示网络原因导致错误
+                    MUtils.showToast(context, getString(R.string.network_exception));
+                } else { // 其他错误
+                    LogUtil.e("onError message: " + ex.getMessage());
+                }
             }
 
             @Override
@@ -276,23 +314,48 @@ public class VerifyPhoneActivity extends BaseActivity {
         Intent it = new Intent();
         it.putExtra("isReturn", true);
         it.putExtra("verify_code", sms_code);
-        this.setResult(MConstants.SIGN_UP_SUCCESS, it);
+        this.setResult(MConstants.CONFIR_PSW_RESULT, it);
         this.finish();
+    }
+
+    /**
+     * 设置显示错误信息
+     *
+     * @param error
+     */
+    private void setError(String error) {
+        tv_verify_error.setVisibility(View.VISIBLE);
+        tv_verify_error.setText(error);
     }
 
     @Override
     protected void OnClick(View v) {
         switch (v.getId()) {
             case R.id.tv_verify_send:
-//                sendIdentify();
+                if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
+                    sendIdentify();
+                }
+                if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
+                    sendConfirmationIdentify();
+                }
                 break;
 
             case R.id.tv_verify_confirm:
-//                if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
-//                    executeSignUp();
-//                } else if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
-//                    executeResetPassword();
-//                }
+                if (TextUtils.isEmpty(edit_verify_code.getText().toString().trim())) {
+                    setError(getString(R.string.error_code_empty));
+                    return;
+                }
+                if (!sms_code.equals(edit_verify_code.getText().toString().trim())) {
+                    setError(getString(R.string.error_verify));
+                    return;
+                }
+                if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
+                    executeSignUp();
+                }
+                if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
+                    //重置密码获取验证码成功,回转修改界面
+                    returnToConfirmation();
+                }
                 break;
         }
     }

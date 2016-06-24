@@ -1,19 +1,21 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.ConfirmationPswActivity;
 import com.mooring.mh.activity.MainActivity;
-import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.utils.MConstants;
@@ -31,16 +33,19 @@ import java.util.List;
 
 /**
  * 登陆
- * <p/>
+ * <p>
  * Created by Will on 16/3/30.
  */
 public class LoginFragment extends BaseFragment implements View.OnClickListener {
 
-    private EditText edit_userName;
-    private EditText edit_userPwd;
-    private TextView tv_forget_psw;
-    private TextView tv_login_btn;
-    private TextView tv_login_error;
+    private EditText edit_userName;//用户名
+    private EditText edit_userPwd;//密码
+    private TextView tv_forget_psw;//忘记密码
+    private TextView tv_login_btn;//登录按钮
+    private TextView tv_login_error;//错误提示
+    /**
+     * 第三方登录
+     */
     private ImageView imgView_sina;
     private ImageView imgView_weChart;
     private ImageView imgView_QQ;
@@ -59,6 +64,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
     @Override
     protected void initFragment() {
+        DbManager.DaoConfig config = DbXUtils.getDaoConfig(getActivity());
+        dbManager = x.getDb(config);
+
         msdkListener = new MSDKListener();
     }
 
@@ -76,7 +84,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         imgView_QQ = (ImageView) rootView.findViewById(R.id.imgView_QQ);
         imgView_facebook = (ImageView) rootView.findViewById(R.id.imgView_facebook);
 
-
+        edit_userName.addTextChangedListener(EditTextChangeListener);
+        edit_userPwd.addTextChangedListener(EditTextChangeListener);
         tv_forget_psw.setOnClickListener(this);
         tv_login_btn.setOnClickListener(this);
         imgView_sina.setOnClickListener(this);
@@ -90,6 +99,27 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
     }
 
+    /**
+     * 文本改变监听
+     */
+    private TextWatcher EditTextChangeListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (edit_userName.getText().length() != 0 || edit_userPwd.getText().length() != 0) {
+                tv_login_error.setText("");
+            }
+        }
+    };
 
     /**
      * 登陆
@@ -111,8 +141,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             public void onSuccess(JSONObject result) {
                 if (result != null) {
 
-                    MUtils.showToast(context, result.optString("message"));
-
                     //登陆成功   检查本地是否有用户
 
 //                    checkHasLocalUser();
@@ -128,7 +156,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                         startActivity(new Intent(context, MainActivity.class));
                         context.finish();
                     }else{
-                        MUtils.showToast(context, getResources().getString(R.string.network_exception));
+                        MUtils.showToast(context, result.optString("message"));
                     }
                 }
             }
@@ -164,10 +192,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      * 检查本地是否有用户
      */
     private void checkHasLocalUser() {
-        DbManager.DaoConfig config = DbXUtils.getDaoConfig(getActivity());
-        dbManager = x.getDb(config);
 
-        List<User> users = new ArrayList<>();
+        List<User> users = new ArrayList<User>();
         try {
             users = dbManager.findAll(User.class);
             if (users.size() == 0) {
@@ -180,29 +206,24 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         }
     }
 
-
     /**
      * 登陆前检索
      *
      * @return
      */
     private boolean checkLogin() {
-        if ("".equals(userName)) {
-            setError(getResources().getString(R.string.error_username_empty));
-            return false;
-        }
-        if ("".equals(userPwd)) {
-            setError(getResources().getString(R.string.error_psw_empty));
+        if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(userPwd)) {
+            setError(getResources().getString(R.string.error_account_psw_empty));
             return false;
         }
         if (TextUtils.isDigitsOnly(userName)) {
             if (!MUtils.isMobileNO(userName)) {
-                setError(getResources().getString(R.string.error_phone_format));
+                setError(getResources().getString(R.string.error_account_format));
                 return false;
             }
         } else {
             if (!MUtils.isEmail(userName)) {
-                setError(getResources().getString(R.string.error_email_format));
+                setError(getResources().getString(R.string.error_account_format));
                 return false;
             }
         }
@@ -213,6 +234,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         return true;
     }
 
+    /**
+     * 设置错误信息
+     *
+     * @param error
+     */
     private void setError(String error) {
         tv_login_error.setVisibility(View.VISIBLE);
         tv_login_error.setText(error);
@@ -222,16 +248,15 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      * 第三方登陆
      */
     private void SSO() {
-        MUtils.showToast(context, InitApplicationHelper.sp.getString(MConstants.SP_KEY_TOKEN, ""));
+        MUtils.showToast(context, sp.getString(MConstants.SP_KEY_TOKEN, ""));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_forget_psw:
-                Intent it = new Intent();
-                it.setClass(getActivity(), ConfirmationPswActivity.class);
-                getActivity().startActivity(it);
+                //跳转忘记密码
+                startActivity(new Intent(context, ConfirmationPswActivity.class));
                 break;
             case R.id.tv_login_btn:
                 userName = edit_userName.getText().toString().trim();
@@ -262,6 +287,18 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     }
 
     class MSDKListener extends MachtalkSDKListener {
+
+        @Override
+        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
+            super.onServerConnectStatusChanged(scs);
+            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_TIMEOUT) {
+                //者连接超时,重新登陆
+                MachtalkSDK.getInstance().userLogin(
+                        edit_userName.getText().toString(),
+                        edit_userPwd.getText().toString(), null);
+            }
+        }
+
         @Override
         public void onUserLogin(Result result, String user) {
             int success = Result.FAILED;
@@ -273,22 +310,29 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             if (success == Result.SUCCESS) {
                 editor.putString(MConstants.SP_KEY_USERNAME, userName);
                 editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
-                editor.commit();
-
-                LogUtil.i("store username: " + userName + " password: " + userPwd);
+                editor.apply();
 
                 MUtils.showToast(context, getString(R.string.login_success));
+                /*if (sp.getBoolean(MConstants.HAS_LOCAL_USER, false)) {
+                    startActivity(new Intent(context, MainActivity.class));
+                    context.finish();
+                } else {
+                    Intent it = new Intent(context, UserInfoActivity.class);
+                    it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.ADD_USER_REQUEST);
+                    startActivity(it);
+                }*/
+
                 startActivity(new Intent(context, MainActivity.class));
                 context.finish();
             } else {
                 if (errMsg == null) {
                     errMsg = getResources().getString(R.string.network_exception);
                 }
-                MUtils.showToast(context, errMsg);
+                LogUtil.e(errMsg);
+                setError(getString(R.string.login_failed));
             }
         }
     }
-
 
     /**
      * 保存成员到本地
@@ -314,7 +358,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             }
         }
     }
-
 
     @Override
     public void onHiddenChanged(boolean hidden) {

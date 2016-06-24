@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="Base.Theme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+    </style>
+
+    <style name="Theme.AppTheme" parent="Base.Theme">
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
         <item name="android:windowBackground">@drawable/bg_activity_base</item>
     </style>
@@ -19,18 +22,17 @@
     </style>
 
     <!--Start页面使用的Theme-->
-    <style name="StartTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="Theme.StartTheme" parent="Base.Theme">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@drawable/img_about_mooring</item>
+        <item name="android:windowBackground">@drawable/bg_activity_start</item>
     </style>
 
     <!--Guide页面使用的Theme-->
-    <style name="GuideTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="Theme.GuideTheme" parent="Base.Theme">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
     </style>
+
     <!-- 从底部弹出dialog主题 -->
     <style name="MyDialogStyle">
         <item name="android:windowBackground">@android:color/transparent</item>

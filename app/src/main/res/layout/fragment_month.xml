@@ -15,7 +15,7 @@
             android:id="@+id/data_select"
             layout="@layout/date_select_layout" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible">
@@ -24,8 +24,7 @@
                 android:id="@+id/month_yAxis"
                 android:layout_width="50dp"
                 android:layout_height="200dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="left|center_vertical"
                 chart:chart_y="12"
                 chart:y_location="1" />
 
@@ -39,9 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="300dp" />
             </HorizontalScrollView>
-
-
-        </RelativeLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

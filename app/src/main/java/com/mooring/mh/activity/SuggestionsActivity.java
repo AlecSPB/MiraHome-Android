@@ -34,8 +34,9 @@ public class SuggestionsActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        EdTv_suggestion = (EditText) findViewById(R.id.EdTv_suggestion);
         tv_send = (TextView) findViewById(R.id.tv_send);
+        EdTv_suggestion = (EditText) findViewById(R.id.EdTv_suggestion);
+
         tv_send.setOnClickListener(this);
     }
 

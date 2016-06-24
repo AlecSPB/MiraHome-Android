@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WaitingDots">
+        <attr name="dotsColor" format="color" />
+        <attr name="period" format="integer" />
+        <attr name="jumpHeight" format="integer" />
+        <attr name="autoplay" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="LoadingView">
+        <attr name="loadingText" format="string" />
+        <attr name="loadingTextAppearance" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgress">
+        <attr name="color_1" format="reference|color"/>
+        <attr name="color_2" format="reference|color"/>
+        <attr name="color_3" format="reference|color"/>
+    </declare-styleable>
+</resources>

@@ -53,6 +53,13 @@
         <attr name="y_location" format="integer" />
     </declare-styleable>
 
+    <!-- 自定义...加载效果 -->
+    <declare-styleable name="WaitingDots">
+        <attr name="period" format="integer" />
+        <attr name="jumpHeight" format="integer" />
+        <attr name="autoPlay" format="boolean" />
+    </declare-styleable>
+
     <!--测试使用-->
     <declare-styleable name="WeatherStyle">
         <attr name="pieces_count" format="integer" />

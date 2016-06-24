@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -16,26 +17,17 @@ import java.util.List;
 
 /**
  * 自定义闹钟RecycleView 的Adapter
- * <p>
+ * <p/>
  * Created by Will on 16/4/21.
  */
 public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.ViewHolder> {
 
     private List<String> data;
     private OnRecyclerItemClickListener itemClickListener;
+    private OnToggleBtnChange onToggleBtnChange;
 
     public AlarmClockAdapter(List<String> data) {
         this.data = data;
-    }
-
-    public void addData(int position) {
-        data.add(position, "Insert One");
-        notifyItemInserted(position);
-    }
-
-    public void removeData(int position) {
-        data.remove(position);
-        notifyItemRemoved(position);
     }
 
     /**
@@ -80,6 +72,24 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             holder.daySV_clock.setTvData(MUtils.ParsingDay(alarmDay));
             holder.tglBtn_wake_up.setChecked("1".equals(smart));
             holder.tglBtn_clock_set.setChecked("1".equals(clockSwitch));
+            holder.tglBtn_wake_up.setOnCheckedChangeListener(new CompoundButton.
+                    OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (onToggleBtnChange != null) {
+                        onToggleBtnChange.onChanged(buttonView, isChecked,position);
+                    }
+                }
+            });
+            holder.tglBtn_clock_set.setOnCheckedChangeListener(new CompoundButton.
+                    OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (onToggleBtnChange != null) {
+                        onToggleBtnChange.onChanged(buttonView, isChecked,position);
+                    }
+                }
+            });
 
             holder.v.setTag(position);
         }
@@ -118,6 +128,14 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             tglBtn_clock_set = (ToggleButton) view.findViewById(R.id.tglBtn_clock_set);
             tglBtn_wake_up = (ToggleButton) view.findViewById(R.id.tglBtn_wake_up);
         }
+    }
+
+    public void setOnToggleBtnChange(OnToggleBtnChange l) {
+        this.onToggleBtnChange = l;
+    }
+
+    public interface OnToggleBtnChange {
+        void onChanged(CompoundButton cb, boolean isChecked,int position);
     }
 
     /**

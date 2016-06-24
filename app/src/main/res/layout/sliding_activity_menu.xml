@@ -76,8 +76,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="20dp"
                         android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -150,7 +150,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_device"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -160,8 +160,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:text="@string/tv_device"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_28pt" />
@@ -170,13 +169,12 @@
                     android:id="@+id/tv_not_connected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:text="@string/tv_not_connected"
                     android:textColor="@color/colorWhite50"
                     android:textSize="@dimen/text_dimen_24pt" />
 
-            </RelativeLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tv_connect_health"
@@ -188,7 +186,7 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_28pt" />
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_temp_setting"
                 android:layout_width="match_parent"
                 android:layout_height="45dp">
@@ -196,8 +194,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:text="@string/tv_temperature_setting"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_28pt" />
@@ -205,7 +202,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_gravity="right|center_vertical"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -232,7 +229,7 @@
                         android:textSize="@dimen/text_dimen_24pt" />
 
                 </LinearLayout>
-            </RelativeLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tv_help_text"

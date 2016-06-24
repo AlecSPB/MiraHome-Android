@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * 自定义x,y轴图标控件可以横向滑动,配合YAxisView使用
+ * 不可编辑view的宽高大小
  *
  * @see YAxisView
  * <p/>
@@ -143,7 +144,6 @@ public class MyChartView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(num_x * xSpace + xLeft * 2, num_y * ySpace + xBottom * 2);
     }
-
 
     @Override
     protected void onDraw(Canvas canvas) {

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:pre="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--天气-->
     <FrameLayout
         android:id="@+id/layout_weather_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:background="@drawable/img_weather_bg_night"
         android:visibility="visible">
 
@@ -60,271 +60,275 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent_2"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <!--展示界面和数据-->
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
-            <!--展示界面和数据-->
-            <ScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
+                <!--用于空出和title一样高度的区域显示title-->
+                <!-- <View
+                     android:layout_width="match_parent"
+                     android:layout_height="?attr/actionBarSize" />-->
 
                 <LinearLayout
+                    android:id="@+id/layout_sleep_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <!--用于空出和title一样高度的区域显示title-->
-                    <View
+                    android:orientation="vertical"
+                    android:paddingTop="?attr/actionBarSize"
+                    android:visibility="visible">
+
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize" />
+                        android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:id="@+id/layout_show"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="visible">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:contentDescription="@string/app_name"
-                                android:src="@drawable/img_total_points" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:text="70"
-                                android:textColor="@color/colorTotalPoint"
-                                android:textSize="@dimen/text_dimen_168pt"
-                                android:typeface="normal" />
-
-                        </RelativeLayout>
-
-                        <TextView
-                            android:id="@+id/tv_weather_scores"
+                        <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginBottom="5dp"
-                            android:text="@string/tv_user_scores"
-                            android:textColor="@color/colorWhite50"
-                            android:textSize="@dimen/text_dimen_28pt" />
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/img_total_points" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="70"
+                            android:textColor="@color/colorTotalPoint"
+                            android:textSize="@dimen/text_dimen_168pt"
+                            android:typeface="normal" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tv_weather_scores"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/tv_user_scores"
+                        android:textColor="@color/colorWhite50"
+                        android:textSize="@dimen/text_dimen_28pt" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/transparent_4"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
-                            android:background="@color/transparent_4"
-                            android:orientation="vertical"
-                            android:padding="20dp">
+                            android:layout_marginTop="20dp"
+                            android:orientation="horizontal">
 
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
 
-                                <LinearLayout
+                                <com.mooring.mh.views.CircleProgress.CircleDisplay
+                                    android:id="@+id/circle_progress_1"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    pre:pre_finishColor="@color/colorPurple" />
+
+                                <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentLeft="true"
-                                    android:gravity="center"
-                                    android:orientation="vertical">
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="10dp"
+                                    android:text="@string/tv_deep_sleep"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/text_dimen_24pt" />
 
-                                    <com.mooring.mh.views.CircleProgress.CircleDisplay
-                                        android:id="@+id/circle_progress_1"
-                                        android:layout_width="60dp"
-                                        android:layout_height="60dp"
-                                        pre:pre_finishColor="@color/colorPurple" />
+                            </LinearLayout>
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center_horizontal"
-                                        android:layout_marginTop="10dp"
-                                        android:text="@string/tv_deep_sleep"
-                                        android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_24pt" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
 
-                                </LinearLayout>
+                                <com.mooring.mh.views.CircleProgress.CircleDisplay
+                                    android:id="@+id/circle_progress_2"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_marginLeft="5dp"
+                                    pre:pre_finishColor="@color/colorOrange" />
 
-                                <RelativeLayout
-                                    android:layout_width="150dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerHorizontal="true">
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentLeft="true"
-                                        android:orientation="vertical">
-
-                                        <com.mooring.mh.views.CircleProgress.CircleDisplay
-                                            android:id="@+id/circle_progress_2"
-                                            android:layout_width="60dp"
-                                            android:layout_height="60dp"
-                                            android:layout_marginLeft="5dp"
-                                            pre:pre_finishColor="@color/colorOrange" />
-
-                                        <TextView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_gravity="center_horizontal"
-                                            android:layout_marginTop="10dp"
-                                            android:text="@string/tv_light_sleep"
-                                            android:textColor="@color/colorWhite"
-                                            android:textSize="@dimen/text_dimen_24pt" />
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentRight="true"
-                                        android:orientation="vertical">
-
-                                        <com.mooring.mh.views.CircleProgress.CircleDisplay
-                                            android:id="@+id/circle_progress_3"
-                                            android:layout_width="60dp"
-                                            android:layout_height="60dp"
-                                            android:layout_marginLeft="5dp"
-                                            pre:pre_finishColor="@android:color/holo_green_light" />
-
-                                        <TextView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_gravity="center_horizontal"
-                                            android:layout_marginTop="10dp"
-                                            android:text="@string/tv_rem"
-                                            android:textColor="@color/colorWhite"
-                                            android:textSize="@dimen/text_dimen_24pt" />
-
-                                    </LinearLayout>
-                                </RelativeLayout>
-
-                                <LinearLayout
+                                <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:orientation="vertical">
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="10dp"
+                                    android:text="@string/tv_light_sleep"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/text_dimen_24pt" />
 
-                                    <com.mooring.mh.views.CircleProgress.CircleDisplay
-                                        android:id="@+id/circle_progress_4"
-                                        android:layout_width="60dp"
-                                        android:layout_height="60dp"
-                                        android:layout_marginLeft="5dp"
-                                        pre:pre_finishColor="@android:color/holo_blue_light" />
+                            </LinearLayout>
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center_horizontal"
-                                        android:layout_marginTop="10dp"
-                                        android:text="@string/tv_wake_up"
-                                        android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_24pt" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
 
-                                </LinearLayout>
-                            </RelativeLayout>
+                                <com.mooring.mh.views.CircleProgress.CircleDisplay
+                                    android:id="@+id/circle_progress_3"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_marginLeft="5dp"
+                                    pre:pre_finishColor="@android:color/holo_green_light" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="10dp"
+                                    android:text="@string/tv_rem"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/text_dimen_24pt" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <com.mooring.mh.views.CircleProgress.CircleDisplay
+                                    android:id="@+id/circle_progress_4"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_marginLeft="5dp"
+                                    pre:pre_finishColor="@android:color/holo_blue_light" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="10dp"
+                                    android:text="@string/tv_wake_up"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/text_dimen_24pt" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginTop="30dp"
-                                android:orientation="horizontal">
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="left"
-                                        android:text="@string/tv_sleep_duration"
-                                        android:textColor="@color/colorWhite50"
-                                        android:textSize="@dimen/text_dimen_24pt" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="left"
-                                        android:text="7h15m"
-                                        android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_48pt" />
-
-                                </LinearLayout>
-
-                                <View
-                                    android:layout_width="1dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginLeft="20dp"
-                                    android:layout_marginRight="20dp"
-                                    android:background="@color/colorWhite50" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="left"
-                                        android:text="@string/tv_sleep_times"
-                                        android:textColor="@color/colorWhite50"
-                                        android:textSize="@dimen/text_dimen_24pt" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="left"
-                                        android:text="2"
-                                        android:textColor="@color/colorWhite"
-                                        android:textSize="@dimen/text_dimen_48pt" />
-
-                                </LinearLayout>
+                                android:orientation="vertical">
 
                                 <TextView
-                                    android:id="@+id/tv_sleep_detail"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="20dp"
-                                    android:background="@drawable/bg_more_text"
-                                    android:gravity="center"
-                                    android:paddingBottom="5dp"
-                                    android:paddingLeft="15dp"
-                                    android:paddingRight="15dp"
-                                    android:paddingTop="5dp"
-                                    android:text="@string/tv_more"
+                                    android:layout_gravity="left"
+                                    android:text="@string/tv_sleep_duration"
+                                    android:textColor="@color/colorWhite50"
+                                    android:textSize="@dimen/text_dimen_24pt" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="left"
+                                    android:text="7h15m"
                                     android:textColor="@color/colorWhite"
-                                    android:textSize="@dimen/text_dimen_34pt" />
+                                    android:textSize="@dimen/text_dimen_48pt" />
 
                             </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:background="@color/colorWhite50" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="left"
+                                    android:text="@string/tv_sleep_times"
+                                    android:textColor="@color/colorWhite50"
+                                    android:textSize="@dimen/text_dimen_24pt" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="left"
+                                    android:text="2"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/text_dimen_48pt" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_sleep_detail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@drawable/bg_more_text"
+                                android:gravity="center"
+                                android:paddingBottom="5dp"
+                                android:paddingLeft="20dp"
+                                android:paddingRight="20dp"
+                                android:paddingTop="5dp"
+                                android:text="@string/tv_more"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="@dimen/text_dimen_34pt" />
                         </LinearLayout>
                     </LinearLayout>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/transparent_4"
+                    android:orientation="vertical"
+                    android:paddingBottom="20dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="15dp">
 
                     <LinearLayout
+                        android:id="@+id/layout_weather_data"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:background="@color/transparent_4"
-                        android:orientation="vertical"
-                        android:padding="20dp">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_curr_temp"
@@ -333,7 +337,7 @@
                             android:drawableLeft="@drawable/ic_sun"
                             android:drawablePadding="5dp"
                             android:gravity="center_vertical"
-                            android:text="27℃"
+                            android:text="30℃"
                             android:textColor="@color/colorWhite50"
                             android:textSize="@dimen/text_dimen_48pt" />
 
@@ -350,7 +354,7 @@
                                 android:drawableLeft="@drawable/ic_wind"
                                 android:drawablePadding="5dp"
                                 android:gravity="center_vertical"
-                                android:text="3.0km/h"
+                                android:text="10.5km/h"
                                 android:textColor="@color/colorWhite50"
                                 android:textSize="@dimen/text_dimen_28pt" />
 
@@ -358,34 +362,52 @@
                                 android:id="@+id/tv_humidity"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginLeft="20dp"
                                 android:drawableLeft="@drawable/ic_humidity"
                                 android:drawablePadding="5dp"
                                 android:gravity="center_vertical"
-                                android:text="20%"
+                                android:text="30%"
                                 android:textColor="@color/colorWhite50"
                                 android:textSize="@dimen/text_dimen_28pt" />
                         </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
-            </ScrollView>
 
-            <!--数据展示-->
-            <ViewStub
-                android:id="@+id/viewStub_data_fail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inflatedId="@+id/layout_data_fail"
-                android:layout="@layout/get_data_fail_layout" />
+                    <TextView
+                        android:id="@+id/tv_error_no_weather_data"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/error_no_weather_data"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/text_dimen_28pt"
+                        android:visibility="invisible" />
+                </FrameLayout>
+            </LinearLayout>
+        </ScrollView>
 
-            <!--链接设备-->
-            <ViewStub
-                android:id="@+id/viewStub_connect_mooring"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inflatedId="@+id/connect_mooring"
-                android:layout="@layout/connect_mooring_layout" />
-        </FrameLayout>
-    </LinearLayout>
+        <!--数据展示-->
+        <ViewStub
+            android:id="@+id/VStub_no_network_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/layout_data_fail"
+            android:layout="@layout/stub_no_network" />
 
-</RelativeLayout>
+        <!--无数据,连接设备-->
+        <ViewStub
+            android:id="@+id/VStub_connect_mooring"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/layout_connect_mooring"
+            android:layout="@layout/stub_connect_mooring" />
+
+        <!--当前数据为空-->
+        <ViewStub
+            android:id="@+id/VStub_no_mooring_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/no_mooring_data"
+            android:layout="@layout/stub_no_mooring_data" />
+    </FrameLayout>
+
+</FrameLayout>

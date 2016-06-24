@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,11 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_mon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +35,7 @@
                     android:id="@+id/tv_mon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_monday"
                     android:textColor="@color/colorPurple"
@@ -46,17 +45,16 @@
                     android:id="@+id/tglBtn_mon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_tue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,28 +65,26 @@
                     android:id="@+id/tv_tue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_tuesday"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_34pt" />
 
-
                 <ToggleButton
                     android:id="@+id/tglBtn_tue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_wed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,29 +95,26 @@
                     android:id="@+id/tv_wed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_wednesday"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_34pt" />
 
-
                 <ToggleButton
                     android:id="@+id/tglBtn_wed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
 
-
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_tues"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,28 +125,26 @@
                     android:id="@+id/tv_tues"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_thursday"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_34pt" />
 
-
                 <ToggleButton
                     android:id="@+id/tglBtn_tues"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_fri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -164,28 +155,26 @@
                     android:id="@+id/tv_fri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_friday"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_34pt" />
 
-
                 <ToggleButton
                     android:id="@+id/tglBtn_fri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_sat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,28 +185,26 @@
                     android:id="@+id/tv_sat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_saturday"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_34pt" />
 
-
                 <ToggleButton
                     android:id="@+id/tglBtn_sat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/layout_sun"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -228,33 +215,31 @@
                     android:id="@+id/tv_sun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
                     android:text="@string/tv_sunday"
                     android:textColor="@color/colorPurple"
                     android:textSize="@dimen/text_dimen_34pt" />
 
-
                 <ToggleButton
                     android:id="@+id/tglBtn_sun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@android:color/transparent"
                     android:button="@drawable/bg_toggle_button"
                     android:checked="false"
                     android:text=""
                     android:textOff=""
                     android:textOn="" />
-            </RelativeLayout>
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_confirm"
         style="@style/text_button_comm"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
         android:text="@string/tv_confirm" />
-</RelativeLayout>
+</FrameLayout>

@@ -9,7 +9,8 @@
     <FrameLayout
         android:id="@+id/layout_alarm_none"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="match_parent"
@@ -31,14 +32,14 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/param_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
-            android:visibility="gone" />
+            android:scrollbars="none" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>

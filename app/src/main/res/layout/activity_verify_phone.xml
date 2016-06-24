@@ -14,7 +14,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_shadow" />
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -48,7 +48,7 @@
                 android:textColorHint="@color/colorWhite50"
                 android:textSize="@dimen/text_dimen_34pt" />
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="10dp"
@@ -58,8 +58,7 @@
                     android:id="@+id/tv_wait_times"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="left|center_vertical"
                     android:text=""
                     android:textColor="@color/colorWhite50"
                     android:textSize="@dimen/text_dimen_28pt"
@@ -69,14 +68,13 @@
                     android:id="@+id/tv_verify_send"
                     android:layout_width="80dp"
                     android:layout_height="40dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="right|center_vertical"
                     android:background="@drawable/bg_button_comm"
                     android:gravity="center"
                     android:text="@string/btn_tv_send"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_34pt" />
-            </RelativeLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tv_verify_confirm"
@@ -92,13 +90,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:gravity="center_horizontal"
-                android:text="@string/error_verify"
+                android:text=""
                 android:textColor="@color/colorOrange"
                 android:textSize="@dimen/text_dimen_28pt"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
         </LinearLayout>
 
         <include layout="@layout/common_text_mirahome" />
-    </RelativeLayout>
+    </FrameLayout>
 </LinearLayout>

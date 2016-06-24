@@ -18,7 +18,6 @@ import com.mooring.mh.utils.MConstants;
 public class CommonSuccessActivity extends AppCompatActivity {
     private ImageView imgView_success_icon;
     private TextView tv_success_tip;
-
     private int entrance_flag = 0;//0X11:signUp  0X12:confirm  0X21:connected 0X30:add user
 
     @Override
@@ -40,7 +39,8 @@ public class CommonSuccessActivity extends AppCompatActivity {
                             intent.setClass(CommonSuccessActivity.this, MainActivity.class);
                             break;
                         case MConstants.SIGN_UP_SUCCESS:
-                            intent.setClass(CommonSuccessActivity.this, MainActivity.class);
+                            intent.putExtra(MConstants.ENTRANCE_FLAG, MConstants.ADD_USER_REQUEST);
+                            intent.setClass(CommonSuccessActivity.this, UserInfoActivity.class);
                             break;
                         case MConstants.CONFIRM_SUCCESS:
                             intent.setClass(CommonSuccessActivity.this, LoginAndSignUpActivity.class);

@@ -11,15 +11,14 @@
     android:paddingLeft="20dp"
     android:paddingTop="10dp">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="left|center_vertical"
             android:orientation="vertical">
 
             <TextView
@@ -41,8 +40,7 @@
             android:id="@+id/tglBtn_clock_set"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
             android:background="@android:color/transparent"
             android:button="@drawable/bg_toggle_button"
             android:checked="false"
@@ -50,7 +48,7 @@
             android:textOff=""
             android:textOn="" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

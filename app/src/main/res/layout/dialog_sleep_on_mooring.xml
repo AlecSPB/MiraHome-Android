@@ -18,11 +18,11 @@
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_34pt" />
 
-        <RelativeLayout
-            android:layout_marginTop="20dp"
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -59,6 +59,6 @@
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_dimen_28pt" />
             </LinearLayout>
-        </RelativeLayout>
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>

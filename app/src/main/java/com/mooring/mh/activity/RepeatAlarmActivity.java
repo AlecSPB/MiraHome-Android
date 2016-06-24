@@ -69,9 +69,6 @@ public class RepeatAlarmActivity extends BaseActivity implements
     protected void initView() {
 
         imgView_act_right = (ImageView) findViewById(R.id.imgView_act_right);
-        imgView_act_right.setVisibility(View.VISIBLE);
-        imgView_act_right.setImageResource(R.drawable.bg_repeat_alarm);
-        imgView_act_right.setOnClickListener(this);
 
         layout_mon = findViewById(R.id.layout_mon);
         layout_tue = findViewById(R.id.layout_tue);
@@ -98,7 +95,6 @@ public class RepeatAlarmActivity extends BaseActivity implements
         tglBtn_sun = (ToggleButton) findViewById(R.id.tglBtn_sun);
 
         tv_confirm = (TextView) findViewById(R.id.tv_confirm);
-        tv_confirm.setOnClickListener(this);
 
         tglBtn_mon.setOnCheckedChangeListener(this);
         tglBtn_tue.setOnCheckedChangeListener(this);
@@ -108,10 +104,13 @@ public class RepeatAlarmActivity extends BaseActivity implements
         tglBtn_sat.setOnCheckedChangeListener(this);
         tglBtn_sun.setOnCheckedChangeListener(this);
 
+        tv_confirm.setOnClickListener(this);
+        imgView_act_right.setVisibility(View.VISIBLE);
+        imgView_act_right.setImageResource(R.drawable.bg_repeat_alarm);
+        imgView_act_right.setOnClickListener(this);
 
         initData();
     }
-
 
     private void initData() {
         tglBtn_mon.setChecked(!repeat.get(0).equals("0"));

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
@@ -12,16 +12,15 @@
             android:id="@+id/imgView_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="left|center_vertical"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/bg_left_arrow" />
+            android:src="@drawable/btn_left_unavailable" />
 
         <TextView
             android:id="@+id/tv_middle_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center"
             android:text="2015 11 11"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_dimen_28pt" />
@@ -30,16 +29,15 @@
             android:id="@+id/imgView_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/bg_right_arrow" />
+            android:src="@drawable/btn_right_unavailable" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorLightGrey" />
+        android:background="@color/colorWhite50" />
 
 </LinearLayout>

@@ -1,48 +1,45 @@
 package com.mooring.mh.activity;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.text.TextUtils;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.DeviceStatus;
+import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
-import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleProgress.DryingCircleView;
 import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.CustomToggle;
 
-import org.xutils.common.util.LogUtil;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
-/**
- * 烘干Activity
- * <p/>
- * Created by Will on 16/4/12.
- */
-public class DryingControlActivity extends BaseActivity implements DryingCircleView.LoadingListener,
-        CustomToggle.OnCheckedChangeListener {
+
+public class DryingControlActivity extends BaseActivity implements CustomToggle.OnCheckedChangeListener {
 
     private DryingCircleView drying;
-    private TextView tv_drying_times;
+    private TextView tv_drying_totalTimes;
     private CustomToggle toggle_drying;
 
-    private long time = 0;//记录上次
-    private long times = 30 * 60 * 1000;//默认烘干时间30分钟
+    private Timer timer;
+    private TimerTask timerTask;
+    private long totalTimes = 30 * 60 * 1000;//默认烘干时间30分钟
+    private int clockTime = 0;//倒计时使用
     private String deviceId;//设备ID
     private MSDKListener msdkListener;//自定义SDK回调监听
-    private boolean isOperate = false;//是否是手动操作
-    private boolean isDestroy = false;//是否关闭当前Activity
-    private boolean isFingerCancel = false;//是否手动取消当前烘干
+    private boolean isOperate = false;
 
     @Override
     protected int getLayoutId() {
@@ -59,20 +56,18 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
 
         deviceId = sp.getString(MConstants.DEVICE_ID, "");
         msdkListener = new MSDKListener();
-
     }
 
     @Override
     protected void initView() {
         drying = (DryingCircleView) findViewById(R.id.drying);
-        tv_drying_times = (TextView) findViewById(R.id.tv_drying_times);
         toggle_drying = (CustomToggle) findViewById(R.id.toggle_drying);
+        tv_drying_totalTimes = (TextView) findViewById(R.id.tv_drying_times);
 
-        drying.setOnLoadingListener(this);
-        toggle_drying.setChecked(false);//初始化关闭
         toggle_drying.setOnCheckedChange(this);
+        toggle_drying.setChecked(false);//初始化关闭
 
-        //上一次烘干没结束的情况下,继续烘干
+        // 上一次烘干没结束的情况下,继续烘干
         RestoreDryingTimes();
     }
 
@@ -80,56 +75,69 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
      * 恢复当前烘干时间
      */
     private void RestoreDryingTimes() {
-        if (!sp.getBoolean(MConstants.DRYING_OPEN, false)) {
+        if (!sp.getBoolean(MConstants.ATTR_DRYING_SWITCH, false)) {
+            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
             return;
         }
-        String startTime = sp.getString(MConstants.DRYING_START_TIME, "");
-        if (!TextUtils.isEmpty(startTime)) {
-            int drying_times = Integer.parseInt(sp.getString(MConstants.DRYING_TIMES, ""));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            try {
-                Date start_date = sdf.parse(startTime);
-                long curr = System.currentTimeMillis();
-                time = curr - start_date.getTime();
-                if (time < drying_times) {
-                    toggle_drying.setChecked(true);
-                    drying.setAnimDuration(drying_times - time - 500);
-                    drying.startAnim((float) time / drying_times);
-                } else {//时间超过设定时间了
-                    time = 0;
-                    editor.putBoolean(MConstants.DRYING_OPEN, false);
-                    editor.apply();
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        long startTime = sp.getLong(MConstants.ATTR_DRYING_ON_TIME, 0);
+        long dryingTimes = sp.getLong(MConstants.ATTR_DRYING_TIME, 0);
+        if (startTime != 0 && dryingTimes != 0) {
+            openDryingWithParam(startTime, dryingTimes);
         }
     }
 
-    @Override
-    protected void OnClick(View v) {
+    /**
+     * @param startTime
+     * @param dryingTime
+     */
+    private void openDryingWithParam(long startTime, long dryingTime) {
+        long curr = System.currentTimeMillis();
+        if (curr - startTime >= dryingTime) {
+            editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, false).apply();
+            return;
+        }
+        toggle_drying.setChecked(true);
+        drying.setAnimDuration(dryingTime - (curr - startTime));
+        drying.startAnim((float) (curr - startTime) / dryingTime);
+        clockTime = (int) (curr - startTime) / 1000;
+        initTimer();
+        timer.schedule(timerTask, 0, 1000);
     }
 
     /**
-     * 设置烘干时间
-     *
-     * @param times
+     * 开启烘干
      */
+    private void openDrying() {
+        MachtalkSDK.getInstance().operateDevice(deviceId,
+                new String[]{MConstants.ATTR_DRYING_SWITCH, MConstants.ATTR_DRYING_TIME},
+                new String[]{"1", String.valueOf(totalTimes / 1000)});
+        toggle_drying.setChecked(true);
+        initTimer();
+        timer.schedule(timerTask, 0, 1000);
+        drying.setAnimDuration(totalTimes);
+        drying.startAnim();
+        clockTime = 0;
 
-    public void setTimes(long times) {
-        this.times = times;
+        editor.putLong(MConstants.ATTR_DRYING_ON_TIME, System.currentTimeMillis());
+        editor.putLong(MConstants.ATTR_DRYING_TIME, totalTimes);
+        editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, true);
+        editor.apply();
     }
 
     /**
-     * 格式化时间显示
-     *
-     * @param times
-     * @return
+     * 关闭烘干
      */
-    private String calculateTimes(long times) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
-        return sdf.format(times + 500);
+    private void closeDrying() {
+        //取消烘干
+        MachtalkSDK.getInstance().operateDevice(deviceId,
+                new String[]{MConstants.ATTR_DRYING_SWITCH},
+                new String[]{"0"});
+        editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, false).apply();
+        drying.resetView();
+        clearTimer();
+        tv_drying_totalTimes.setText(getResources().getString(R.string.blank_time));
+        clockTime = 0;
+        toggle_drying.setChecked(false);
     }
 
     /**
@@ -144,17 +152,7 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //取消烘干
-                MachtalkSDK.getInstance().operateDevice(deviceId,
-                        new String[]{MConstants.ATTR_DRYING_SWITCH},
-                        new String[]{"0"});
-                editor.putBoolean(MConstants.DRYING_OPEN, false);
-                editor.apply();
-
-                isFingerCancel = true;
-                drying.resetView();
-                time = 0;
-                toggle_drying.setChecked(false);
-                tv_drying_times.setText(getString(R.string.blank_time));
+                closeDrying();
                 isOperate = true;
                 dialog.dismiss();
             }
@@ -162,9 +160,8 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
         builder.setNegativeButton(true, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                isFingerCancel = false;
                 isOperate = false;
+                dialog.dismiss();
             }
         });
 
@@ -188,42 +185,77 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
         builder.create().show();
     }
 
-    @Override
-    public void onCheckedChanged(View v, boolean isChecked) {
-        isFingerCancel = false;
-        if (isChecked) {
-            MachtalkSDK.getInstance().operateDevice(deviceId,
-                    new String[]{MConstants.ATTR_DRYING_SWITCH, MConstants.ATTR_DRYING_TIME},
-                    new String[]{"1", String.valueOf(times / 1000)});
+    /**
+     * 发送消息
+     */
+    @SuppressLint("HandlerLeak")
+    Handler han = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            tv_drying_totalTimes.setText(calculateTimes(totalTimes - clockTime * 1000));
+            clockTime++;
+            if (clockTime * 1000 > totalTimes) {
+                //加载完毕执行重置
+                drying.resetView();
+                clearTimer();
+                clockTime = 0;
+                toggle_drying.setChecked(false);
+                showCompleteDialog();
+            }
+        }
+    };
 
-            toggle_drying.setChecked(true);
-            drying.setAnimDuration(times - 500);
-            drying.startAnim();
-            time = 0;
+    /**
+     * 格式化时间显示
+     *
+     * @param totalTimes
+     * @return
+     */
+    private String calculateTimes(long totalTimes) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+        return sdf.format(totalTimes);
+    }
 
-            editor.putString(MConstants.DRYING_START_TIME, MUtils.getCurrTime("yyyy-MM-dd HH:mm:ss"));
-            editor.putString(MConstants.DRYING_TIMES, String.valueOf(times));
-            editor.putBoolean(MConstants.DRYING_OPEN, true);
-            editor.apply();
-            isOperate = true;
-        } else {
-            showDialog(); //弹出提示
+    /**
+     * 初始化计时
+     */
+    private void initTimer() {
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                han.sendEmptyMessage(0x01);
+            }
+        };
+    }
+
+    /**
+     * 清除计时
+     */
+    private void clearTimer() {
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
     }
 
     @Override
-    public void onLoading(long value) {
-        if (!isDestroy && value == -1 && !isFingerCancel) {
-            //加载完毕执行重置
-            drying.resetView();
-            toggle_drying.setChecked(false);
-            time = 0;
-            tv_drying_times.setText(getString(R.string.blank_time));
-            showCompleteDialog();
-            return;
-        }
-        if (time + value <= times) {
-            tv_drying_times.setText(calculateTimes(times - time - value));
+    protected void OnClick(View v) {
+
+    }
+
+    @Override
+    public void onCheckedChanged(View v, boolean isChecked) {
+        if (isChecked) {
+            openDrying();
+            isOperate = true;
+        } else {
+            showDialog(); //弹出提示
         }
     }
 
@@ -235,20 +267,56 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
-            if (!isOperate) {
-                return;
-            }
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
-                //操作成功
-                LogUtil.e("操作成功+++++++" + rdm.isRespMsg());
-            } else {
-                MUtils.showToast(context, getResources().getString(R.string.operate_failed));
+                List<DvidStatus> dsList = rdm.getDvidStatusList();
+                if (dsList == null) {
+                    return;
+                }
+                for (DvidStatus ds : dsList) {
+                    if (MConstants.ATTR_DRYING_SWITCH.equals(ds.getDvid())) {
+                        if ("1".equals(ds.getValue())) {
+                            openDrying();
+                        } else {
+                            closeDrying();
+                        }
+                    }
+                }
             }
-            isOperate = false;
+        }
+
+        @Override
+        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
+            super.onQueryDeviceStatus(result, deviceStatus);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (success == Result.SUCCESS && deviceStatus != null && deviceId.equals(deviceStatus.getDeviceId())) {
+                List<DvidStatus> dsList = deviceStatus.getDeviceDvidStatuslist();
+                if (dsList == null) {
+                    return;
+                }
+                String drySwitch = "";
+                long startTime = 0, dryTime = 0;
+                for (DvidStatus ds : dsList) {
+                    if (MConstants.ATTR_DRYING_SWITCH.equals(ds.getDvid())) {
+                        drySwitch = ds.getValue();
+                    }
+                    if (MConstants.ATTR_DRYING_ON_TIME.equals(ds.getDvid())) {
+                        startTime = Long.parseLong(ds.getValue());
+                    }
+                    if (MConstants.ATTR_DRYING_TIME.equals(ds.getDvid())) {
+                        dryTime = Long.parseLong(ds.getValue());
+                    }
+                }
+                if ("1".equals(drySwitch)) {
+                    openDryingWithParam(startTime, dryTime);
+                }
+            }
         }
     }
 
@@ -267,9 +335,9 @@ public class DryingControlActivity extends BaseActivity implements DryingCircleV
 
     @Override
     protected void onDestroy() {
-        isDestroy = true;
         drying.resetView();
-        time = 0;
+        clockTime = 0;
+        clearTimer();
         super.onDestroy();
     }
 }

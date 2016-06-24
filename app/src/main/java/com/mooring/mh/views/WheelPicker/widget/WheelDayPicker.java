@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 基于WheelPicker的月份选择控件
@@ -23,8 +24,9 @@ public class WheelDayPicker extends WheelCurvedPicker {
 
     private List<String> days = new ArrayList<>();
 
-    private int day = C.get(Calendar.DAY_OF_MONTH), month = C.get(Calendar.MONTH) + 1,
-            year = C.get(Calendar.YEAR);
+    private int day = C.get(Calendar.DAY_OF_MONTH);
+    private int month = C.get(Calendar.MONTH) + 1;
+    private int year = C.get(Calendar.YEAR);
     private int maxDay;
 
     public WheelDayPicker(Context context) {
@@ -51,7 +53,8 @@ public class WheelDayPicker extends WheelCurvedPicker {
             days = DAYS.get(maxDay);
         } else {
             days = new ArrayList<>();
-            for (int i = 1; i <= maxDay; i++) days.add(String.valueOf(i));
+            for (int i = 1; i <= maxDay; i++)
+                days.add(String.format(Locale.getDefault(), "%02d", i));
             DAYS.put(maxDay, days);
         }
         this.days = days;

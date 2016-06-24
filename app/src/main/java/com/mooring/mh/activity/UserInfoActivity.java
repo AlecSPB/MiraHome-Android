@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,12 +29,13 @@ import org.xutils.common.Callback;
 import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
+import org.xutils.ex.HttpException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 /**
  * 用户信息查看和编辑页面
- * <p/>
+ * <p>
  * Created by Will on 16/4/15.
  */
 public class UserInfoActivity extends BaseActivity {
@@ -46,7 +49,8 @@ public class UserInfoActivity extends BaseActivity {
     private TextView tv_birthday;
     private TextView tv_height;
     private TextView tv_weight;
-    private int flag ;
+    private TextView tv_user_info_error;
+    private int flag;
     private int member_id;
     private int tempSex = 0, sex = 0;
     private DbManager dbManager;
@@ -75,7 +79,7 @@ public class UserInfoActivity extends BaseActivity {
     @Override
     protected void initActivity() {
         Intent it = getIntent();
-        flag = it.getIntExtra(MConstants.ENTRANCE_FLAG,-1);
+        flag = it.getIntExtra(MConstants.ENTRANCE_FLAG, -1);
         if (flag == MConstants.USER_INFO_REQUEST) {
             member_id = it.getIntExtra(MConstants.SP_KEY_MEMBER_ID, -1);
         }
@@ -100,6 +104,7 @@ public class UserInfoActivity extends BaseActivity {
         tv_birthday = (TextView) findViewById(R.id.tv_birthday);
         tv_height = (TextView) findViewById(R.id.tv_height);
         tv_weight = (TextView) findViewById(R.id.tv_weight);
+        tv_user_info_error = (TextView) findViewById(R.id.tv_user_info_error);
 
         imgView_act_right.setVisibility(View.VISIBLE);
         imgView_act_right.setOnClickListener(this);
@@ -110,6 +115,11 @@ public class UserInfoActivity extends BaseActivity {
         tv_birthday.setOnClickListener(this);
         tv_height.setOnClickListener(this);
         tv_weight.setOnClickListener(this);
+        edText_name.addTextChangedListener(EditTextChangeListener);
+        tv_sex.addTextChangedListener(EditTextChangeListener);
+        tv_birthday.addTextChangedListener(EditTextChangeListener);
+        tv_height.addTextChangedListener(EditTextChangeListener);
+        tv_weight.addTextChangedListener(EditTextChangeListener);
 
         if (flag == MConstants.USER_INFO_REQUEST) {
             tv_on_mooring.setVisibility(View.VISIBLE);
@@ -122,6 +132,32 @@ public class UserInfoActivity extends BaseActivity {
             tv_act_title.setText(getString(R.string.title_add_user));
         }
     }
+
+    /**
+     * 文本改变监听
+     */
+    private TextWatcher EditTextChangeListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (edText_name.getText().length() != 0 ||
+                    tv_sex.getText().length() != 0 ||
+                    tv_birthday.getText().length() != 0 ||
+                    tv_height.getText().length() != 0 ||
+                    tv_weight.getText().length() != 0) {
+                tv_user_info_error.setText("");
+            }
+        }
+    };
 
     @Override
     protected void OnClick(View v) {
@@ -163,7 +199,7 @@ public class UserInfoActivity extends BaseActivity {
      * 添加成员
      */
     private void addUser() {
-        RequestParams params = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.MEMBER);
+        RequestParams params = MUtils.getBaseParams(MConstants.MEMBER);
         params.addParameter("member_name", edText_name.getText().toString().trim());
         params.addParameter("gender", sex);
         params.addParameter("birth_date", tv_birthday.getText().toString().trim());
@@ -189,8 +225,10 @@ public class UserInfoActivity extends BaseActivity {
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
-                    Intent it = new Intent(context,CommonSuccessActivity.class);
-                    it.putExtra(MConstants.ENTRANCE_FLAG,MConstants.ADD_USER_SUCCESS);
+                    editor.putBoolean(MConstants.HAS_LOCAL_USER, true).apply();
+
+                    Intent it = new Intent(context, CommonSuccessActivity.class);
+                    it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.ADD_USER_SUCCESS);
                     startActivity(it);
                 } else {
                     MUtils.showToast(context, getString(R.string.error_add_failed));
@@ -199,7 +237,12 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                MUtils.showToast(context, getString(R.string.error_add_failed));
+                if (ex instanceof HttpException) { // 网络错误
+                    //提示网络原因导致错误
+                    MUtils.showToast(context, getString(R.string.network_exception));
+                } else { // 其他错误
+                    MUtils.showToast(context, getString(R.string.error_add_failed));
+                }
             }
 
             @Override
@@ -217,7 +260,7 @@ public class UserInfoActivity extends BaseActivity {
      * 编辑成员
      */
     private void editUser() {
-        RequestParams params = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.MANAGE_MEMBER);
+        RequestParams params = MUtils.getBaseParams(MConstants.MANAGE_MEMBER);
         params.addParameter("member_name", edText_name.getText().toString().trim());
         params.addParameter("gender", sex);
         params.addParameter("birth_date", tv_birthday.getText().toString().trim());
@@ -248,7 +291,12 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                MUtils.showToast(context, getString(R.string.error_edit_failed));
+                if (ex instanceof HttpException) { // 网络错误
+                    //提示网络原因导致错误
+                    MUtils.showToast(context, getString(R.string.network_exception));
+                } else { // 其他错误
+                    MUtils.showToast(context, getString(R.string.error_edit_failed));
+                }
             }
 
             @Override
@@ -263,15 +311,22 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     /**
-     * 删除成员
+     * 删除成员,自身不可删除
      */
     private void deleteUser() {
-        RequestParams params = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.MANAGE_MEMBER);
+        RequestParams params = MUtils.getBaseParams(MConstants.MANAGE_MEMBER);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null && result.optInt("code") == 0) {
                     MUtils.showToast(context, getString(R.string.delete_user_success));
+                    try {
+                        if (dbManager.findAll(User.class).size() <= 0) {
+                            editor.putBoolean(MConstants.HAS_LOCAL_USER, false).apply();
+                        }
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
                     context.finish();
                 } else {
                     MUtils.showToast(context, getString(R.string.error_delete_failed));
@@ -280,7 +335,12 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                MUtils.showToast(context, getString(R.string.error_delete_failed));
+                if (ex instanceof HttpException) { // 网络错误
+                    //提示网络原因导致错误
+                    MUtils.showToast(context, getString(R.string.network_exception));
+                } else { // 其他错误
+                    MUtils.showToast(context, getString(R.string.error_delete_failed));
+                }
             }
 
             @Override
@@ -648,7 +708,7 @@ public class UserInfoActivity extends BaseActivity {
      * 上传头像,并且刷新现有头像
      */
     private void modifyHeadImg() {
-        RequestParams param = MUtils.getBaseParams(MConstants.SERVICE_URL + MConstants.UPLOAD);
+        RequestParams param = MUtils.getBaseParams(MConstants.UPLOAD);
         param.addBodyParameter("Filedata", MUtils.tempFile, "image/jpeg");
         x.http().post(param, new Callback.CommonCallback<JSONObject>() {
             @Override

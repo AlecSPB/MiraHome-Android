@@ -1,13 +1,15 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
+import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.DeviceStatus;
 import com.machtalk.sdk.domain.DvidStatus;
@@ -25,23 +27,22 @@ import java.util.List;
 
 /**
  * 参数Fragment,实时更新
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class ParameterFragment extends BaseFragment implements View.OnClickListener, SwitchUserObserver {
 
     private View layout_parameter;//有设备页
-    private View layout_no_device;//无设备页
-    private ImageView imgView_device_connect;
+    private View layout_no_device;//无设备去连接
 
-    private View layout_heart_rate;
-    private View layout_breathing_rate;
-    private View layout_body_movement;
-    private View layout_humidity;
-    private View layout_temperature;
-    private View layout_bed_temperature;
-    private View layout_light;
-    private View layout_noise;
+    private View layout_heart_rate;//心率
+    private View layout_breathing_rate;//呼吸频率
+    private View layout_body_movement;//体动
+    private View layout_humidity;//湿度
+    private View layout_temperature;//温度
+    private View layout_bed_temperature;//床温
+    private View layout_light;//光照值
+    private View layout_noise;//噪声值
 
     private TextView tv_heart_rate;
     private TextView tv_breathing_rate;
@@ -53,10 +54,9 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     private TextView tv_noise;
     private MSDKListener msdkListener;
 
-    private int currLocation;
-    private String deviceId;
-    private AlphaAnimation alphaAnimation;
-    private boolean isRefresh = false;
+    private int currLocation;//当前用户
+    private AlphaAnimation alphaAnimation;//显示动画
+    private boolean isRefresh = false;//是否自动刷新
 
     @Override
     protected int getLayoutId() {
@@ -67,18 +67,13 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     protected void initFragment() {
         msdkListener = new MSDKListener();
 
-        deviceId = sp.getString(MConstants.DEVICE_ID, "");
         currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
-
     }
 
     @Override
     protected void initView() {
 
         layout_parameter = rootView.findViewById(R.id.layout_parameter);
-        layout_no_device = rootView.findViewById(R.id.layout_no_device);
-        imgView_device_connect = (ImageView) rootView.findViewById(R.id.imgView_device_connect);
-
         layout_heart_rate = rootView.findViewById(R.id.layout_heart_rate);
         layout_breathing_rate = rootView.findViewById(R.id.layout_breathing_rate);
         layout_body_movement = rootView.findViewById(R.id.layout_body_movement);
@@ -87,16 +82,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         layout_bed_temperature = rootView.findViewById(R.id.layout_bed_temperature);
         layout_light = rootView.findViewById(R.id.layout_light);
         layout_noise = rootView.findViewById(R.id.layout_noise);
-
-        layout_heart_rate.setOnClickListener(this);
-        layout_breathing_rate.setOnClickListener(this);
-        layout_body_movement.setOnClickListener(this);
-        layout_humidity.setOnClickListener(this);
-        layout_temperature.setOnClickListener(this);
-        layout_bed_temperature.setOnClickListener(this);
-        layout_light.setOnClickListener(this);
-        layout_noise.setOnClickListener(this);
-        imgView_device_connect.setOnClickListener(this);
 
         tv_heart_rate = (TextView) rootView.findViewById(R.id.tv_heart_rate);
         tv_breathing_rate = (TextView) rootView.findViewById(R.id.tv_breathing_rate);
@@ -107,12 +92,56 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         tv_light = (TextView) rootView.findViewById(R.id.tv_light);
         tv_noise = (TextView) rootView.findViewById(R.id.tv_noise);
 
+        layout_heart_rate.setOnClickListener(this);
+        layout_breathing_rate.setOnClickListener(this);
+        layout_body_movement.setOnClickListener(this);
+        layout_humidity.setOnClickListener(this);
+        layout_temperature.setOnClickListener(this);
+        layout_bed_temperature.setOnClickListener(this);
+        layout_light.setOnClickListener(this);
+        layout_noise.setOnClickListener(this);
+
         alphaAnimation = new AlphaAnimation(0.05f, 1.0f);
         alphaAnimation.setDuration(1500);
         alphaAnimation.setRepeatCount(-1);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
-
         startAnimation();
+
+        //执行一次查询
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    }
+
+    /**
+     * 显示无设备去连接界面
+     */
+    private void showNoDeviceView() {
+        layout_parameter.setVisibility(View.GONE);
+        if (layout_no_device == null) {
+            ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
+            layout_no_device = viewStub.inflate();
+        } else {
+            layout_no_device.setVisibility(View.VISIBLE);
+        }
+        View view = rootView.findViewById(R.id.no_device_to_conn);
+        View imgView_device_connect = view.findViewById(R.id.imgView_device_connect);
+        imgView_device_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //连接设备
+                startActivity(new Intent(context, SetWifiActivity.class));
+            }
+        });
+    }
+
+    /**
+     * 隐藏无设备去连接界面
+     */
+    private void hideNoDeviceView() {
+        layout_parameter.setVisibility(View.VISIBLE);
+        stopAnimation();
+        if (layout_no_device != null) {
+            layout_no_device.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -148,40 +177,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-            case R.id.layout_heart_rate:
-                jumpActivity(0, "88", "Heart rate");
-                break;
-            case R.id.layout_breathing_rate:
-                jumpActivity(1, "88", "Breathing rate");
-                break;
-            case R.id.layout_body_movement:
-                jumpActivity(2, "88", "Body movement");
-                break;
-            case R.id.layout_humidity:
-                jumpActivity(3, "88", "Humidity");
-                break;
-            case R.id.layout_temperature:
-                jumpActivity(4, "88", "Temperature");
-                break;
-            case R.id.layout_bed_temperature:
-                jumpActivity(5, "88", "Bed temperature");
-                break;
-            case R.id.layout_light:
-                jumpActivity(6, "88", "Light");
-                break;
-            case R.id.layout_noise:
-                jumpActivity(7, "88", "Noise");
-                break;
-            case R.id.imgView_device_connect:
-                startActivity(new Intent(context, SetWifiActivity.class));
-                break;
-        }
-    }
-
     /**
      * 跳转到详情页
      *
@@ -189,56 +184,13 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
      * @param param
      * @param title
      */
-    private void jumpActivity(int id, String param, String title) {
+    private void jumpActivity(int id, TextView param, String title) {
         Intent it = new Intent();
         it.setClass(context, ParameterDetailActivity.class);
         it.putExtra("number", id);
-        it.putExtra("param", param);
+        it.putExtra("param", param.getText().toString());
         it.putExtra("title", title);
         context.startActivity(it);
-    }
-
-    /**
-     * 自定义回调监听
-     */
-    class MSDKListener extends MachtalkSDKListener {
-
-        @Override
-        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
-            super.onQueryDeviceStatus(result, deviceStatus);
-            int success = Result.FAILED;
-            if (result != null) {
-                success = result.getSuccess();
-            }
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
-            if (success == Result.SUCCESS && deviceStatus != null
-                    && deviceId.equals(deviceStatus.getDeviceId())) {
-                parseDvidStatusList(deviceStatus.getDeviceDvidStatuslist());
-                layout_parameter.setVisibility(View.VISIBLE);
-                layout_no_device.setVisibility(View.GONE);
-                isRefresh = true;
-            } else {
-                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
-                layout_parameter.setVisibility(View.GONE);
-                layout_no_device.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
-            super.onReceiveDeviceMessage(result, rdm);
-            if (!isRefresh) {
-                return;
-            }
-            int success = Result.FAILED;
-            if (result != null) {
-                success = result.getSuccess();
-            }
-            LogUtil.e("onReceiveDeviceMessage  " + result.getSuccess());
-            if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
-                parseDvidStatusList(rdm.getDvidStatusList());
-            }
-        }
     }
 
     /**
@@ -250,9 +202,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         if (list == null) {
             return;
         }
-
-        stopAnimation();
-
+        stopAnimation();//停止动画加载
         for (int i = 0; i < list.size(); i++) {
             DvidStatus ds = list.get(i);
             if (MConstants.ATTR_ENVIR_HUMIDITY.equals(ds.getDvid())) {//环境湿度
@@ -298,6 +248,91 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
+    /**
+     * 自定义回调监听
+     */
+    class MSDKListener extends MachtalkSDKListener {
+
+        @Override
+        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
+            super.onQueryDeviceStatus(result, deviceStatus);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
+            if (success == Result.SUCCESS && deviceStatus != null
+                    && deviceId.equals(deviceStatus.getDeviceId())) {
+                hideNoDeviceView();
+                parseDvidStatusList(deviceStatus.getDeviceDvidStatuslist());
+                isRefresh = true;
+            } else {
+                showNoDeviceView();
+                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
+            }
+        }
+
+        @Override
+        public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
+            super.onReceiveDeviceMessage(result, rdm);
+            if (!isRefresh) {
+                return;
+            }
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            LogUtil.e("onReceiveDeviceMessage  " + result.getSuccess());
+            if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
+                parseDvidStatusList(rdm.getDvidStatusList());
+            }
+        }
+
+        @Override
+        public void onDeviceOnOffline(String dId, MachtalkSDKConstant.DeviceOnOffline dool) {
+            super.onDeviceOnOffline(deviceId, dool);
+            if (!TextUtils.isEmpty(dId) && deviceId.equals(dId)) {
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {//局域网上线
+
+                }
+                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {//局域网下线
+
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.layout_heart_rate:
+                jumpActivity(0, tv_heart_rate, getString(R.string.tv_heart_rate));
+                break;
+            case R.id.layout_breathing_rate:
+                jumpActivity(1, tv_breathing_rate, getString(R.string.tv_breathing_rate));
+                break;
+            case R.id.layout_body_movement:
+                jumpActivity(2, tv_body_movement, getString(R.string.tv_body_movement));
+                break;
+            case R.id.layout_humidity:
+                jumpActivity(3, tv_humidity, getString(R.string.tv_humidity));
+                break;
+            case R.id.layout_temperature:
+                jumpActivity(4, tv_temperature, getString(R.string.tv_temperature));
+                break;
+            case R.id.layout_bed_temperature:
+                jumpActivity(5, tv_bed_temperature, getString(R.string.tv_bed_temperature));
+                break;
+            case R.id.layout_light:
+                jumpActivity(6, tv_light, getString(R.string.tv_light));
+                break;
+            case R.id.layout_noise:
+                jumpActivity(7, tv_noise, getString(R.string.tv_noise));
+                break;
+        }
+    }
+
     @Override
     public void onSwitch(String userId, int location, String fTag) {
         if (fTag.equals(this.getTag())) {//当前fragment为展现
@@ -334,8 +369,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
-        //每次跳转回来执行一次请求,获取最新数据
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
     }
 
     @Override
@@ -347,9 +380,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (alphaAnimation != null) {
-            alphaAnimation.cancel();
-            alphaAnimation = null;
-        }
+        stopAnimation();
     }
 }

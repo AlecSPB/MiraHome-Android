@@ -14,10 +14,7 @@ import com.mooring.mh.views.AlarmDaySelectView;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelTimePicker;
 
-import org.xutils.common.util.LogUtil;
-
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 /**
  * 闹钟编辑和添加Activity
@@ -40,7 +37,6 @@ public class AlarmEditActivity extends BaseActivity {
     private boolean set;//闹钟开关
     private int position = -1;
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.activity_alarm_edit;
@@ -53,12 +49,7 @@ public class AlarmEditActivity extends BaseActivity {
 
     @Override
     protected void initActivity() {
-
-
-        LogUtil.e("______" + getCurrentTimeZone());
-
         Intent it = getIntent();
-
         flag = it.getStringExtra("flag");
         if ("edit".equals(flag)) {
             time = it.getStringExtra("time");
@@ -75,12 +66,10 @@ public class AlarmEditActivity extends BaseActivity {
             smart = true;
             set = true;
         }
-
     }
 
     @Override
     protected void initView() {
-
         imgView_act_right = (ImageView) findViewById(R.id.imgView_act_right);
         layout_repeat = findViewById(R.id.layout_repeat);
         asv_alarm_edit = (AlarmDaySelectView) findViewById(R.id.asv_alarm_edit);
@@ -101,11 +90,8 @@ public class AlarmEditActivity extends BaseActivity {
             }
         });
 
-
         initData();
-
     }
-
 
     private void initData() {
         time_picker.setTextColor(getResources().getColor(R.color.colorWhite50));
@@ -136,41 +122,6 @@ public class AlarmEditActivity extends BaseActivity {
         asv_alarm_edit.setTvData(repeat);
         tglBtn_alarm_smart.setChecked(smart);
 
-    }
-
-    public static String getCurrentTimeZone() {
-        TimeZone tz = TimeZone.getDefault();
-        LogUtil.e("______" + tz.getRawOffset());
-        return createGmtOffsetString(true, true, tz.getRawOffset());
-    }
-
-    public static String createGmtOffsetString(boolean includeGmt,
-                                               boolean includeMinuteSeparator, int offsetMillis) {
-        int offsetMinutes = offsetMillis / 60000;
-        char sign = '+';
-        if (offsetMinutes < 0) {
-            sign = '-';
-            offsetMinutes = -offsetMinutes;
-        }
-        StringBuilder builder = new StringBuilder(9);
-        if (includeGmt) {
-            builder.append("GMT");
-        }
-        builder.append(sign);
-        appendNumber(builder, 2, offsetMinutes / 60);
-        if (includeMinuteSeparator) {
-            builder.append(':');
-        }
-        appendNumber(builder, 2, offsetMinutes % 60);
-        return builder.toString();
-    }
-
-    private static void appendNumber(StringBuilder builder, int count, int value) {
-        String string = Integer.toString(value);
-        for (int i = 0; i < count - string.length(); i++) {
-            builder.append('0');
-        }
-        builder.append(string);
     }
 
     @Override
@@ -205,7 +156,8 @@ public class AlarmEditActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MConstants.REPEAT_ALARM_REQUEST && resultCode == MConstants.REPEAT_ALARM_RESULT) {
+        if (requestCode == MConstants.REPEAT_ALARM_REQUEST &&
+                resultCode == MConstants.REPEAT_ALARM_RESULT) {
             repeat = data.getStringArrayListExtra("repeat");
             asv_alarm_edit.setTvData(repeat);
         }

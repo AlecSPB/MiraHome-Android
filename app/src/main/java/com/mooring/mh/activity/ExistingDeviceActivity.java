@@ -36,7 +36,7 @@ import java.util.List;
 public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerItemClickListener {
     private TextView tv_act_skip;
     private RecyclerView device_recyclerView;
-    private ImageView imgView_retry_connect;
+    private ImageView imgView_retry_add_device;
     private LinearLayoutManager layoutManager;
     private DeviceListAdapter adapter;
     private List<Device> deviceList;
@@ -69,6 +69,7 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     protected void initActivity() {
 
         msdkListener = new MSDKListener();
+        self_control_back = true;//获取自主控制权
     }
 
     @Override
@@ -81,11 +82,11 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         layout_one_device = findViewById(R.id.layout_one_device);
         imgView_one_device = (ImageView) findViewById(R.id.imgView_one_device);
         tv_device_name = (TextView) findViewById(R.id.tv_device_name);
-        imgView_retry_connect = (ImageView) findViewById(R.id.imgView_retry_connect);
-
+        imgView_retry_add_device = (ImageView) findViewById(R.id.imgView_retry_add_device);
+//
         tv_act_skip.setVisibility(View.VISIBLE);
         tv_act_skip.setOnClickListener(this);
-        imgView_retry_connect.setOnClickListener(this);
+        imgView_retry_add_device.setOnClickListener(this);
         layout_one_device.setOnClickListener(this);
 
         MachtalkSDK.getInstance().queryDeviceList();
@@ -193,14 +194,16 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
             case R.id.tv_act_skip:
                 context.finish();
                 break;
-            case R.id.imgView_retry_connect:
+            case R.id.imgView_retry_add_device:
                 startActivity(new Intent(context, SetWifiActivity.class));
                 context.finish();
-
-//                MachtalkSDK.getInstance().startSearchLanDevices(3000, true);
                 break;
             case R.id.layout_one_device:
                 decideDevice(singleDevice);
+                break;
+            case R.id.imgView_act_back:
+                this.setResult(MConstants.EXISTING_RESULT);
+                this.finish();
                 break;
         }
     }
@@ -235,7 +238,6 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                     if (!deviceList.get(0).isOnline()) {
                         imgView_one_device.setAlpha(0.5f);
                     }
-                    LogUtil.e("deviceList   " + deviceList.get(0).getId() + "   " + sp.getString(MConstants.DEVICE_ID, ""));
                     if (deviceList.get(0).getId().equals(sp.getString(MConstants.DEVICE_ID, ""))) {
                         imgView_check_box.setVisibility(View.VISIBLE);
                     }
@@ -317,7 +319,6 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
 
-//        MachtalkSDK.getInstance().stopSearchLanDevices();
     }
 
     @Override

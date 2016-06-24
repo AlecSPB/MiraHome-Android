@@ -1,7 +1,9 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +16,7 @@ import com.mooring.mh.utils.MUtils;
 
 /**
  * 注册
- * <p/>
+ * <p>
  * Created by Will on 16/3/30.
  */
 public class SignUpFragment extends BaseFragment implements View.OnClickListener {
@@ -29,8 +31,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private ImageView imgView_QQ;
     private ImageView imgView_facebook;
 
-    private String phone;
-    private String psw;
+    private String userName;
+    private String userPwd;
 
     @Override
     protected int getLayoutId() {
@@ -45,7 +47,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     protected void initView() {
 
         edit_phone = (EditText) rootView.findViewById(R.id.edit_phone);
-        edit_psw = (EditText) rootView.findViewById(R.id.edit_phone);
+        edit_psw = (EditText) rootView.findViewById(R.id.edit_psw);
         tv_sign_btn = (TextView) rootView.findViewById(R.id.tv_sign_btn);
         tv_sign_error = (TextView) rootView.findViewById(R.id.tv_sign_error);
 
@@ -59,8 +61,32 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         imgView_weChart.setOnClickListener(this);
         imgView_QQ.setOnClickListener(this);
         imgView_facebook.setOnClickListener(this);
+        edit_phone.addTextChangedListener(EditTextChangeListener);
+        edit_psw.addTextChangedListener(EditTextChangeListener);
 
     }
+
+    /**
+     * 文本改变监听
+     */
+    private TextWatcher EditTextChangeListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (edit_phone.getText().length() != 0 || edit_psw.getText().length() != 0) {
+                tv_sign_error.setText("");
+            }
+        }
+    };
 
     /**
      * 注册
@@ -69,9 +95,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         Intent it = new Intent();
         it.setClass(getActivity(), VerifyPhoneActivity.class);
         it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.SIGN_UP_SUCCESS);
-        it.putExtra(MConstants.SP_KEY_USERNAME, phone);
-        it.putExtra(MConstants.SP_KEY_PASSWORD, psw);
-        getActivity().startActivity(it);
+        it.putExtra(MConstants.SP_KEY_USERNAME, userName);
+        it.putExtra(MConstants.SP_KEY_PASSWORD, userPwd);
+        context.startActivity(it);
     }
 
     /**
@@ -80,32 +106,33 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
      * @return
      */
     private boolean checkSignUp() {
-        if ("".equals(phone)) {
-            setError(getResources().getString(R.string.error_username_empty));
+        if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(userPwd)) {
+            setError(getResources().getString(R.string.error_account_psw_empty));
             return false;
         }
-        if ("".equals(psw)) {
-            setError(getResources().getString(R.string.error_psw_empty));
-            return false;
-        }
-        if (TextUtils.isDigitsOnly(phone)) {
-            if (!MUtils.isMobileNO(phone)) {
-                setError(getResources().getString(R.string.error_phone_format));
+        if (TextUtils.isDigitsOnly(userName)) {
+            if (!MUtils.isMobileNO(userName)) {
+                setError(getResources().getString(R.string.error_account_format));
                 return false;
             }
         } else {
-            if (!MUtils.isEmail(phone)) {
-                setError(getResources().getString(R.string.error_email_format));
+            if (!MUtils.isEmail(userName)) {
+                setError(getResources().getString(R.string.error_account_format));
                 return false;
             }
         }
-        if (!MUtils.checkPsw(psw)) {
+        if (!MUtils.checkPsw(userPwd)) {
             setError(getResources().getString(R.string.error_psw_format));
             return false;
         }
         return true;
     }
 
+    /**
+     * 设置显示错误信息
+     *
+     * @param error
+     */
     private void setError(String error) {
         tv_sign_error.setVisibility(View.VISIBLE);
         tv_sign_error.setText(error);
@@ -122,8 +149,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_sign_btn:
-                phone = edit_phone.getText().toString().trim();
-                psw = edit_psw.getText().toString().trim();
+                userName = edit_phone.getText().toString().trim();
+                userPwd = edit_psw.getText().toString().trim();
                 if (checkSignUp()) {
                     signUp();
                 }
@@ -142,6 +169,4 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 break;
         }
     }
-
-
 }

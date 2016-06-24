@@ -11,17 +11,16 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:background="@color/colorPurple"
-        android:orientation="horizontal">
+        android:background="@color/colorPurple">
 
         <TextView
             android:id="@+id/select_title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
+            android:layout_gravity="left|center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
             android:text="@string/hint_weight"
@@ -32,11 +31,10 @@
             android:id="@+id/select_confirm"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
             android:scaleType="fitXY"
             android:src="@drawable/bg_dialog_confirm" />
-    </RelativeLayout>
+    </FrameLayout>
 
     <com.mooring.mh.views.WheelPicker.widget.WheelWeightSelectPicker
         android:id="@+id/wheel_data_weight"

@@ -8,6 +8,7 @@ import com.mooring.mh.views.WheelPicker.WheelCurvedPicker;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 基于WheelPicker的月份选择控件
@@ -19,12 +20,10 @@ public class WheelMonthPicker extends WheelCurvedPicker {
     private static final List<String> MONTHS = new ArrayList<>();
 
     static {
-        for (int i = 1; i <= 12; i++) MONTHS.add(String.valueOf(i));
+        for (int i = 1; i <= 12; i++) MONTHS.add(String.format(Locale.getDefault(), "%02d", i));
     }
 
     private List<String> months = MONTHS;
-
-    private int month;
 
     public WheelMonthPicker(Context context) {
         super(context);
@@ -49,7 +48,6 @@ public class WheelMonthPicker extends WheelCurvedPicker {
     public void setCurrentMonth(int month) {
         month = Math.max(month, 1);
         month = Math.min(month, 12);
-        this.month = month;
         setItemIndex(month - 1);
     }
 }

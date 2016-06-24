@@ -25,7 +25,7 @@ import com.mooring.mh.R;
 
 /**
  * 圆形头像
- * <p/>
+ * <p>
  * Created by Will on 16/3/30.
  */
 public class CircleImageView extends ImageView {
@@ -33,7 +33,7 @@ public class CircleImageView extends ImageView {
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
-    private static final int COLORDRAWABLE_DIMENSION = 2;
+    private static final int COLOR_DRAWABLE_DIMENSION = 2;
 
     private static final int DEFAULT_BORDER_WIDTH = 0;
     private static final int DEFAULT_BORDER_COLOR = Color.BLACK;
@@ -65,6 +65,7 @@ public class CircleImageView extends ImageView {
     private boolean mReady;
     private boolean mSetupPending;
     private boolean mBorderOverlay;
+    private boolean mDisableCircularTransformation;
 
     public CircleImageView(Context context) {
         super(context);
@@ -122,16 +123,21 @@ public class CircleImageView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (mDisableCircularTransformation) {
+            super.onDraw(canvas);
+            return;
+        }
+
         if (mBitmap == null) {
             return;
         }
 
         if (mFillColor != Color.TRANSPARENT) {
-            canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, mDrawableRadius, mFillPaint);
+            canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mFillPaint);
         }
-        canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, mDrawableRadius, mBitmapPaint);
-        if (mBorderWidth != 0) {
-            canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, mBorderRadius, mBorderPaint);
+        canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mBitmapPaint);
+        if (mBorderWidth > 0) {
+            canvas.drawCircle(mBorderRect.centerX(), mBorderRect.centerY(), mBorderRadius, mBorderPaint);
         }
     }
 
@@ -155,14 +161,33 @@ public class CircleImageView extends ImageView {
         invalidate();
     }
 
+    /**
+     * @deprecated Use {@link #setBorderColor(int)} instead
+     */
+    @Deprecated
     public void setBorderColorResource(@ColorRes int borderColorRes) {
         setBorderColor(getContext().getResources().getColor(borderColorRes));
     }
 
+    /**
+     * Return the color drawn behind the circle-shaped drawable.
+     *
+     * @return The color drawn behind the drawable
+     * @deprecated Fill color support is going to be removed in the future
+     */
+    @Deprecated
     public int getFillColor() {
         return mFillColor;
     }
 
+    /**
+     * Set a color to be drawn behind the circle-shaped drawable. Note that
+     * this has no effect if the drawable is opaque or no drawable is set.
+     *
+     * @param fillColor The color to be drawn behind the drawable
+     * @deprecated Fill color support is going to be removed in the future
+     */
+    @Deprecated
     public void setFillColor(@ColorInt int fillColor) {
         if (fillColor == mFillColor) {
             return;
@@ -173,6 +198,15 @@ public class CircleImageView extends ImageView {
         invalidate();
     }
 
+    /**
+     * Set a color to be drawn behind the circle-shaped drawable. Note that
+     * this has no effect if the drawable is opaque or no drawable is set.
+     *
+     * @param fillColorRes The color resource to be resolved to a color and
+     *                     drawn behind the drawable
+     * @deprecated Fill color support is going to be removed in the future
+     */
+    @Deprecated
     public void setFillColorResource(@ColorRes int fillColorRes) {
         setFillColor(getContext().getResources().getColor(fillColorRes));
     }
@@ -203,32 +237,41 @@ public class CircleImageView extends ImageView {
         setup();
     }
 
+    public boolean isDisableCircularTransformation() {
+        return mDisableCircularTransformation;
+    }
+
+    public void setDisableCircularTransformation(boolean disableCircularTransformation) {
+        if (mDisableCircularTransformation == disableCircularTransformation) {
+            return;
+        }
+
+        mDisableCircularTransformation = disableCircularTransformation;
+        initializeBitmap();
+    }
+
     @Override
     public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
-        mBitmap = bm;
-        setup();
+        initializeBitmap();
     }
 
     @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
-        mBitmap = getBitmapFromDrawable(drawable);
-        setup();
+        initializeBitmap();
     }
 
     @Override
     public void setImageResource(@DrawableRes int resId) {
         super.setImageResource(resId);
-        mBitmap = getBitmapFromDrawable(getDrawable());
-        setup();
+        initializeBitmap();
     }
 
     @Override
     public void setImageURI(Uri uri) {
         super.setImageURI(uri);
-        mBitmap = uri != null ? getBitmapFromDrawable(getDrawable()) : null;
-        setup();
+        initializeBitmap();
     }
 
     @Override
@@ -238,8 +281,19 @@ public class CircleImageView extends ImageView {
         }
 
         mColorFilter = cf;
-        mBitmapPaint.setColorFilter(mColorFilter);
+        applyColorFilter();
         invalidate();
+    }
+
+    @Override
+    public ColorFilter getColorFilter() {
+        return mColorFilter;
+    }
+
+    private void applyColorFilter() {
+        if (mBitmapPaint != null) {
+            mBitmapPaint.setColorFilter(mColorFilter);
+        }
     }
 
     private Bitmap getBitmapFromDrawable(Drawable drawable) {
@@ -255,7 +309,7 @@ public class CircleImageView extends ImageView {
             Bitmap bitmap;
 
             if (drawable instanceof ColorDrawable) {
-                bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG);
+                bitmap = Bitmap.createBitmap(COLOR_DRAWABLE_DIMENSION, COLOR_DRAWABLE_DIMENSION, BITMAP_CONFIG);
             } else {
                 bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
             }
@@ -270,6 +324,15 @@ public class CircleImageView extends ImageView {
         }
     }
 
+    private void initializeBitmap() {
+        if (mDisableCircularTransformation) {
+            mBitmap = null;
+        } else {
+            mBitmap = getBitmapFromDrawable(getDrawable());
+        }
+        setup();
+    }
+
     private void setup() {
         if (!mReady) {
             mSetupPending = true;
@@ -282,6 +345,7 @@ public class CircleImageView extends ImageView {
 
         if (mBitmap == null) {
             invalidate();
+            return;
         }
 
         mBitmapShader = new BitmapShader(mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
@@ -301,17 +365,30 @@ public class CircleImageView extends ImageView {
         mBitmapHeight = mBitmap.getHeight();
         mBitmapWidth = mBitmap.getWidth();
 
-        mBorderRect.set(0, 0, getWidth(), getHeight());
+        mBorderRect.set(calculateBounds());
         mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2.0f, (mBorderRect.width() - mBorderWidth) / 2.0f);
 
         mDrawableRect.set(mBorderRect);
-        if (!mBorderOverlay) {
-            mDrawableRect.inset(mBorderWidth, mBorderWidth);
+        if (!mBorderOverlay && mBorderWidth > 0) {
+            mDrawableRect.inset(mBorderWidth - 1.0f, mBorderWidth - 1.0f);
         }
         mDrawableRadius = Math.min(mDrawableRect.height() / 2.0f, mDrawableRect.width() / 2.0f);
 
+        applyColorFilter();
         updateShaderMatrix();
         invalidate();
+    }
+
+    private RectF calculateBounds() {
+        int availableWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+        int availableHeight = getHeight() - getPaddingTop() - getPaddingBottom();
+
+        int sideLength = Math.min(availableWidth, availableHeight);
+
+        float left = getPaddingLeft() + (availableWidth - sideLength) / 2f;
+        float top = getPaddingTop() + (availableHeight - sideLength) / 2f;
+
+        return new RectF(left, top, left + sideLength, top + sideLength);
     }
 
     private void updateShaderMatrix() {

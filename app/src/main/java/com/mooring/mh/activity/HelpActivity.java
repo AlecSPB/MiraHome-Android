@@ -50,10 +50,10 @@ public class HelpActivity extends BaseActivity {
     protected void initView() {
         // 实例化各个界面的布局对象
         LayoutInflater mLi = LayoutInflater.from(this);
-        view1 = mLi.inflate(R.layout.layout_help_page_one, null);
-        view2 = mLi.inflate(R.layout.layout_help_page_two, null);
-        view3 = mLi.inflate(R.layout.layout_help_page_three, null);
-        view4 = mLi.inflate(R.layout.layout_help_page_four, null);
+        view1 = mLi.inflate(R.layout.help_page_one, null);
+        view2 = mLi.inflate(R.layout.help_page_two, null);
+        view3 = mLi.inflate(R.layout.help_page_three, null);
+        view4 = mLi.inflate(R.layout.help_page_four, null);
 
         // 实例化ViewPager
         help_viewpager = (ViewPager) findViewById(R.id.help_viewpager);

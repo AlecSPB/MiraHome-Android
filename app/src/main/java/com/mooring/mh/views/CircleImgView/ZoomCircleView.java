@@ -27,64 +27,18 @@ import com.mooring.mh.R;
  */
 public class ZoomCircleView extends View {
 
-    /**
-     * 用于缩放的Bitmap
-     */
-    private Bitmap mBitmap;
-
-    /**
-     * 用于缩放,矩阵
-     */
-    private Matrix matrix = new Matrix();
-
-    /**
-     * 用于判定是否缩小
-     */
-    private boolean isZoomIn = false;
-
-    /**
-     * 用于判定是否放大
-     */
-    private boolean isZoomOut = false;
-
-    /**
-     * 用于支持缩放
-     */
-    private boolean isZoom = true;
-
-    /**
-     * 图片的缩放比例
-     */
-    private float mScale = 0.0f;
+    private Bitmap mBitmap; // 用于缩放的Bitmap
+    private Matrix matrix;//用于缩放,矩阵
+    private boolean isZoomIn = false;//用于判定是否缩小
+    private boolean isZoomOut = false;//用于判定是否放大
+    private boolean isZoom = true; //用于支持缩放
+    private float mScale = 0.0f;//图片的缩放比例初始值
     private float targetScale = 0.5f;//目标比例
-    public static final int SCALE_BIG = 0X11;
-    public static final int SCALE_SMALL = 0X22;
+    public static final int SCALE_BIG = 0X11;//放大
+    public static final int SCALE_SMALL = 0X22;//缩小
     private int currMode = SCALE_BIG;
     private int currW, currH, left, top, right, bottom;
-
-    public float getScale() {
-        return mScale;
-    }
-
-    public void setScale(float scale) {
-        this.mScale = scale;
-
-        int l, t, r, b;
-        if (currMode == SCALE_BIG) {
-            l = (int) (left - currW * mScale);
-            t = (int) (top - currH * mScale);
-            r = (int) (right + currW * mScale);
-            b = (int) (bottom + currH * mScale);
-        } else {
-            l = (int) (left + currW * mScale / 2);
-            t = (int) (top + currH * mScale / 2);
-            r = (int) (right - currW * mScale / 2);
-            b = (int) (bottom - currH * mScale / 2);
-        }
-        layout(l, t, r, b);
-    }
-
-    private ObjectAnimator animator;
+    private ObjectAnimator animator;//属性动画
 
     public ZoomCircleView(Context context) {
         this(context, null);
@@ -98,9 +52,10 @@ public class ZoomCircleView extends View {
         super(context, attrs, defStyleAttr);
         obtainStyledAttributes(attrs, defStyleAttr);
 
+        matrix = new Matrix();
         animator = ObjectAnimator.ofFloat(this, "scale", mScale, targetScale);
         animator.setInterpolator(new AccelerateInterpolator());
-        animator.setDuration(400);
+        animator.setDuration(300);
     }
 
     private void obtainStyledAttributes(AttributeSet attrs, int defStyleAttr) {
@@ -119,7 +74,6 @@ public class ZoomCircleView extends View {
         }
 
         mTypedArray.recycle();
-
     }
 
     /**
@@ -143,6 +97,9 @@ public class ZoomCircleView extends View {
      * @param mode
      */
     public void executeScale(int mode) {
+        if (animator.isRunning()) {
+            return;
+        }
         isZoom = false;
         this.currMode = mode;
 
@@ -150,13 +107,11 @@ public class ZoomCircleView extends View {
             isZoom = true;
             isZoomOut = false;
             isZoomIn = true;
-            mScale = 0.0f;
         }
         if (mode == SCALE_SMALL && isZoomIn && !isZoomOut) {
             isZoom = true;
             isZoomIn = false;
             isZoomOut = true;
-            mScale = 0.0f;
         }
 
         left = getLeft();
@@ -167,6 +122,7 @@ public class ZoomCircleView extends View {
         currH = getHeight();
 
         if (isZoom) {
+            mScale = 0.0f;
             animator.start();
         }
     }
@@ -256,6 +212,38 @@ public class ZoomCircleView extends View {
         }
     }
 
+    /**
+     * scale对应get方法
+     *
+     * @return
+     */
+    public float getScale() {
+        return mScale;
+    }
+
+    /**
+     * scale对应set方法
+     *
+     * @param scale
+     */
+    public void setScale(float scale) {
+        this.mScale = scale;
+
+        int l, t, r, b;
+        if (currMode == SCALE_BIG) {
+            l = (int) (left - currW * mScale);
+            t = (int) (top - currH * mScale);
+            r = (int) (right + currW * mScale);
+            b = (int) (bottom + currH * mScale);
+        } else {
+            l = (int) (left + currW * mScale / 2);
+            t = (int) (top + currH * mScale / 2);
+            r = (int) (right - currW * mScale / 2);
+            b = (int) (bottom - currH * mScale / 2);
+        }
+        layout(l, t, r, b);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -269,6 +257,23 @@ public class ZoomCircleView extends View {
             p.setColor(getResources().getColor(R.color.transparent_2));
             p.setStyle(Paint.Style.FILL);
             canvas.drawCircle(getWidth() / 2, getHeight() / 2, Math.min(getWidth(), getHeight()) / 2, p);
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(100, 100);
+        } else if (widthSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(100, heightSpecSize);
+        } else if (heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(widthSpecSize, 100);
         }
     }
 

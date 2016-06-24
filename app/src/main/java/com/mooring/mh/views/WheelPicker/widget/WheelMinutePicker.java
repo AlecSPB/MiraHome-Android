@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 分钟选择器
+ * <p>
  * Created by Will on 16/5/5.
  */
 public class WheelMinutePicker extends WheelStraightPicker {

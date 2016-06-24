@@ -4,15 +4,20 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.mooring.mh.BuildConfig;
+import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
 
 import org.xutils.common.util.FileUtil;
@@ -30,7 +35,7 @@ import java.util.regex.Pattern;
 
 /**
  * 公共工具类
- * <p/>
+ * <p>
  * Created by Will on 16/3/25.
  */
 public class MUtils {
@@ -142,7 +147,7 @@ public class MUtils {
      * @return
      */
     public static RequestParams getBaseParams(String uri) {
-        RequestParams params = new RequestParams(MConstants.SERVICE_URL + uri);
+        RequestParams params = new RequestParams(uri);
         params.addBodyParameter(MConstants.SP_KEY_TOKEN,
                 InitApplicationHelper.sp.getString(MConstants.SP_KEY_TOKEN, ""));
         return params;
@@ -195,7 +200,7 @@ public class MUtils {
      */
     public static String getWeek(String pTime) {
         String Week = "";
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Calendar c = Calendar.getInstance();
         try {
             c.setTime(format.parse(pTime));
@@ -232,7 +237,6 @@ public class MUtils {
      * @return
      */
     public static String getCurrDate() {
-
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//设置日期格式
         return df.format(new Date());
     }
@@ -370,7 +374,14 @@ public class MUtils {
         intent.putExtra("aspectY", 1);
         // 裁剪后输出图片的尺寸大小
         intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
+        intent.putExtra("private boolean isZh() {\n" +
+                "Locale locale = getResources().getConfiguration().locale;\n" +
+                "String language = locale.getLanguage();\n" +
+                "if (language.endsWith(\"zh\"))\n" +
+                "return true;\n" +
+                "else\n" +
+                "return false;\n" +
+                "}", 300);
         // 图片格式
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);// 取消人脸识别
@@ -457,5 +468,50 @@ public class MUtils {
             tempFileName = path + "user_head_" + System.currentTimeMillis() + ".jpg";
             tempFile = new File(tempFileName);
         }
+    }
+
+    /**
+     * 跳转到设置界面的Dialog提示
+     *
+     * @param msg
+     */
+    public static void showGoSettingDialog(final Activity act, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+        builder.setMessage(msg);
+        builder.setTitle(act.getString(R.string.tip_access_request));
+        builder.setPositiveButton(act.getString(R.string.tip_go_setting),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                        intent.setData(uri);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        act.startActivity(intent);
+                        act.finish();
+                    }
+                });
+        builder.setNegativeButton(act.getString(R.string.tv_cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        act.finish();
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * 获取当前系统的语言
+     *
+     * @param context
+     * @return
+     */
+    private String getLocalLanguageCode(Context context) {
+        Locale locale = context.getResources().getConfiguration().locale;
+        return locale.getLanguage();
     }
 }

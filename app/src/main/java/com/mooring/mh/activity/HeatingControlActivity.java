@@ -87,8 +87,8 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
 
         listener = new BaseListener();
 
-        left_target_temp = InitApplicationHelper.sp.getString(MConstants.LEFT_TARGET_TEMP, "");
-        right_target_temp = InitApplicationHelper.sp.getString(MConstants.RIGHT_TARGET_TEMP, "");
+        left_target_temp = InitApplicationHelper.sp.getString(MConstants.ATTR_LEFT_TARGET_TEMP, "");
+        right_target_temp = InitApplicationHelper.sp.getString(MConstants.ATTR_LEFT_TARGET_TEMP, "");
     }
 
     @Override
@@ -150,7 +150,7 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
                     MachtalkSDK.getInstance().operateDevice(deviceId,
                             new String[]{MConstants.ATTR_LEFT_TARGET_TEMP},
                             new String[]{currTemp + ""});
-                    editor.putString(MConstants.LEFT_TARGET_TEMP, currTemp + "");
+                    editor.putString(MConstants.ATTR_LEFT_TARGET_TEMP, currTemp + "");
                     editor.commit();
                 }
             });
@@ -195,14 +195,14 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
                         MachtalkSDK.getInstance().operateDevice(deviceId,
                                 new String[]{MConstants.ATTR_LEFT_TARGET_TEMP},
                                 new String[]{currTemp + ""});
-                        editor.putString(MConstants.LEFT_TARGET_TEMP, currTemp + "");
+                        editor.putString(MConstants.ATTR_LEFT_TARGET_TEMP, currTemp + "");
                         editor.commit();
                     }
                     if (location == 1) {
                         MachtalkSDK.getInstance().operateDevice(deviceId,
                                 new String[]{MConstants.ATTR_RIGHT_TARGET_TEMP},
                                 new String[]{currTemp + ""});
-                        editor.putString(MConstants.RIGHT_TARGET_TEMP, currTemp + "");
+                        editor.putString(MConstants.ATTR_LEFT_TARGET_TEMP, currTemp + "");
                         editor.commit();
                     }
                 }

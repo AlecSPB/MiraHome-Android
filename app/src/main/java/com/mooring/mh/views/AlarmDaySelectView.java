@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 自定义闹钟重复日期--适配不同语言
+ * ps:一二三四五六日
+ * <p/>
  * Created by Will on 16/5/6.
  */
 public class AlarmDaySelectView extends LinearLayout {
@@ -59,7 +62,8 @@ public class AlarmDaySelectView extends LinearLayout {
         textSize = MUtils.sp2px(getContext(), 5);
 
         tvList = new ArrayList<>();
-        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.rightMargin = MUtils.dp2px(getContext(), 10);
         for (int i = 0; i < text.length; i++) {
             tv = new TextView(getContext());
