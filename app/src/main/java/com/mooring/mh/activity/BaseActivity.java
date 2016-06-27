@@ -38,7 +38,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected ImageView imgView_act_back;//Activity返回
     protected TextView tv_act_title;//Activity的title
     protected boolean self_control_back = false;//是否自主控制返回按钮事件
-    private boolean isPromptsTheUser = false;//是否允许提示用户--ATTR_IS_CONNECTED对应sp存储的值
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         sp = InitApplicationHelper.sp;
         editor = InitApplicationHelper.sp.edit();
         editor.apply();
-
-        isPromptsTheUser = sp.getBoolean(MConstants.ATTR_IS_CONNECTED, false);
 
         MachtalkSDK.getInstance().startSDK(this, null);//-----------测试,待定
         MachtalkSDK.getInstance().setContext(this);
@@ -128,22 +125,23 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
-            //一旦毯子断开,执行提示
-            if (!isPromptsTheUser) {
-                return;
-            }
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
             if (success == Result.SUCCESS && rdm != null && rdm.getDvidStatusList() != null) {
                 List<DvidStatus> deviceStatus = rdm.getDvidStatusList();
-                boolean conn = sp.getBoolean(MConstants.ATTR_IS_CONNECTED, false);
                 for (int i = 0; i < deviceStatus.size(); i++) {
                     if (MConstants.ATTR_IS_CONNECTED.equals(deviceStatus.get(i).getDvid())) {
-                        if (conn && "0".equals(deviceStatus.get(i).getValue())) {//由连接到未连接
-                            showDialog();
-                            isPromptsTheUser = false;
+                        //下面MConstants.ATTR_IS_CONNECTED担当两个不同角色
+                        boolean conn = sp.getBoolean(MConstants.ATTR_IS_CONNECTED, false);
+                        //最新的状态值保存下来
+                        editor.putBoolean(MConstants.ATTR_IS_CONNECTED,
+                                "1".equals(deviceStatus.get(i).getValue())).apply();
+                        if (conn && "0".equals(deviceStatus.get(i).getValue())) {
+                            showBlanketsOffDialog();
+                        } else if (!conn && "1".equals(deviceStatus.get(i).getValue())) {
+                            MUtils.showToast(context, "毯子已和控制器连接");
                         }
                     }
                 }
@@ -169,7 +167,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                 }
                 if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
                     editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false).apply();
-                    return;
                 }
             }
         }
@@ -188,7 +185,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     /**
      * 提示用户毯子断开连接
      */
-    private void showDialog() {
+    private void showBlanketsOffDialog() {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.tip_disconnect_blanket));
         builder.setLogo(R.drawable.img_blanket_disconnect);
