@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * 起始页--执行动画,判断是否首次使用,是否自动登录
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class StartPageActivity extends Activity {
@@ -79,7 +79,7 @@ public class StartPageActivity extends Activity {
         img_start = (ImageView) findViewById(R.id.img_start);
 
         inAnimation = new AlphaAnimation(0.05f, 1.0f);
-        inAnimation.setDuration(1500);
+        inAnimation.setDuration(1000);
         inAnimation.setRepeatCount(0);
         inAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -101,7 +101,7 @@ public class StartPageActivity extends Activity {
             public void run() {
                 img_start.startAnimation(inAnimation);
             }
-        }, 1000);
+        }, 1500);
     }
 
     /**
@@ -137,6 +137,7 @@ public class StartPageActivity extends Activity {
 
             if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPwd) &&
                     sp.getBoolean(MConstants.HAS_LOCAL_USER, false)) {
+                MUtils.showLoadingDialog(context);
                 MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
             } else {
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
@@ -212,6 +213,7 @@ public class StartPageActivity extends Activity {
                 success = result.getSuccess();
                 errMsg = result.getErrorMessage();
             }
+            MUtils.hideLoadingDialog();
             if (success == Result.SUCCESS) {
                 editor.putString(MConstants.SP_KEY_USERNAME, userName);
                 editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
