@@ -8,12 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.mooring.mh.BuildConfig;
@@ -35,13 +37,14 @@ import java.util.regex.Pattern;
 
 /**
  * 公共工具类
- * <p>
+ * <p/>
  * Created by Will on 16/3/25.
  */
 public class MUtils {
 
     public static File tempFile;//临时文件,用于相机或相册的图片存储
     public static String tempFileName = "";//对应相机或相册文件的文件全路径
+    public static Dialog loading_dialog;//加载loading dialog
 
     /**
      * dp转换成px单位
@@ -510,8 +513,39 @@ public class MUtils {
      * @param context
      * @return
      */
-    private String getLocalLanguageCode(Context context) {
+    public static String getLocalLanguageCode(Context context) {
         Locale locale = context.getResources().getConfiguration().locale;
         return locale.getLanguage();
     }
+
+    /**
+     * 显示Loading的dialogView
+     *
+     * @param c
+     */
+    public static void showLoadingDialog(Context c) {
+        if (loading_dialog != null && !loading_dialog.isShowing()) {
+            loading_dialog.show();
+            return;
+        }
+        loading_dialog = new Dialog(c, R.style.LoadingDialogStyle);
+        loading_dialog.setContentView(R.layout.dialog_loading);
+        loading_dialog.setCanceledOnTouchOutside(false);
+        ImageView imageView = (ImageView) loading_dialog.findViewById(R.id.imgView_loading);
+        AnimationDrawable _animation = (AnimationDrawable) imageView.getDrawable();
+        _animation.start();
+        loading_dialog.show();
+    }
+
+
+    /**
+     * 隐藏已显示的loading dialog
+     */
+    public static void hideLoadingDialog() {
+        if (loading_dialog != null && loading_dialog.isShowing()) {
+            loading_dialog.dismiss();
+            loading_dialog = null;
+        }
+    }
+
 }
