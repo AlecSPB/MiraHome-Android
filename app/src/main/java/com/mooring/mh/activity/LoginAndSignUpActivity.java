@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.LoginAndSignUpPagerAdapter;
 import com.mooring.mh.utils.MConstants;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -85,5 +86,17 @@ public class LoginAndSignUpActivity extends BaseActivity {
 
     @Override
     protected void OnClick(View v) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

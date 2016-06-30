@@ -22,6 +22,7 @@ import com.mooring.mh.adapter.AlarmClockAdapter;
 import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
 
@@ -30,7 +31,7 @@ import java.util.List;
 
 /**
  * 闹钟fragment
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
 public class TimingFragment extends BaseFragment implements OnRecyclerItemClickListener,
@@ -324,12 +325,14 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(timingSDKListener);
+        MobclickAgent.onPageStart("Timing");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(timingSDKListener);
+        MobclickAgent.onPageEnd("Timing");
     }
 
     @Override

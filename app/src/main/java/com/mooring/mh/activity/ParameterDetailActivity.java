@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 展示各种数据详情
@@ -18,6 +19,7 @@ public class ParameterDetailActivity extends BaseActivity {
     private String param;
     private String title;
 
+    private View detail_title;
     private View layout_detail;
     private TextView tv_detail_param;
     private TextView tv_detail_unit;
@@ -43,11 +45,13 @@ public class ParameterDetailActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        detail_title = findViewById(R.id.detail_title);
         layout_detail = findViewById(R.id.layout_detail);
         tv_detail_param = (TextView) findViewById(R.id.tv_detail_param);
         tv_detail_unit = (TextView) findViewById(R.id.tv_detail_unit);
         imgView_detail_ic = (ImageView) findViewById(R.id.imgView_detail_ic);
 
+        detail_title.setBackgroundColor(getResources().getColor(R.color.transparent_4));
         tv_act_title.setText(title);
         tv_detail_param.setText(param);
         switch (number) {
@@ -96,5 +100,19 @@ public class ParameterDetailActivity extends BaseActivity {
 
     @Override
     protected void OnClick(View v) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("ParameterDetail");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("ParameterDetail");
+        MobclickAgent.onPause(this);
     }
 }

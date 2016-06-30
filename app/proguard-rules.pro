@@ -40,3 +40,15 @@
 #   ** *Event(...);
 #}
 #-keepattributes Exceptions,InnerClasses,Signature,Deprecated,Annotation,Synthetic,EnclosingMethod
+
+#------------------友盟统计混淆-----------------------
+#-keepclassmembers class * {
+#   public <init> (org.json.JSONObject);
+#}
+#-keep public class com.mooring.mh.R$*{
+#   public static final int *;
+#}
+#-keepclassmembers enum * {
+#    public static **[] values();
+#    public static ** valueOf(java.lang.String);
+#}

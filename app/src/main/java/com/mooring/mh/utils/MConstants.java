@@ -284,6 +284,7 @@ public class MConstants {
     public final static String LOGOUT_KICKOFF = "logout_kickoff";//用户被挤下线标志
     public final static String CURR_USER_ID = "curr_user_id";//当前用户id,用来提取出当前用户使用
     public final static String CURR_USER_LOCATION = "curr_user_location";//当前用户位置
+    public final static String CURR_SYSTEM_LANGUAGE = "curr_system_language";//当前系统语言
 
     /**
      * 设备属性值
@@ -455,6 +456,6 @@ public class MConstants {
     /**
      * 跳转已存在设备回调
      */
-    public final static int EXISTING_RESULT = 0X37;
+    public final static int EXISTING_RESULT = 0X38;
 
 }

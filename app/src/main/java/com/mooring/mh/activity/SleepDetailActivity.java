@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.DayAndMonthPagerAdapter;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 睡眠数据详情Activity 页面  展现Day或Month的所有数据
@@ -16,7 +17,7 @@ import com.mooring.mh.adapter.DayAndMonthPagerAdapter;
  * Created by Will on 16/3/28.
  */
 
-public class SleepDetailActivity extends BaseActivity implements View.OnClickListener {
+public class SleepDetailActivity extends BaseActivity {
 
     private ViewPager more_viewPager;
     private TabLayout more_tabLayout;
@@ -49,5 +50,17 @@ public class SleepDetailActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected void OnClick(View v) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

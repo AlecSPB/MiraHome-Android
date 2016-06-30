@@ -21,12 +21,13 @@ import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CommonDialog;
+import com.umeng.message.PushAgent;
 
 import java.util.List;
 
 /**
  * 自定义BaseActivity for common
- * <p/>
+ * <p>
  * Created by Will on 16/3/30.
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
@@ -52,6 +53,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         sp = InitApplicationHelper.sp;
         editor = InitApplicationHelper.sp.edit();
         editor.apply();
+
+        //如果不调用此方法，不仅会导致按照"几天不活跃"条件来推送失效
+        PushAgent.getInstance(context).onAppStart();
 
         MachtalkSDK.getInstance().startSDK(this, null);//-----------测试,待定
         MachtalkSDK.getInstance().setContext(this);
@@ -216,9 +220,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
+        super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(baseListener);
-        super.onDestroy();
-        System.gc();
     }
 }

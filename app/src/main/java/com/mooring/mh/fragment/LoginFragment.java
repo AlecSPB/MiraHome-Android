@@ -20,6 +20,7 @@ import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.User;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +34,7 @@ import java.util.List;
 
 /**
  * 登陆
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class LoginFragment extends BaseFragment implements View.OnClickListener {
@@ -126,7 +127,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      */
     private void login() {
 
-
+        MUtils.showLoadingDialog(context);
         MachtalkSDK.getInstance().userLogin(
                 edit_userName.getText().toString(),
                 edit_userPwd.getText().toString(), null);
@@ -307,6 +308,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 success = result.getSuccess();
                 errMsg = result.getErrorMessage();
             }
+            MUtils.hideLoadingDialog();
             if (success == Result.SUCCESS) {
                 editor.putString(MConstants.SP_KEY_USERNAME, userName);
                 editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
@@ -375,11 +377,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        MobclickAgent.onPageStart("Login");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        MobclickAgent.onPageEnd("Login");
     }
 }

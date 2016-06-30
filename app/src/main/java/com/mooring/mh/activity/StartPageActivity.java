@@ -2,13 +2,13 @@ package com.mooring.mh.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -23,6 +23,8 @@ import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.PushAgent;
 
 import org.xutils.common.util.LogUtil;
 
@@ -31,14 +33,14 @@ import java.util.List;
 
 /**
  * 起始页--执行动画,判断是否首次使用,是否自动登录
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
-public class StartPageActivity extends Activity {
+public class StartPageActivity extends AppCompatActivity {
 
     private ImageView img_start;
     private AlphaAnimation inAnimation;
-    private Activity context = null;
+    private AppCompatActivity context = null;
     private MachtalkSDKListener baseListener;//自定义SDK回调监听
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -64,6 +66,17 @@ public class StartPageActivity extends Activity {
         MachtalkSDK.getInstance().startSDK(context, null);
 
         baseListener = new BaseListener();
+
+        //如果不调用此方法，会导致按照"几天不活跃"条件来推送失效，
+        PushAgent.getInstance(context).onAppStart();
+
+        //友盟统计配置
+        MobclickAgent.setDebugMode(true);
+        // SDK在统计Fragment时，需要关闭Activity自带的页面统计，
+        // 然后在每个页面中重新集成页面统计的代码(包括调用了 onResume 和 onPause 的Activity)。
+        MobclickAgent.openActivityDurationTrack(false);
+        MobclickAgent.setScenarioType(context, MobclickAgent.EScenarioType.E_UM_NORMAL);
+        MobclickAgent.enableEncrypt(true);//日志加密
 
         //执行动画切换
         executeAnimation();
@@ -238,12 +251,16 @@ public class StartPageActivity extends Activity {
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(baseListener);
+        MobclickAgent.onPageStart("StartPage");
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(baseListener);
+        MobclickAgent.onPageEnd("StartPage");
+        MobclickAgent.onPause(this);
     }
 
     @Override

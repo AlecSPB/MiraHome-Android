@@ -23,6 +23,7 @@ import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CommonDialog;
+import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
 
@@ -125,7 +126,7 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
      * 决定对当前选中设备的使用或者忽略
      */
     private void decideDevice(final Device device) {
-        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog = new Dialog(this, R.style.BottomPopDialogStyle);
         dialog.setContentView(R.layout.dialog_decide_device);
         dialog.setCanceledOnTouchOutside(true);
         dialog.findViewById(R.id.other_view).setOnClickListener(
@@ -312,13 +313,16 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        MobclickAgent.onPageStart("ExistingDevice");
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
-
+        MobclickAgent.onPageEnd("ExistingDevice");
+        MobclickAgent.onPause(this);
     }
 
     @Override

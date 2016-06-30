@@ -2,10 +2,9 @@ package com.mooring.mh.activity;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 没有发现设备页面
@@ -30,12 +29,9 @@ public class NotFindDeviceActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        ImageView imgView_retry_connect = (ImageView) findViewById(R.id.imgView_retry_connect);
-        TextView tv_act_skip = (TextView) findViewById(R.id.tv_act_skip);
-
-        imgView_retry_connect.setOnClickListener(this);
-        tv_act_skip.setOnClickListener(this);
-        tv_act_skip.setVisibility(View.VISIBLE);
+        findViewById(R.id.imgView_retry_connect).setOnClickListener(this);
+        findViewById(R.id.tv_act_skip).setOnClickListener(this);
+        findViewById(R.id.tv_act_skip).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -44,5 +40,19 @@ public class NotFindDeviceActivity extends BaseActivity {
             startActivity(new Intent(context, SetWifiActivity.class));
         }
         context.finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("NotFindDevice");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("NotFindDevice");
+        MobclickAgent.onPause(this);
     }
 }

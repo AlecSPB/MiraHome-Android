@@ -10,6 +10,8 @@ import com.mooring.mh.views.ChartView.MyChartView;
 import com.mooring.mh.views.ChartView.YAxisView;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
 import com.mooring.mh.views.CircleProgress.DoubleCircleView;
+import com.mooring.mh.views.ScrollView.MyHorizontalScrollView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,8 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
     MyChartView myChartView1;
     MyChartView myChartView2;
     MyChartView myChartView3;
+
+    MyHorizontalScrollView horizontal_scrollview_1;
 
     YAxisView allChart1;
     YAxisView allChart2;
@@ -90,6 +94,26 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
         allChart2 = (YAxisView) rootView.findViewById(R.id.allChart2);
         allChart3 = (YAxisView) rootView.findViewById(R.id.allChart3);
 
+        horizontal_scrollview_1 = (MyHorizontalScrollView) rootView.findViewById(R.id.horizontal_scrollview_1);
+//        horizontal_scrollview_1.setOnBorderListener(new MyHorizontalScrollView.OnBorderListener() {
+//            @Override
+//            public void onStart() {
+////                horizontal_scrollview_1.getParent().requestDisallowInterceptTouchEvent(false);
+//                LogUtil.w("Start");
+//            }
+//
+//            @Override
+//            public void onMiddle() {
+////                horizontal_scrollview_1.getParent().requestDisallowInterceptTouchEvent(true);
+//                LogUtil.w("Middle");
+//            }
+//
+//            @Override
+//            public void onEnd() {
+////                horizontal_scrollview_1.getParent().requestDisallowInterceptTouchEvent(false);
+//                LogUtil.w("End");
+//            }
+//        });
 
         /**
          * 设置监听
@@ -153,7 +177,17 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("Day");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("Day");
+    }
 }

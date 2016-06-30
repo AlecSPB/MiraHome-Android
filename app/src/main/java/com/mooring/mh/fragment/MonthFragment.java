@@ -3,6 +3,7 @@ package com.mooring.mh.fragment;
 import com.mooring.mh.R;
 import com.mooring.mh.views.ChartView.XXChartView;
 import com.mooring.mh.views.ChartView.YAxisView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,18 @@ public class MonthFragment extends BaseFragment {
         month_chart.setDatas(xDatas, "2016-05", sleep, deep);
 
         month_yAxis.setYdatas(yString);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("Month");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("Month");
     }
 
 }

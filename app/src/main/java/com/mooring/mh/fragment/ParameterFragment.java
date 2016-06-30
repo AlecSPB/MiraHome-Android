@@ -20,6 +20,7 @@ import com.mooring.mh.activity.ParameterDetailActivity;
 import com.mooring.mh.activity.SetWifiActivity;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
 
@@ -27,7 +28,7 @@ import java.util.List;
 
 /**
  * 参数Fragment,实时更新
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
 public class ParameterFragment extends BaseFragment implements View.OnClickListener, SwitchUserObserver {
@@ -260,7 +261,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             if (result != null) {
                 success = result.getSuccess();
             }
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
             if (success == Result.SUCCESS && deviceStatus != null
                     && deviceId.equals(deviceStatus.getDeviceId())) {
                 hideNoDeviceView();
@@ -282,7 +282,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             if (result != null) {
                 success = result.getSuccess();
             }
-            LogUtil.e("onReceiveDeviceMessage  " + result.getSuccess());
+            LogUtil.w(success + "    ____     ");
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
                 parseDvidStatusList(rdm.getDvidStatusList());
             }
@@ -369,12 +369,14 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        MobclickAgent.onPageStart("Parameter");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        MobclickAgent.onPageEnd("Parameter");
     }
 
     @Override

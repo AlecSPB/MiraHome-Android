@@ -18,6 +18,7 @@ import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.views.CircleProgress.DryingCircleView;
 import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.CustomToggle;
+import com.umeng.analytics.MobclickAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -87,6 +88,8 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
     }
 
     /**
+     * 开启烘干
+     *
      * @param startTime
      * @param dryingTime
      */
@@ -279,9 +282,9 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
                 for (DvidStatus ds : dsList) {
                     if (MConstants.ATTR_DRYING_SWITCH.equals(ds.getDvid())) {
                         if ("1".equals(ds.getValue())) {
-                            openDrying();
+//                            openDrying();//此处要做手动操作判断,否则会出现重复回调
                         } else {
-                            closeDrying();
+//                            closeDrying();
                         }
                     }
                 }
@@ -325,12 +328,16 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        MobclickAgent.onPageStart("DryingControl");
+        MobclickAgent.onResume(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        MobclickAgent.onPageEnd("DryingControl");
+        MobclickAgent.onPause(this);
     }
 
     @Override

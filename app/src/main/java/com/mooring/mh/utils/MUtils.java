@@ -537,7 +537,6 @@ public class MUtils {
         loading_dialog.show();
     }
 
-
     /**
      * 隐藏已显示的loading dialog
      */

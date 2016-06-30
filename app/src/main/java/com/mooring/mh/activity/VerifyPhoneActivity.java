@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -358,5 +359,19 @@ public class VerifyPhoneActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("VerifyPhone");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("VerifyPhone");
+        MobclickAgent.onPause(this);
     }
 }

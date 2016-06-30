@@ -7,12 +7,13 @@ import android.widget.ImageView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.GuideViewPagerAdapter;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 
 /**
  * 帮助Activity,包含App的使用导航
- * <p/>
+ * <p>
  * Created by Will on 16/6/3.
  */
 public class HelpActivity extends BaseActivity {
@@ -117,5 +118,19 @@ public class HelpActivity extends BaseActivity {
     @Override
     protected void OnClick(View v) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("Help");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("Help");
+        MobclickAgent.onPause(this);
     }
 }

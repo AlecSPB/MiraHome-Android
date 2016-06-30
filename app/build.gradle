@@ -19,6 +19,22 @@ android {
         }
     }
 
+    /**
+     * 设置不同渠道打包通道
+     */
+    productFlavors {
+
+        googleplay {}
+        wandoujia {}
+        baidu {}
+        c360 {}
+        uc {}
+
+        productFlavors.all { flavor ->
+            flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+    }
+
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
@@ -43,5 +59,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile 'org.xutils:xutils:3.3.36'
-    compile 'com.google.android.gms:play-services-fitness:9.0.2'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.google.android.gms:play-services-fitness:9.2.0'
+    compile 'com.umeng.analytics:analytics:latest.integration'
+    compile project(':PushSDK')
 }

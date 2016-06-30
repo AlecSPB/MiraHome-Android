@@ -1,10 +1,11 @@
 package com.mooring.mh.activity;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +16,8 @@ import com.mooring.mh.adapter.GuideViewPagerAdapter;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.PushAgent;
 
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -30,7 +33,7 @@ import java.util.ArrayList;
  * <p>
  * Created by Will on 16/3/24.
  */
-public class GuidePageActivity extends Activity {
+public class GuidePageActivity extends AppCompatActivity {
     // 定义ViewPager对象
     private ViewPager viewPager;
 
@@ -52,14 +55,20 @@ public class GuidePageActivity extends Activity {
     //Editor 对象
     private SharedPreferences.Editor editor;
 
+    //Context
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        context = this;
         setContentView(R.layout.activity_guidepage);
 
         editor = InitApplicationHelper.sp.edit();
         editor.apply();
+
+        //如果不调用此方法，会导致按照"几天不活跃"条件来推送失效，
+        PushAgent.getInstance(context).onAppStart();
 
         if ("".equals(InitApplicationHelper.sp.getString(MConstants.SP_KEY_TOKEN, ""))) {
             getToken();
@@ -191,6 +200,20 @@ public class GuidePageActivity extends Activity {
 
         startActivity(new Intent(GuidePageActivity.this, LoginAndSignUpActivity.class));
         this.finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("GuidePage");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("GuidePage");
+        MobclickAgent.onPause(this);
     }
 
 }

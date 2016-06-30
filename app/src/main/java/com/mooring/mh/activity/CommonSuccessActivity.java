@@ -1,5 +1,6 @@
 package com.mooring.mh.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.PushAgent;
 
 /**
  * 注册成功,修改密码,设备连接成功,添加用户公用
@@ -19,14 +22,19 @@ public class CommonSuccessActivity extends AppCompatActivity {
     private ImageView imgView_success_icon;
     private TextView tv_success_tip;
     private int entrance_flag = 0;//0X11:signUp  0X12:confirm  0X21:connected 0X30:add user
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_common_success);
 
         Intent it = getIntent();
         entrance_flag = it.getIntExtra(MConstants.ENTRANCE_FLAG, 0);
+
+        //如果不调用此方法，不仅会导致按照"几天不活跃"条件来推送失效
+        PushAgent.getInstance(context).onAppStart();
 
         initView();
 
@@ -87,5 +95,19 @@ public class CommonSuccessActivity extends AppCompatActivity {
     private void editImageText(int imgRs, int tvRs) {
         imgView_success_icon.setImageResource(imgRs);
         tv_success_tip.setText(getString(tvRs));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("CommonSuccess");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("CommonSuccess");
+        MobclickAgent.onPause(this);
     }
 }

@@ -1,8 +1,14 @@
 package com.mooring.mh.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,9 +21,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.result.DataReadResult;
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
@@ -38,18 +54,28 @@ import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
 import com.mooring.mh.views.CircleImgView.ZoomCircleView;
 import com.mooring.mh.views.CustomToggle;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.IUmengRegisterCallback;
+import com.umeng.message.PushAgent;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static java.text.DateFormat.getDateInstance;
+import static java.text.DateFormat.getTimeInstance;
 
 /**
  * 主界面MainActivity
- * <p>
+ * <p/>
  * Created by Will on 16/4/27.
  */
 public class MainActivity extends SubjectActivity implements OnRecyclerItemClickListener,
@@ -127,6 +153,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     private final int PARAMETER = 3;
     private final int TIMING = 4;
     private int currFragmentIndex = 0;//当前显示的Fragment
+    private PushAgent mPushAgent;//推送
 
     @Override
     protected int getLayoutId() {
@@ -144,11 +171,29 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
 
         fragmentManager = getSupportFragmentManager();
 
+        //初始化数据库
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
         dbManager = x.getDb(dao);
 
-        baseListener = new BaseListener();
+        //初始化智成云监听回调
         MachtalkSDK.getInstance().setContext(this);
+        baseListener = new BaseListener();
+
+        //注册推送
+        mPushAgent = PushAgent.getInstance(this);
+        if (!mPushAgent.isEnabled()) {
+            mPushAgent.enable(new IUmengRegisterCallback() {
+                @Override
+                public void onRegistered(final String registrationId) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            LogUtil.w("device_token:  " + registrationId);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
@@ -223,6 +268,8 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         layout_device.setOnClickListener(this);
         toggle_temp.setOnCheckedChange(this);
 
+        showHelpTipView();//帮助提示层
+
         initData();
 
         setTabSelection(WEATHER);
@@ -266,6 +313,27 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         menu_recyclerView.setAdapter(adapter);
 
         MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    }
+
+    /**
+     * 显示帮助提示层
+     */
+    private void showHelpTipView() {
+        String currLanguage = MUtils.getLocalLanguageCode(context);
+        if (currLanguage.equals(sp.getString(MConstants.CURR_SYSTEM_LANGUAGE, ""))) {
+            return;
+        }
+        if ("zh".equals(currLanguage)) {//中文
+            imgView_help_bg.setImageResource(R.drawable.img_main_help);
+        } else if ("en".equals(currLanguage)) {//英语
+            imgView_help_bg.setImageResource(R.drawable.img_main_help);
+        } else if ("ko".equals(currLanguage)) {//韩语
+            imgView_help_bg.setImageResource(R.drawable.img_main_help);
+        } else if ("ja".equals(currLanguage)) {//日语
+            imgView_help_bg.setImageResource(R.drawable.img_main_help);
+        }
+        layout_main_help.setVisibility(View.VISIBLE);
+        editor.putString(MConstants.CURR_SYSTEM_LANGUAGE, currLanguage).apply();
     }
 
     /**
@@ -392,7 +460,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     /**
      * 根据设备的类型{单人垫,双人垫},以及现在所拥有的用户个数
      * value  0：单人1：双人
-     * <p>
+     * <p/>
      * 计算当前用户个数
      */
     public void computeCurrentUsers(String value) {
@@ -456,26 +524,26 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
 
         LogUtil.e("connect google fit");
 
-//        if (!checkPermissions()) {
-//            requestPermissions();
-//            return;
-//        }
-//
-//        buildFitnessClient();
+        if (!checkPermissions()) {
+            requestPermissions();
+            return;
+        }
+
+        buildFitnessClient();
     }
 
     /**
      * 检查权限是否已赋予
-     *//*
+     */
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
-    *//**
+    /**
      * 请求位置权限
-     *//*
+     */
     private void requestPermissions() {
         boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -490,9 +558,9 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         }
     }
 
-    *//**
+    /**
      * 实例化Fitness
-     *//*
+     */
     private void buildFitnessClient() {
         if (mClient == null && checkPermissions()) {
             GoogleApiClient.Builder builder = new GoogleApiClient.Builder(this);
@@ -504,7 +572,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
                     LogUtil.i("Connected!!!");
                     // Now you can make calls to the Fitness APIs.
 
-//                    new InsertAndVerifyDataTask().execute();
+                    new InsertAndVerifyDataTask().execute();
 
                     MUtils.showToast(context, "绑定成功");
                 }
@@ -530,9 +598,9 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         }
     }
 
-    *//**
+    /**
      * 插入数据
-     *//*
+     */
     private class InsertAndVerifyDataTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             // Create a new dataset and insertion request.
@@ -581,10 +649,10 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         }
     }
 
-    *//**
+    /**
      * Create and return a {@link DataSet} of heart count data for insertion using the History API.
      * 创建一个心跳数据集
-     *//*
+     */
     private DataSet insertFitnessData() {
         LogUtil.i("Creating a new data insert request.");
 
@@ -616,13 +684,11 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         dataSet.add(dataPoint);
         // [END build_insert_data_request]
 
+        MUtils.showToast(context, dataPoint.toString() + dataPoint.getStartTime(TimeUnit.MILLISECONDS));
+
         return dataSet;
     }
 
-    *//**
-     * Return a {@link DataReadRequest} for all heart count changes in the past week.
-     * 返回心跳总数集
-     *//*
     public static DataReadRequest queryFitnessData() {
         // [START build_read_data_request]
         // Setting a start and end date using a range of 1 week before this moment.
@@ -655,14 +721,6 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         return readRequest;
     }
 
-    *//**
-     * Log a record of the query result. It's possible to get more constrained data sets by
-     * specifying a data source or data type, but for demonstrative purposes here's how one would
-     * dump all the data. In this sample, logging also prints to the device screen, so we can see
-     * what the query returns, but your app should not log fitness information as a privacy
-     * consideration. A better option would be to dump the data you receive to a local data
-     * directory to avoid exposing it to other applications.
-     *//*
     public static void printData(DataReadResult dataReadResult) {
         // [START parse_read_data_result]
         // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
@@ -700,7 +758,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
                         " Value: " + dp.getValue(field));
             }
         }
-    }*/
+    }
 
     /**
      * 退出登录
@@ -939,7 +997,6 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             if (mDrawerLayout.isDrawerOpen(activity_menu)) {
                 mDrawerLayout.closeDrawer(activity_menu);
@@ -980,17 +1037,20 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(baseListener);
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(baseListener);
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         MachtalkSDK.getInstance().stopSDK();
         super.onDestroy();
+        System.gc();
     }
 }

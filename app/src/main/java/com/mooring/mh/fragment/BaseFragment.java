@@ -8,9 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.machtalk.sdk.connect.MachtalkSDK;
-import com.machtalk.sdk.connect.MachtalkSDKConstant;
-import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.utils.MConstants;
@@ -26,7 +23,6 @@ import org.xutils.x;
 public abstract class BaseFragment extends Fragment {
     protected View rootView;
     protected FragmentActivity context;
-    private BaseListener baseListener;
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;
     protected DbManager dbManager;
@@ -45,9 +41,6 @@ public abstract class BaseFragment extends Fragment {
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(context);
         dbManager = x.getDb(dao);
 
-        MachtalkSDK.getInstance().setContext(context);
-        baseListener = new BaseListener();
-
         initFragment();
 
         if (getLayoutId() == 0) {
@@ -58,17 +51,6 @@ public abstract class BaseFragment extends Fragment {
         initView();
 
         return rootView;
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (!hidden) {
-            MachtalkSDK.getInstance().setContext(context);
-            MachtalkSDK.getInstance().setSdkListener(baseListener);
-        } else {
-            MachtalkSDK.getInstance().removeSdkListener(baseListener);
-        }
     }
 
     /**
@@ -88,28 +70,4 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void initFragment();
 
-    class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
-            super.onServerConnectStatusChanged(scs);
-            if (scs == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                context.finish();
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MachtalkSDK.getInstance().setContext(context);
-        MachtalkSDK.getInstance().setSdkListener(baseListener);
-    }
-
-    @Override
-    public void onDestroy() {
-        MachtalkSDK.getInstance().removeSdkListener(baseListener);
-        super.onDestroy();
-        System.gc();
-    }
 }

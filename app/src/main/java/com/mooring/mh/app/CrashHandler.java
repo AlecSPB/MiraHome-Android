@@ -1,7 +1,5 @@
 package com.mooring.mh.app;
 
-import android.content.Context;
-
 import org.xutils.common.util.LogUtil;
 
 /**
@@ -24,7 +22,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         return instance;
     }
 
-    public void init(Context ctx) {  //初始化，把当前对象设置成UncaughtExceptionHandler处理器
+    public void init() {  //初始化，把当前对象设置成UncaughtExceptionHandler处理器
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 

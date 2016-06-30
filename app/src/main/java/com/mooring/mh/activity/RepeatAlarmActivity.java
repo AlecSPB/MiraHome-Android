@@ -9,6 +9,7 @@ import android.widget.ToggleButton;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 
@@ -199,6 +200,20 @@ public class RepeatAlarmActivity extends BaseActivity implements
             tv.setTextColor(getResources().getColor(R.color.colorPurpleDeep));
             layout.setBackgroundColor(getResources().getColor(R.color.color_day_normal));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("RepeatAlarm");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("RepeatAlarm");
+        MobclickAgent.onPause(this);
     }
 
 }

@@ -13,6 +13,7 @@ import com.mooring.mh.R;
 import com.mooring.mh.activity.VerifyPhoneActivity;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 注册
@@ -168,5 +169,17 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 SSO();
                 break;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("SignUp");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("SignUp");
     }
 }

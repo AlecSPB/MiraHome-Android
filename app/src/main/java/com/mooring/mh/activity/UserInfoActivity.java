@@ -22,6 +22,7 @@ import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelDatePicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelHeightSelectPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelWeightSelectPicker;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONObject;
 import org.xutils.DbManager;
@@ -405,7 +406,7 @@ public class UserInfoActivity extends BaseActivity {
      * 更改头像
      */
     private void SelectHeadImg() {
-        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog = new Dialog(this, R.style.BottomPopDialogStyle);
         dialog.setContentView(R.layout.dialog_select_head);
         dialog.setCanceledOnTouchOutside(true);
         dialog.findViewById(R.id.other_view).setOnClickListener(
@@ -452,7 +453,7 @@ public class UserInfoActivity extends BaseActivity {
      * 选择性别
      */
     private void SelectSex() {
-        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog = new Dialog(this, R.style.BottomPopDialogStyle);
         dialog.setContentView(R.layout.dialog_select_sex);
         dialog.setCanceledOnTouchOutside(true);
         male = (TextView) dialog.findViewById(R.id.sex_choose_male);
@@ -507,7 +508,7 @@ public class UserInfoActivity extends BaseActivity {
      * 选择生日
      */
     private void SelectBirthday() {
-        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog = new Dialog(this, R.style.BottomPopDialogStyle);
         dialog.setContentView(R.layout.dialog_select_birthday);
         dialog.setCanceledOnTouchOutside(true);
         dialog.findViewById(R.id.other_view).setOnClickListener(new View.OnClickListener() {
@@ -565,7 +566,7 @@ public class UserInfoActivity extends BaseActivity {
      * 选择身高
      */
     private void SelectHeight() {
-        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog = new Dialog(this, R.style.BottomPopDialogStyle);
         dialog.setContentView(R.layout.dialog_select_height);
         dialog.setCanceledOnTouchOutside(true);
         dialog.findViewById(R.id.other_view).setOnClickListener(new View.OnClickListener() {
@@ -624,7 +625,7 @@ public class UserInfoActivity extends BaseActivity {
      * 选择重量
      */
     private void SelectWeight() {
-        dialog = new Dialog(this, R.style.MyDialogStyle);
+        dialog = new Dialog(this, R.style.BottomPopDialogStyle);
         dialog.setContentView(R.layout.dialog_select_weight);
         dialog.setCanceledOnTouchOutside(true);
         dialog.findViewById(R.id.other_view).setOnClickListener(new View.OnClickListener() {
@@ -731,5 +732,19 @@ public class UserInfoActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("UserInfo");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("UserInfo");
+        MobclickAgent.onPause(this);
     }
 }

@@ -30,6 +30,7 @@ import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
 import com.mooring.mh.views.WeatherView.WeatherView;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -710,21 +711,23 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        weather_view.setRuning(true);
+        MobclickAgent.onPageStart("Weather");
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         weather_view.setRuning(false);
+        MobclickAgent.onPageEnd("Weather");
     }
 
     @Override
     public void onStop() {
         super.onStop();
         weather_view.setRuning(false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        weather_view.setRuning(true);
     }
 
     @Override

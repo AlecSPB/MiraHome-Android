@@ -13,6 +13,7 @@ import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.AlarmDaySelectView;
 import com.mooring.mh.views.WheelPicker.AbstractWheelPicker;
 import com.mooring.mh.views.WheelPicker.widget.WheelTimePicker;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 
@@ -161,5 +162,19 @@ public class AlarmEditActivity extends BaseActivity {
             repeat = data.getStringArrayListExtra("repeat");
             asv_alarm_edit.setTvData(repeat);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("AlarmEdit");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("AlarmEdit");
+        MobclickAgent.onPause(this);
     }
 }

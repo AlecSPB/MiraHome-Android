@@ -26,12 +26,20 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:theme="@style/Theme.AppTheme">
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="921d6e61c0c6b31c2772adb34bb63e43" />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="57736e1ae0f55a39be0024f8" />
+        <meta-data
+            android:name="UMENG_MESSAGE_SECRET"
+            android:value="af6c3dc9bd26c41cc302bc2e4c766a11" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
 
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService" />

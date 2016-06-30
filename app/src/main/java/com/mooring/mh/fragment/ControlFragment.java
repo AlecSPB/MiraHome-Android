@@ -9,6 +9,7 @@ import com.mooring.mh.activity.DryingControlActivity;
 import com.mooring.mh.activity.HeatingControlActivity;
 import com.mooring.mh.activity.SetWifiActivity;
 import com.mooring.mh.utils.MConstants;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 第二个fragment 负责控制仪器的温度
@@ -113,6 +114,18 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
         if (!hidden) {
             judgeDeviceIsOnline();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("Control");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("Control");
     }
 }
 

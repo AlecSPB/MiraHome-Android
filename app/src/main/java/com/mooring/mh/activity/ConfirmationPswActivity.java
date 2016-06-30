@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -172,5 +173,19 @@ public class ConfirmationPswActivity extends BaseActivity {
                 verify_code = data.getStringExtra("verify_code");
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("ConfirmationPsw");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("ConfirmationPsw");
+        MobclickAgent.onPause(this);
     }
 }

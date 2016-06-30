@@ -21,6 +21,7 @@ import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.ControlView.DragScaleTwoView;
 import com.mooring.mh.views.ControlView.DragScaleView;
 import com.mooring.mh.views.CustomToggle;
+import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
 
@@ -430,11 +431,15 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(listener);
+        MobclickAgent.onPageStart("HeatingControl");
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(listener);
+        MobclickAgent.onPageEnd("HeatingControl");
+        MobclickAgent.onPause(this);
     }
 }

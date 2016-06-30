@@ -23,6 +23,7 @@ import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.utils.NetworkUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
 
@@ -366,6 +367,8 @@ public class SetWifiActivity extends BaseActivity {
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
+        MobclickAgent.onPageStart("SetWifi");
+        MobclickAgent.onResume(this);
         if (currShowView == layout_scan_wifi) {
             imgView_search_mid.startAnimation(rotateAnimation);
         }
@@ -375,6 +378,8 @@ public class SetWifiActivity extends BaseActivity {
     public void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
+        MobclickAgent.onPageEnd("SetWifi");
+        MobclickAgent.onPause(this);
     }
 
     @Override

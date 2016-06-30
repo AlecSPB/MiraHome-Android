@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MUtils;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 提交建议
@@ -50,5 +51,19 @@ public class SuggestionsActivity extends BaseActivity {
                 MUtils.showToast(context, getString(R.string.tip_suggest_empty));
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("Suggestions");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("Suggestions");
+        MobclickAgent.onPause(this);
     }
 }
