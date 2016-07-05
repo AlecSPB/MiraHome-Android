@@ -17,7 +17,7 @@ import com.umeng.analytics.MobclickAgent;
  * Created by Will on 16/3/28.
  */
 
-public class SleepDetailActivity extends SlideBackActivity {
+public class SleepDetailActivity extends BaseActivity {
 
     private ViewPager more_viewPager;
     private TabLayout more_tabLayout;
