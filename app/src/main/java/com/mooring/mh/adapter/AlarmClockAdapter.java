@@ -11,7 +11,7 @@ import android.widget.ToggleButton;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MUtils;
-import com.mooring.mh.views.AlarmDaySelectView;
+import com.mooring.mh.views.other.AlarmDaySelectView;
 
 import java.util.List;
 

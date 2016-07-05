@@ -307,8 +307,7 @@ public class MConstants {
     public final static String ATTR_RIGHT_SOMEONE = "116";//右边有人
     public final static String ATTR_DRYING_SWITCH = "117";//烘干开关标志
     public final static String ATTR_DRYING_TIME = "118";//烘干过程时间
-    public final static String ATTR_LEFT_MODE = "119";//左模式
-    public final static String ATTR_RIGHT_MODE = "120";//右模式
+    public final static String ATTR_TEMP_UNIT = "119";//温度单位
     public final static String ATTR_BLANKETS_TOWARD = "121";//毯子朝向
     public final static String ATTR_TIME_ZONE = "122";//时区
     public final static String ATTR_IS_CONNECTED = "123";//是否连接

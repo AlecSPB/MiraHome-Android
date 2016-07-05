@@ -45,7 +45,7 @@
             <TextView
                 android:id="@+id/tv_sign_btn"
                 style="@style/text_button_comm"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="50dp"
                 android:text="@string/title_sign_up" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
                 android:text=""
                 android:textColor="@color/colorOrange"

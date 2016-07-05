@@ -1,4 +1,4 @@
-package com.mooring.mh.views;
+package com.mooring.mh.views.other;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -104,7 +104,6 @@ public class AlarmDaySelectView extends LinearLayout {
      */
     public void setSelectColor(int selectColor) {
         this.selectColor = getResources().getColor(selectColor);
-        ;
     }
 
     /**

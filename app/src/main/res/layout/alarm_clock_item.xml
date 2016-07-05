@@ -29,7 +29,7 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_dimen_48pt" />
 
-            <com.mooring.mh.views.AlarmDaySelectView
+            <com.mooring.mh.views.other.AlarmDaySelectView
                 android:id="@+id/daySV_clock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

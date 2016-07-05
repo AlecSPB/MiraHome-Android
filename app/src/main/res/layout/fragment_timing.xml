@@ -7,39 +7,52 @@
     android:paddingTop="?attr/actionBarSize">
 
     <FrameLayout
-        android:id="@+id/layout_alarm_none"
+        android:id="@+id/layout_timing"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
-        <ImageView
+        <FrameLayout
+            android:id="@+id/layout_alarm_none"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitXY"
-            android:src="@drawable/img_alarm_default" />
+            android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="55dp"
-            android:text="@string/tip_add_clock"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_dimen_28pt" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_name"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_alarm_default" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="55dp"
+                android:text="@string/tip_add_clock"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_dimen_28pt" />
+        </FrameLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/timing_swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/timing_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none" />
+        </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <!--无设备,点击去连接-->
+    <ViewStub
+        android:id="@+id/VStub_no_device"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/param_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none" />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/no_device_to_conn"
+        android:layout="@layout/stub_no_device_to_conn" />
 </FrameLayout>

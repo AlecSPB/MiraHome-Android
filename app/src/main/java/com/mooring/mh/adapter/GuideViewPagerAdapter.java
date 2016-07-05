@@ -7,6 +7,8 @@ import android.view.View;
 import java.util.ArrayList;
 
 /**
+ * 导航页Adapter
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class GuideViewPagerAdapter extends PagerAdapter {

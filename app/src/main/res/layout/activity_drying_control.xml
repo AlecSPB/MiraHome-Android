@@ -31,7 +31,7 @@
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_dimen_60pt" />
 
-    <com.mooring.mh.views.CustomToggle
+    <com.mooring.mh.views.other.CustomToggle
         android:id="@+id/toggle_drying"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

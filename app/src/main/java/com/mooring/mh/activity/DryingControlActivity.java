@@ -17,8 +17,8 @@ import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleProgress.DryingCircleView;
-import com.mooring.mh.views.CommonDialog;
-import com.mooring.mh.views.CustomToggle;
+import com.mooring.mh.views.other.CommonDialog;
+import com.mooring.mh.views.other.CustomToggle;
 import com.umeng.analytics.MobclickAgent;
 
 import java.text.SimpleDateFormat;

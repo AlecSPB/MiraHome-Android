@@ -64,7 +64,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private View layout_sleep_data;//所有睡眠数据
     private View layout_weather_data;//天气相关数据
     private View tv_error_no_weather_data;//无天气数据
-
     /**
      * --------------天气---------------
      */

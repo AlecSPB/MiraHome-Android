@@ -14,7 +14,9 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -545,6 +547,15 @@ public class MUtils {
             loading_dialog.dismiss();
             loading_dialog = null;
         }
+    }
+
+    /**
+     * 强制隐藏输入法键盘
+     */
+    public static void hideInputMethod(Context context, View view) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

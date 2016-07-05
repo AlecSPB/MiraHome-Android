@@ -15,13 +15,13 @@
     <!--GuidePageActivity 导航页面-->
     <string name="guide_four_start">开始</string>
     <string name="tip_sleep_report">睡眠报告</string>
-    <string name="tip_sleep_one">根据监测睡眠状况为你提供最全面，准确的睡眠分析，及历史睡眠数据对比，帮助你调整睡眠习惯</string>
+    <string name="tip_sleep_one">根据监测睡眠状况为你提供最全面，准确\n的睡眠分析，及历史睡眠数据对比，帮助\n你调整睡眠习惯</string>
     <string name="tip_temp_control">温度控制</string>
-    <string name="tip_sleep_two">MOORING拥有独立分区域的智能温控系统，即便你入睡以后也能通过睡眠监测数据为你提供最适宜的睡眠温度</string>
+    <string name="tip_sleep_two">MOORING拥有独立分区域的智能温控系\n统，即便你入睡以后也能通过睡眠监测数\n据为你提供最适宜的睡眠温度</string>
     <string name="tip_sleep_monitor">睡眠监测</string>
-    <string name="tip_sleep_three">实时准确监测你的睡眠心率，呼吸，体动等身体指标及室温，湿度，噪音，光线等环境数据</string>
+    <string name="tip_sleep_three">实时准确监测你的睡眠心率，呼吸，体动\n等身体指标及室温，湿度，噪音，光线等\n环境数据</string>
     <string name="tip_smart_wake">智能叫醒</string>
-    <string name="tip_sleep_four">通过控制睡毯温度变化，调整你的睡眠阶段，让你在浅睡眠状态伴随的轻微的震动下自然醒来开始</string>
+    <string name="tip_sleep_four">通过控制睡毯温度变化，调整你的睡眠阶\n段，让你在浅睡眠状态伴随的轻微的震动\n下自然醒来开始</string>
 
     <!--设备相关-->
     <string name="device_not_online">查询状态失败，请查看设备是否在线</string>

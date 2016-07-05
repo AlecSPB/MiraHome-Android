@@ -17,7 +17,7 @@ import com.umeng.analytics.MobclickAgent;
 
 /**
  * 注册
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class SignUpFragment extends BaseFragment implements View.OnClickListener {
@@ -152,6 +152,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             case R.id.tv_sign_btn:
                 userName = edit_phone.getText().toString().trim();
                 userPwd = edit_psw.getText().toString().trim();
+                MUtils.hideInputMethod(context, edit_psw);
                 if (checkSignUp()) {
                     signUp();
                 }

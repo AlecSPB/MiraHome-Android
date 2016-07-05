@@ -10,6 +10,8 @@ import com.mooring.mh.fragment.LoginFragment;
 import com.mooring.mh.fragment.SignUpFragment;
 
 /**
+ * 登录和注册Adapter
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class LoginAndSignUpPagerAdapter extends FragmentPagerAdapter {

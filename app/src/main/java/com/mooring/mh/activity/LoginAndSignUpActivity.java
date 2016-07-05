@@ -57,7 +57,7 @@ public class LoginAndSignUpActivity extends BaseActivity {
          * 若是用户登录被挤掉,弹出被迫下线dialog
          */
         if (MConstants.LOGOUT_KICKOFF.equals(flag)) {
-            dialog = new Dialog(this);
+            dialog = new Dialog(this, R.style.LoadingDialogStyle);
             dialog.setContentView(R.layout.dialog_logout_kickoff);
             dialog.setCanceledOnTouchOutside(false);
             Calendar cal = Calendar.getInstance();

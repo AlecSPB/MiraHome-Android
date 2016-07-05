@@ -22,6 +22,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     private View layout_no_device;//无设备去连接
     private View layout_heating;
     private View layout_drying;
+    private boolean isDeviceExist = false;//设备是否在线标志
 
     @Override
     protected int getLayoutId() {
@@ -41,8 +42,6 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
 
         layout_heating.setOnClickListener(this);
         layout_drying.setOnClickListener(this);
-
-        judgeDeviceIsOnline();
     }
 
     /**
@@ -52,8 +51,10 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
         if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
                 sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
             hideNoDeviceView();
+            isDeviceExist = true;
         } else {
             showNoDeviceView();
+            isDeviceExist = false;
         }
     }
 
@@ -61,6 +62,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
      * 显示无设备去连接界面
      */
     private void showNoDeviceView() {
+        if (!isDeviceExist) return;
         layout_control.setVisibility(View.GONE);
         if (layout_no_device == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
@@ -83,6 +85,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
      * 隐藏无设备去连接界面
      */
     private void hideNoDeviceView() {
+        if (isDeviceExist) return;
         layout_control.setVisibility(View.VISIBLE);
         if (layout_no_device != null) {
             layout_no_device.setVisibility(View.GONE);
@@ -119,6 +122,9 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
+        //判断设备是否在线
+        judgeDeviceIsOnline();
+
         MobclickAgent.onPageStart("Control");
     }
 

@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
@@ -18,6 +19,7 @@ import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.activity.AlarmEditActivity;
+import com.mooring.mh.activity.SetWifiActivity;
 import com.mooring.mh.adapter.AlarmClockAdapter;
 import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.utils.MConstants;
@@ -31,14 +33,17 @@ import java.util.List;
 
 /**
  * 闹钟fragment
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
-public class TimingFragment extends BaseFragment implements OnRecyclerItemClickListener,
-        SwitchUserObserver, SwipeRefreshLayout.OnRefreshListener, AlarmClockAdapter.OnToggleBtnChange {
+public class TimingFragment extends BaseFragment implements AlarmClockAdapter.OnToggleBtnChange,
+        SwitchUserObserver, SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener {
 
-    private SwipeRefreshLayout swipe_refresh;//下拉刷新
-    private RecyclerView param_recyclerView;//闹钟列表
+    private View layout_timing;//闹钟界面
+    private View layout_no_device;//无设备界面
+
+    private SwipeRefreshLayout timing_swipeRefresh;//下拉刷新
+    private RecyclerView timing_recyclerView;//闹钟列表
     private View layout_alarm_none;//无闹钟界面
     private RecyclerView.LayoutManager layoutManager;//RecycleView对应的布局管理器
     private AlarmClockAdapter adapter;
@@ -47,6 +52,7 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     private int currLocation;//当前位置
     private String propertyId;//左右属性ID--对应125:126
     private boolean isOperate = false;//是否是手动操作
+    private boolean isDeviceExist = false;//设备是否在线
 
     @Override
     protected int getLayoutId() {
@@ -65,22 +71,76 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     @Override
     protected void initView() {
 
-        swipe_refresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
+        layout_timing = rootView.findViewById(R.id.layout_timing);
+        timing_swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.timing_swipeRefresh);
         layout_alarm_none = rootView.findViewById(R.id.layout_alarm_none);
-        param_recyclerView = (RecyclerView) rootView.findViewById(R.id.param_recyclerView);
+        timing_recyclerView = (RecyclerView) rootView.findViewById(R.id.timing_recyclerView);
 
-        swipe_refresh.setColorSchemeResources(R.color.colorWhite50);
-        swipe_refresh.setProgressBackgroundColorSchemeResource(R.color.colorPurple);
-        swipe_refresh.setOnRefreshListener(this);
-        param_recyclerView.setItemAnimator(new DefaultItemAnimator());
+        timing_swipeRefresh.setColorSchemeResources(R.color.colorWhite50);
+        timing_swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.colorPurple);
+        timing_swipeRefresh.setOnRefreshListener(this);
+        timing_recyclerView.setItemAnimator(new DefaultItemAnimator());
         layoutManager = new LinearLayoutManager(context);
-        param_recyclerView.setLayoutManager(layoutManager);
-        param_recyclerView.setHasFixedSize(true);
-        param_recyclerView.addItemDecoration(new AlarmClockAdapter.SpaceItemDecoration(
+        timing_recyclerView.setLayoutManager(layoutManager);
+        timing_recyclerView.setHasFixedSize(true);
+        timing_recyclerView.addItemDecoration(new AlarmClockAdapter.SpaceItemDecoration(
                 MUtils.dp2px(getContext(), 5)));
 
-        swipe_refresh.setProgressViewOffset(true, 0, MUtils.dp2px(context, 30));
-        swipe_refresh.setRefreshing(true);
+        adapter = new AlarmClockAdapter(dataList);
+        adapter.setItemClickListener(this);
+        adapter.setOnToggleBtnChange(this);
+        timing_recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * 判断设备是否在线
+     */
+    private void judgeDeviceIsOnline() {
+        if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
+                sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+            hideNoDeviceView();
+            isDeviceExist = true;
+        } else {
+            showNoDeviceView();
+            isDeviceExist = false;
+        }
+    }
+
+    /**
+     * 显示无设备去连接界面
+     */
+    private void showNoDeviceView() {
+        if (!isDeviceExist) return;
+        layout_timing.setVisibility(View.GONE);
+        if (layout_no_device == null) {
+            ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
+            layout_no_device = viewStub.inflate();
+        } else {
+            layout_no_device.setVisibility(View.VISIBLE);
+        }
+        View view = rootView.findViewById(R.id.no_device_to_conn);
+        View imgView_device_connect = view.findViewById(R.id.imgView_device_connect);
+        imgView_device_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //连接设备
+                context.startActivity(new Intent(context, SetWifiActivity.class));
+            }
+        });
+    }
+
+    /**
+     * 隐藏无设备去连接界面
+     */
+    private void hideNoDeviceView() {
+        if (isDeviceExist) return;
+        layout_timing.setVisibility(View.VISIBLE);
+        if (layout_no_device != null) {
+            layout_no_device.setVisibility(View.GONE);
+        }
+
+        timing_swipeRefresh.setProgressViewOffset(true, 0, MUtils.dp2px(context, 30));
+        timing_swipeRefresh.setRefreshing(true);
         MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
     }
 
@@ -90,21 +150,17 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
      * @param alarms
      */
     private void parsingAlarmString(String alarms) {
-        if (!TextUtils.isEmpty(alarms) || !"mirahome".equals(alarms)) {
+        LogUtil.d("所有闹钟___" + alarms + "___中间是什么");
+        if (!TextUtils.isEmpty(alarms) && !getString(R.string.app_name).toLowerCase().equals(alarms)) {
             dataList.clear();
             String[] alarmArr = alarms.split(";");
             for (int i = 0; i < alarmArr.length - 1; i++) {
                 dataList.add(alarmArr[i]);
             }
-            swipe_refresh.setVisibility(View.VISIBLE);
+            timing_swipeRefresh.setVisibility(View.VISIBLE);
             layout_alarm_none.setVisibility(View.GONE);
-            adapter = new AlarmClockAdapter(dataList);
-            adapter.setItemClickListener(this);
-            adapter.setOnToggleBtnChange(this);
-            param_recyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
         } else {
-            swipe_refresh.setVisibility(View.INVISIBLE);
+            timing_swipeRefresh.setVisibility(View.INVISIBLE);
             layout_alarm_none.setVisibility(View.VISIBLE);
         }
     }
@@ -190,7 +246,9 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                 temp = temp.substring(0, 12) + (isChecked ? "1" : "0");
                 break;
         }
+        LogUtil.e("此时的闹钟:___" + temp);
         dataList.set(position, temp);
+        LogUtil.e("设置之后的闹钟:___" + dataList.get(position).toString());
         sendAlarmString(dataList);
     }
 
@@ -226,15 +284,14 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                 if (list != null) {
                     for (DvidStatus DS : list) {
                         if (propertyId.equals(DS.getDvid())) {
-                            LogUtil.w("所有闹钟:   " + DS.getValue());
                             parsingAlarmString(DS.getValue());
                         }
                     }
                 }
             } else {
-                MUtils.showToast(context, context.getString(R.string.device_not_online));
+                MUtils.showToast(context, getString(R.string.device_not_online));
             }
-            swipe_refresh.setRefreshing(false);
+            timing_swipeRefresh.setRefreshing(false);
         }
 
         @Override
@@ -268,6 +325,10 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
         } else {
             MachtalkSDK.getInstance().setContext(context);
             MachtalkSDK.getInstance().setSdkListener(timingSDKListener);
+
+            //判断设备是否在线
+            judgeDeviceIsOnline();
+
             //判断执行切换
             if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
                 currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
@@ -304,6 +365,10 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                 dataList.add(result);
                 dataList = sortArrayList(dataList);
                 adapter.notifyDataSetChanged();
+                if (timing_swipeRefresh.getVisibility() == View.INVISIBLE) {
+                    timing_swipeRefresh.setVisibility(View.VISIBLE);
+                    layout_alarm_none.setVisibility(View.GONE);
+                }
                 MUtils.showToast(context, getResources().getString(R.string.clock_add_success));
             }
             if ("delete".equals(flag) && position != -1) {
@@ -311,7 +376,7 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
                 adapter.notifyDataSetChanged();
                 MUtils.showToast(context, getResources().getString(R.string.clock_delete_success));
                 if (dataList.size() <= 0) {
-                    swipe_refresh.setVisibility(View.INVISIBLE);
+                    timing_swipeRefresh.setVisibility(View.INVISIBLE);
                     layout_alarm_none.setVisibility(View.VISIBLE);
                 }
             }
@@ -323,6 +388,9 @@ public class TimingFragment extends BaseFragment implements OnRecyclerItemClickL
     @Override
     public void onResume() {
         super.onResume();
+        //判断设备是否在线
+        judgeDeviceIsOnline();
+
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(timingSDKListener);
         MobclickAgent.onPageStart("Timing");

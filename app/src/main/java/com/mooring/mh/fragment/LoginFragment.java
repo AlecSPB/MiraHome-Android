@@ -132,7 +132,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 edit_userName.getText().toString(),
                 edit_userPwd.getText().toString(), null);
 
-//        MachtalkSDK.getInstance().userLogin("18136093612", "123456", null);
+        //执行一次查询列表
+        MachtalkSDK.getInstance().queryDeviceList();
 
         /*RequestParams params = MUtils.getBaseParams(MConstants.LOGIN_BY_MOBILE_PHONE);
         params.addParameter("mobile_userName", userName);
@@ -308,22 +309,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 success = result.getSuccess();
                 errMsg = result.getErrorMessage();
             }
-            MUtils.hideLoadingDialog();
             if (success == Result.SUCCESS) {
                 editor.putString(MConstants.SP_KEY_USERNAME, userName);
                 editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
                 editor.apply();
 
                 MUtils.showToast(context, getString(R.string.login_success));
-                /*if (sp.getBoolean(MConstants.HAS_LOCAL_USER, false)) {
-                    startActivity(new Intent(context, MainActivity.class));
-                    context.finish();
-                } else {
-                    Intent it = new Intent(context, UserInfoActivity.class);
-                    it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.ADD_USER_REQUEST);
-                    startActivity(it);
-                }*/
-
                 startActivity(new Intent(context, MainActivity.class));
                 context.finish();
             } else {
@@ -333,6 +324,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 LogUtil.e(errMsg);
                 setError(getString(R.string.login_failed));
             }
+            MUtils.hideLoadingDialog();
         }
     }
 

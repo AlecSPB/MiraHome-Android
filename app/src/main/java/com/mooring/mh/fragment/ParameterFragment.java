@@ -1,7 +1,6 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.animation.AlphaAnimation;
@@ -9,7 +8,6 @@ import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
-import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.DeviceStatus;
 import com.machtalk.sdk.domain.DvidStatus;
@@ -28,7 +26,7 @@ import java.util.List;
 
 /**
  * 参数Fragment,实时更新
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class ParameterFragment extends BaseFragment implements View.OnClickListener, SwitchUserObserver {
@@ -58,6 +56,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     private int currLocation;//当前用户
     private AlphaAnimation alphaAnimation;//显示动画
     private boolean isRefresh = false;//是否自动刷新
+    private boolean isDeviceExist = false;//设备是否存在
 
     @Override
     protected int getLayoutId() {
@@ -66,8 +65,8 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     protected void initFragment() {
-        msdkListener = new MSDKListener();
 
+        msdkListener = new MSDKListener();
         currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
     }
 
@@ -106,16 +105,27 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         alphaAnimation.setDuration(1500);
         alphaAnimation.setRepeatCount(-1);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
-        startAnimation();
+    }
 
-        //执行一次查询
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+    /**
+     * 判断设备是否在线
+     */
+    private void judgeDeviceIsOnline() {
+        if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
+                sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+            hideNoDeviceView();
+            isDeviceExist = true;
+        } else {
+            showNoDeviceView();
+            isDeviceExist = false;
+        }
     }
 
     /**
      * 显示无设备去连接界面
      */
     private void showNoDeviceView() {
+        if (!isDeviceExist) return;
         layout_parameter.setVisibility(View.GONE);
         if (layout_no_device == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
@@ -123,6 +133,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         } else {
             layout_no_device.setVisibility(View.VISIBLE);
         }
+        stopAnimation();
         View view = rootView.findViewById(R.id.no_device_to_conn);
         View imgView_device_connect = view.findViewById(R.id.imgView_device_connect);
         imgView_device_connect.setOnClickListener(new View.OnClickListener() {
@@ -138,17 +149,30 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
      * 隐藏无设备去连接界面
      */
     private void hideNoDeviceView() {
+        if (isDeviceExist) return;
         layout_parameter.setVisibility(View.VISIBLE);
-        stopAnimation();
         if (layout_no_device != null) {
             layout_no_device.setVisibility(View.GONE);
         }
+        //执行动画
+        startAnimation();
+        //执行一次查询
+//        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
     }
 
     /**
      * 开始动画加载
      */
     private void startAnimation() {
+        tv_heart_rate.setText(getString(R.string.wait_loading));
+        tv_breathing_rate.setText(getString(R.string.wait_loading));
+        tv_body_movement.setText(getString(R.string.wait_loading));
+        tv_humidity.setText(getString(R.string.wait_loading));
+        tv_temperature.setText(getString(R.string.wait_loading));
+        tv_bed_temperature.setText(getString(R.string.wait_loading));
+        tv_light.setText(getString(R.string.wait_loading));
+        tv_noise.setText(getString(R.string.wait_loading));
+        //添加动画
         tv_heart_rate.setAnimation(alphaAnimation);
         tv_breathing_rate.setAnimation(alphaAnimation);
         tv_body_movement.setAnimation(alphaAnimation);
@@ -263,11 +287,9 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             }
             if (success == Result.SUCCESS && deviceStatus != null
                     && deviceId.equals(deviceStatus.getDeviceId())) {
-                hideNoDeviceView();
                 parseDvidStatusList(deviceStatus.getDeviceDvidStatuslist());
                 isRefresh = true;
             } else {
-                showNoDeviceView();
                 MUtils.showToast(context, getResources().getString(R.string.device_not_online));
             }
         }
@@ -285,19 +307,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             LogUtil.w(success + "    ____     ");
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
                 parseDvidStatusList(rdm.getDvidStatusList());
-            }
-        }
-
-        @Override
-        public void onDeviceOnOffline(String dId, MachtalkSDKConstant.DeviceOnOffline dool) {
-            super.onDeviceOnOffline(deviceId, dool);
-            if (!TextUtils.isEmpty(dId) && deviceId.equals(dId)) {
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {//局域网上线
-
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {//局域网下线
-
-                }
             }
         }
     }
@@ -353,12 +362,16 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             MachtalkSDK.getInstance().setContext(context);
             MachtalkSDK.getInstance().setSdkListener(msdkListener);
 
+            //执行判断设备在线状态
+            judgeDeviceIsOnline();
+
             //获取当前的User,如果没有改变,则不做切换
             if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
                 isRefresh = false;
                 currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
                 startAnimation();
             }
+
             //每次展现的时候请求一次,保证数据最新
             MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
         }
@@ -367,6 +380,11 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        //执行判断设备在线状态
+        judgeDeviceIsOnline();
+
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
         MobclickAgent.onPageStart("Parameter");

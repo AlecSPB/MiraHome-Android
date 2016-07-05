@@ -28,10 +28,10 @@ import java.util.TimerTask;
 
 /**
  * 获取手机/邮箱验证码
- * <p>
+ * <p/>
  * 1.从忘记密码跳转过来,只是获取验证码则返回原界面
  * 2.从注册页面条转过来,获取验证码之后,在当前界面直接执行注册
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public class VerifyPhoneActivity extends BaseActivity {
@@ -127,10 +127,12 @@ public class VerifyPhoneActivity extends BaseActivity {
             time--;
             if (time < 0) {
                 tv_verify_send.setEnabled(true);
+                tv_verify_send.setText(getResources().getString(R.string.btn_tv_send));
                 tv_verify_send.setBackgroundColor(getResources().getColor(R.color.colorPurple50));
                 tv_verify_send.setTextColor(getResources().getColor(R.color.colorWhite));
                 clearTimer();
                 time = 60;
+                tv_wait_times.setText("");
             }
         }
     };
@@ -188,6 +190,7 @@ public class VerifyPhoneActivity extends BaseActivity {
             public void onSuccess(JSONObject result) {
                 if (result != null) {
                     MUtils.showToast(context, result.toString());
+                    LogUtil.d("Result:  " + result.toString());
 
                     //成功之后进行保存验证码  sms_code
                     sms_code = result.optString("code");
@@ -352,8 +355,7 @@ public class VerifyPhoneActivity extends BaseActivity {
                 }
                 if (entrance_flag == MConstants.SIGN_UP_SUCCESS) {
                     executeSignUp();
-                }
-                if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
+                } else if (entrance_flag == MConstants.CONFIRM_SUCCESS) {
                     //重置密码获取验证码成功,回转修改界面
                     returnToConfirmation();
                 }

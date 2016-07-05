@@ -84,8 +84,7 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <!--<item name="android:backgroundDimAmount">0.6</item>-->
+        <item name="android:backgroundDimEnabled">true</item>
     </style>
 
     <!--自定义TabLayout的样式-->

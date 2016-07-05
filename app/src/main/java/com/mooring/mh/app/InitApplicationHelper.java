@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
+import com.mooring.mh.BuildConfig;
 import com.mooring.mh.R;
 import com.umeng.message.PushAgent;
 import com.umeng.message.UmengMessageHandler;
@@ -44,14 +45,14 @@ public class InitApplicationHelper {
 
         //xUtils初始化
         x.Ext.init(app);
-        x.Ext.setDebug(true);//发布版本时要设置false
+        x.Ext.setDebug(BuildConfig.LOG_DEBUG);//发布版本时要设置false
 
         //捕获异常初始化
         CrashHandler.getInstance().init();
 
         //注册推送
         mPushAgent = PushAgent.getInstance(app);
-        mPushAgent.setDebugMode(true);
+        mPushAgent.setDebugMode(BuildConfig.LOG_DEBUG);
 
         //以下还是测试阶段
         UmengMessageHandler messageHandler = new UmengMessageHandler() {

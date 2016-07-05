@@ -20,7 +20,7 @@ import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
-import com.mooring.mh.views.CommonDialog;
+import com.mooring.mh.views.other.CommonDialog;
 import com.umeng.message.PushAgent;
 
 import java.util.List;

@@ -53,7 +53,7 @@ import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
 import com.mooring.mh.views.CircleImgView.ZoomCircleView;
-import com.mooring.mh.views.CustomToggle;
+import com.mooring.mh.views.other.CustomToggle;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
@@ -674,7 +674,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
                 .build();
 
         // 创建一个数据集
-        int heartCountDelta = 90;
+        int heartCountDelta = 50;
         DataSet dataSet = DataSet.create(dataSource);
         // For each data point, specify a start time, end time, and the data value -- in this case,
         // the number of new steps.
@@ -884,10 +884,13 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
                 mDrawerLayout.openDrawer(activity_menu);
                 break;
             case R.id.imgView_title_plus:
-                Intent it = new Intent();
-                it.putExtra("flag", "add");
-                it.setClass(context, AlarmEditActivity.class);
-                startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
+                if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
+                        sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+                    Intent it = new Intent();
+                    it.putExtra("flag", "add");
+                    it.setClass(context, AlarmEditActivity.class);
+                    startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
+                }
                 break;
             case R.id.imgView_switch_user:
                 switchUserLocation();
@@ -955,10 +958,8 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         editor.putBoolean(MConstants.TEMPERATURE_UNIT, isChecked).apply();
         MachtalkSDK.getInstance().operateDevice(
                 sp.getString(MConstants.DEVICE_ID, ""),
-                new String[]{MConstants.ATTR_LEFT_TARGET_TEMP},
-                new String[]{isChecked ? "30" : "80"});
-        //上面的30和80还有待于修改,目前待定
-        //---希望的方式是,增加标志位,以保证当前温度转换过后的准确性
+                new String[]{MConstants.ATTR_TEMP_UNIT},
+                new String[]{isChecked ? "0" : "1"});
     }
 
     @Override

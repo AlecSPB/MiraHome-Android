@@ -1,4 +1,4 @@
-package com.mooring.mh.views;
+package com.mooring.mh.views.other;
 
 import android.app.Dialog;
 import android.content.Context;

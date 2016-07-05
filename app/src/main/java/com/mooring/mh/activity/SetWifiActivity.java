@@ -29,7 +29,7 @@ import org.xutils.common.util.LogUtil;
 
 /**
  * 设置WIFI信息进行广播设备
- * <p>
+ * <p/>
  * Created by Will on 16/5/12.
  */
 public class SetWifiActivity extends BaseActivity {
@@ -287,15 +287,6 @@ public class SetWifiActivity extends BaseActivity {
         v.startAnimation(hideAnimation);
     }
 
-    /**
-     * 强制隐藏输入法键盘
-     */
-    private void hideInput(Context context, View view) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     @Override
     protected void OnClick(View v) {
         switch (v.getId()) {
@@ -312,7 +303,7 @@ public class SetWifiActivity extends BaseActivity {
                     return;
                 }
                 //收起手机键盘
-                hideInput(context, edit_wifi_psw);
+                MUtils.hideInputMethod(context, edit_wifi_psw);
 
                 hideWithAnimation(layout_setting_wifi);
                 showWithAnimation(layout_scan_wifi);

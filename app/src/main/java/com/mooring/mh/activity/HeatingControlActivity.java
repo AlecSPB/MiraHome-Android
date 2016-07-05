@@ -1,7 +1,6 @@
 package com.mooring.mh.activity;
 
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -13,14 +12,13 @@ import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
-import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
-import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.ControlView.DragScaleTwoView;
 import com.mooring.mh.views.ControlView.DragScaleView;
-import com.mooring.mh.views.CustomToggle;
+import com.mooring.mh.views.other.CommonDialog;
+import com.mooring.mh.views.other.CustomToggle;
 import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
@@ -53,7 +51,6 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
 
     private String deviceId = "";
     private BaseListener listener;
-    private SharedPreferences.Editor editor;
     private String left_real_temp;//床温
     private String left_target_temp;//可调整温度
     private Boolean left_drop_enable = false;//左边可操控
@@ -80,16 +77,14 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
 
     @Override
     protected void initActivity() {
-        editor = InitApplicationHelper.sp.edit();
-        editor.apply();
 
-        deviceId = InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, "");
-        temp_unit = InitApplicationHelper.sp.getBoolean(MConstants.TEMPERATURE_UNIT, true);
+        deviceId = sp.getString(MConstants.DEVICE_ID, "");
+        temp_unit = sp.getBoolean(MConstants.TEMPERATURE_UNIT, true);
 
         listener = new BaseListener();
 
-        left_target_temp = InitApplicationHelper.sp.getString(MConstants.ATTR_LEFT_TARGET_TEMP, "");
-        right_target_temp = InitApplicationHelper.sp.getString(MConstants.ATTR_LEFT_TARGET_TEMP, "");
+        left_target_temp = sp.getString(MConstants.ATTR_LEFT_TARGET_TEMP, "");
+        right_target_temp = sp.getString(MConstants.ATTR_LEFT_TARGET_TEMP, "");
     }
 
     @Override

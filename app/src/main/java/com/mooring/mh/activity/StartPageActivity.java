@@ -19,6 +19,7 @@ import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Result;
+import com.mooring.mh.BuildConfig;
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
 import com.mooring.mh.utils.MConstants;
@@ -33,7 +34,7 @@ import java.util.List;
 
 /**
  * 起始页--执行动画,判断是否首次使用,是否自动登录
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class StartPageActivity extends AppCompatActivity {
@@ -62,7 +63,7 @@ public class StartPageActivity extends AppCompatActivity {
         editor.apply();
 
         //设定Log输出等级以及输出到本地文件
-        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, true);
+        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_NO, BuildConfig.LOG_DEBUG);
         MachtalkSDK.getInstance().startSDK(context, null);
 
         baseListener = new BaseListener();
@@ -71,7 +72,7 @@ public class StartPageActivity extends AppCompatActivity {
         PushAgent.getInstance(context).onAppStart();
 
         //友盟统计配置
-        MobclickAgent.setDebugMode(true);
+        MobclickAgent.setDebugMode(BuildConfig.LOG_DEBUG);
         // SDK在统计Fragment时，需要关闭Activity自带的页面统计，
         // 然后在每个页面中重新集成页面统计的代码(包括调用了 onResume 和 onPause 的Activity)。
         MobclickAgent.openActivityDurationTrack(false);
@@ -137,6 +138,7 @@ public class StartPageActivity extends AppCompatActivity {
      * 执行方法
      */
     private void executeMethod() {
+        MUtils.showLoadingDialog(context);
         if (sp.getBoolean(MConstants.SP_KEY_FIRST_START, true)) {
             // 引导页
             startActivity(new Intent(context, GuidePageActivity.class));
@@ -150,10 +152,10 @@ public class StartPageActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPwd) &&
                     sp.getBoolean(MConstants.HAS_LOCAL_USER, false)) {
-                MUtils.showLoadingDialog(context);
                 MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
             } else {
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
+                MUtils.hideLoadingDialog();
                 context.finish();
             }
         }
@@ -226,7 +228,6 @@ public class StartPageActivity extends AppCompatActivity {
                 success = result.getSuccess();
                 errMsg = result.getErrorMessage();
             }
-            MUtils.hideLoadingDialog();
             if (success == Result.SUCCESS) {
                 editor.putString(MConstants.SP_KEY_USERNAME, userName);
                 editor.putString(MConstants.SP_KEY_PASSWORD, userPwd);
@@ -242,6 +243,7 @@ public class StartPageActivity extends AppCompatActivity {
                 MUtils.showToast(context, errMsg);
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
             }
+            MUtils.hideLoadingDialog();
             context.finish();
         }
     }

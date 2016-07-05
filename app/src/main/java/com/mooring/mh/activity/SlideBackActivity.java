@@ -15,10 +15,10 @@ public abstract class SlideBackActivity extends BaseActivity {
     private VelocityTracker mVelocityTracker;
 
     //手指向右滑动时的最小速度
-    private static final int XSPEED_MIN = 200;
+    private static final int X_SPEED_MIN = 200;
 
     //手指向右滑动时的最小距离
-    private static final int XDISTANCE_MIN = 150;
+    private static final int X_DISTANCE_MIN = 150;
 
     //记录手指按下时的横坐标。
     private float xDown;
@@ -71,7 +71,7 @@ public abstract class SlideBackActivity extends BaseActivity {
                 //获取顺时速度
                 int xSpeed = getScrollVelocity();
                 //当滑动的距离大于我们设定的最小距离且滑动的瞬间速度大于我们设定的速度时，返回到上一个activity
-                if (distanceX > XDISTANCE_MIN && xSpeed > XSPEED_MIN) {
+                if (distanceX > X_DISTANCE_MIN && xSpeed > X_SPEED_MIN) {
                     finish();
                     overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
                 }

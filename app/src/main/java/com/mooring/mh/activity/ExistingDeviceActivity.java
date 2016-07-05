@@ -22,7 +22,7 @@ import com.mooring.mh.adapter.DeviceListAdapter;
 import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
-import com.mooring.mh.views.CommonDialog;
+import com.mooring.mh.views.other.CommonDialog;
 import com.umeng.analytics.MobclickAgent;
 
 import org.xutils.common.util.LogUtil;
@@ -84,7 +84,7 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         imgView_one_device = (ImageView) findViewById(R.id.imgView_one_device);
         tv_device_name = (TextView) findViewById(R.id.tv_device_name);
         imgView_retry_add_device = (ImageView) findViewById(R.id.imgView_retry_add_device);
-//
+
         tv_act_skip.setVisibility(View.VISIBLE);
         tv_act_skip.setOnClickListener(this);
         imgView_retry_add_device.setOnClickListener(this);
@@ -309,6 +309,11 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     }
 
     @Override
+    public void onItemClick(View view, int position) {
+        decideDevice(deviceList.get(position));
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         MachtalkSDK.getInstance().setContext(this);
@@ -326,7 +331,8 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-        decideDevice(deviceList.get(position));
+    protected void onDestroy() {
+        super.onDestroy();
+        MachtalkSDK.getInstance().stopSearchLanDevices();
     }
 }

@@ -1,4 +1,4 @@
-package com.mooring.mh.views;
+package com.mooring.mh.views.other;
 
 import android.content.Context;
 import android.graphics.Bitmap;
