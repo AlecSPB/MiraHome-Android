@@ -2,12 +2,27 @@ apply plugin: 'com.android.application'
 
 android {
 
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        applicationId "com.mooring.mh"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+
+    //  签名
     signingConfigs {
+        debug {
+            storeFile file("/Users/Will/.android/debug.keystore")
+        }
         /**
          * 设置你的keystore相关
          * demo中只是一个示例，使用时请根据实际情况进行配置
          */
-        debug {
+        release {
             //keystore中key的别名
             keyAlias 'mirahome'
             //keystore中key的密码
@@ -19,39 +34,68 @@ android {
         }
     }
 
+    //执行lint检查，有任何的错误或者警告提示，都会终止构建，我们可以将其关掉。
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            //混淆
+            minifyEnabled true
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //签名
+            signingConfig signingConfigs.release
+        }
+    }
+
     /**
      * 设置不同渠道打包通道
      */
     productFlavors {
-
-        googleplay {}
+        googleplay {
+            minSdkVersion 15
+            applicationId 'com.mooring.mh'
+            targetSdkVersion 23
+            versionCode 1
+            versionName '1.0'
+            signingConfig signingConfigs.release
+        }
         wandoujia {}
         baidu {}
         c360 {}
-        uc {}
-
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
         }
     }
 
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
-
-    defaultConfig {
-        applicationId "com.mooring.mh"
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                def fileName = outputFile.name.replace(".apk", "-${defaultConfig.versionName}.apk")
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
+
 }
 
 dependencies {
