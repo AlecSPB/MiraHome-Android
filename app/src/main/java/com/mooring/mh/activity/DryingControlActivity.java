@@ -15,6 +15,7 @@ import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleProgress.DryingCircleView;
 import com.mooring.mh.views.CommonDialog;
 import com.mooring.mh.views.CustomToggle;
@@ -40,7 +41,6 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
     private int clockTime = 0;//倒计时使用
     private String deviceId;//设备ID
     private MSDKListener msdkListener;//自定义SDK回调监听
-    private boolean isOperate = false;
 
     @Override
     protected int getLayoutId() {
@@ -111,9 +111,6 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
      * 开启烘干
      */
     private void openDrying() {
-        MachtalkSDK.getInstance().operateDevice(deviceId,
-                new String[]{MConstants.ATTR_DRYING_SWITCH, MConstants.ATTR_DRYING_TIME},
-                new String[]{"1", String.valueOf(totalTimes / 1000)});
         toggle_drying.setChecked(true);
         initTimer();
         timer.schedule(timerTask, 0, 1000);
@@ -131,10 +128,6 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
      * 关闭烘干
      */
     private void closeDrying() {
-        //取消烘干
-        MachtalkSDK.getInstance().operateDevice(deviceId,
-                new String[]{MConstants.ATTR_DRYING_SWITCH},
-                new String[]{"0"});
         editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, false).apply();
         drying.resetView();
         clearTimer();
@@ -155,15 +148,16 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //取消烘干
-                closeDrying();
-                isOperate = true;
+                MachtalkSDK.getInstance().operateDevice(deviceId,
+                        new String[]{MConstants.ATTR_DRYING_SWITCH},
+                        new String[]{"0"});
+                MUtils.showLoadingDialog(context);
                 dialog.dismiss();
             }
         });
         builder.setNegativeButton(true, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                isOperate = false;
                 dialog.dismiss();
             }
         });
@@ -255,8 +249,10 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
     @Override
     public void onCheckedChanged(View v, boolean isChecked) {
         if (isChecked) {
-            openDrying();
-            isOperate = true;
+            MachtalkSDK.getInstance().operateDevice(deviceId,
+                    new String[]{MConstants.ATTR_DRYING_SWITCH, MConstants.ATTR_DRYING_TIME},
+                    new String[]{"1", String.valueOf(totalTimes / 1000)});
+            MUtils.showLoadingDialog(context);
         } else {
             showDialog(); //弹出提示
         }
@@ -276,16 +272,15 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
             }
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
                 List<DvidStatus> dsList = rdm.getDvidStatusList();
-                if (dsList == null) {
-                    return;
-                }
+                if (dsList == null) return;
                 for (DvidStatus ds : dsList) {
                     if (MConstants.ATTR_DRYING_SWITCH.equals(ds.getDvid())) {
                         if ("1".equals(ds.getValue())) {
-//                            openDrying();//此处要做手动操作判断,否则会出现重复回调
-                        } else {
-//                            closeDrying();
+                            openDrying();//此处要做手动操作判断,否则会出现重复回调
+                        } else if ("0".equals(ds.getValue())) {
+                            closeDrying();
                         }
+                        MUtils.hideLoadingDialog();
                     }
                 }
             }
@@ -300,9 +295,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
             }
             if (success == Result.SUCCESS && deviceStatus != null && deviceId.equals(deviceStatus.getDeviceId())) {
                 List<DvidStatus> dsList = deviceStatus.getDeviceDvidStatuslist();
-                if (dsList == null) {
-                    return;
-                }
+                if (dsList == null) return;
                 String drySwitch = "";
                 long startTime = 0, dryTime = 0;
                 for (DvidStatus ds : dsList) {
