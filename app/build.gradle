@@ -44,7 +44,7 @@ android {
             // 显示Log
             buildConfigField "boolean", "LOG_DEBUG", "true"
 
-            versionNameSuffix "-debug"
+            versionNameSuffix "-debug" + "-build" + getDate()
             minifyEnabled false
             zipAlignEnabled false
             shrinkResources false
@@ -54,6 +54,7 @@ android {
         release {
             // 不显示Log
             buildConfigField "boolean", "LOG_DEBUG", "false"
+
             //混淆
             minifyEnabled true
             //Zipalign优化
@@ -80,11 +81,14 @@ android {
         }
         wandoujia {}
         baidu {}
-        c360 {}
-        productFlavors.all { flavor ->
-            flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
-        }
+        _360 {}
+        xiaomi {}
     }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
 
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -95,7 +99,12 @@ android {
             }
         }
     }
+}
 
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate;
 }
 
 dependencies {

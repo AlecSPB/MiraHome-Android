@@ -8,8 +8,8 @@ import com.mooring.mh.R;
  * Created by Will on 16/4/27.
  */
 public class SleepTimeInfo {
-    private int type;
-    private int time;
+    private int type;//类型
+    private int time;//小时
 
     public int getType() {
         return type;

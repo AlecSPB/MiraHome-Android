@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.mooring.mh.model.SleepTimeInfo;
 import com.mooring.mh.views.ChartView.MyChartView;
 import com.mooring.mh.views.ChartView.YAxisView;
 import com.mooring.mh.views.CircleProgress.CircleDisplay;
@@ -173,6 +174,18 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
         allChart1.setYdatas(ydata);
         allChart2.setYdatas(ydata);
         allChart3.setYdatas(ydata);
+
+
+        List<SleepTimeInfo> listSleepIn = new ArrayList<>();
+        List<SleepTimeInfo> listSleepOut = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            SleepTimeInfo s = new SleepTimeInfo();
+            s.setTime((int) (50+3 * Math.random()));
+            s.setType(i % 4);
+            listSleepIn.add(s);
+            listSleepOut.add(s);
+        }
+        dcv_day.setDatass(listSleepOut, listSleepIn);
     }
 
     @Override

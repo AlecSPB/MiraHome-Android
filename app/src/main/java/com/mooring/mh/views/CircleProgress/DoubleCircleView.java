@@ -82,6 +82,19 @@ public class DoubleCircleView extends View {
         }
     }
 
+    /**
+     *
+     *
+     * 目前time的单位不确定
+     *
+     * 外圈的值少画了一个
+     *
+     * 两个环之间的间隔需要减小
+     *
+     *
+     * @param canvas
+     */
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
