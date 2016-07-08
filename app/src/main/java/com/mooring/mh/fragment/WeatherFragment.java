@@ -12,9 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewStub;
-import android.view.animation.Animation;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,20 +39,19 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.text.DecimalFormat;
-import java.util.Locale;
 
 /**
  * 天气Fragment
- * <p>
+ * <p/>
  * Created by Will on 16/3/24.
  */
 public class WeatherFragment extends BaseFragment implements View.OnClickListener,
         AMapLocationListener, SwitchUserObserver {
 
-    private CircleDisplay circle_progress_1;//深睡眠
-    private CircleDisplay circle_progress_2;//浅睡眠
-    private CircleDisplay circle_progress_3;//REM
-    private CircleDisplay circle_progress_4;//清醒
+    private CircleDisplay cp_deep_sleep;//深睡眠
+    private CircleDisplay cp_light_sleep;//浅睡眠
+    private CircleDisplay cp_rem;//REM
+    private CircleDisplay cp_wake_up;//清醒
     private TextView tv_sleep_detail;//详情
 
     private View no_network_data;//网络连接失败,暂无网络数据
@@ -67,8 +63,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     /**
      * --------------天气---------------
      */
-    private AMapLocationClient locationClient = null;
-    private AMapLocationClientOption locationOption = null;
+    private AMapLocationClient mLocationClient = null;
+    private AMapLocationClientOption mLocationOption = null;
     private double lon;//经度
     private double lat;//纬度
     private int weatherId;
@@ -102,7 +98,11 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     protected void initView() {
-
+        /**
+         * 天气相关数据
+         */
+        layout_weather_data = rootView.findViewById(R.id.layout_weather_data);
+        tv_error_no_weather_data = rootView.findViewById(R.id.tv_error_no_weather_data);
         weather_view = (WeatherView) rootView.findViewById(R.id.weather_view);
         layout_weather_bg = rootView.findViewById(R.id.layout_weather_bg);
         imgView_cloud_1 = (ImageView) rootView.findViewById(R.id.imgView_cloud_1);
@@ -113,128 +113,42 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         tv_curr_temp = (TextView) rootView.findViewById(R.id.tv_curr_temp);
         tv_wind_speed = (TextView) rootView.findViewById(R.id.tv_wind_speed);
         tv_humidity = (TextView) rootView.findViewById(R.id.tv_humidity);
+        /**
+         * 睡眠数据相关
+         */
         tv_sleep_detail = (TextView) rootView.findViewById(R.id.tv_sleep_detail);
-
-        circle_progress_1 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_1);
-        circle_progress_2 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_2);
-        circle_progress_3 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_3);
-        circle_progress_4 = (CircleDisplay) rootView.findViewById(R.id.circle_progress_4);
-
+        cp_deep_sleep = (CircleDisplay) rootView.findViewById(R.id.cp_deep_sleep);
+        cp_light_sleep = (CircleDisplay) rootView.findViewById(R.id.cp_light_sleep);
+        cp_rem = (CircleDisplay) rootView.findViewById(R.id.cp_rem);
+        cp_wake_up = (CircleDisplay) rootView.findViewById(R.id.cp_wake_up);
         layout_sleep_data = rootView.findViewById(R.id.layout_sleep_data);
-        layout_weather_data = rootView.findViewById(R.id.layout_weather_data);
-        tv_error_no_weather_data = rootView.findViewById(R.id.tv_error_no_weather_data);
-
         tv_sleep_detail.setOnClickListener(this);
 
-        //初始化云动画
-        // initCloud();
+        getLatestSleepData();
 
-        initData();
+        getWeatherData();
     }
 
     /**
-     * 初始化数据
+     * 从服务器获取昨日睡眠数据
      */
-    private void initData() {
-        //初始化当前白天/黑夜
-        sunrise = MUtils.getCurrDate() + " 06:00:00";
-        sunset = MUtils.getCurrDate() + " 18:00:00";
-        System.out.printf(translateTime(1461320856));
-        if (!MUtils.judgeTimeInterval(sunrise, sunset)) {
-            layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_night);
-            imgView_cloud_1.setImageResource(R.drawable.ic_night_cloud_1);
-            imgView_cloud_2.setImageResource(R.drawable.ic_night_cloud_2);
-            imgView_cloud_3.setImageResource(R.drawable.ic_night_cloud_3);
-            imgView_cloud_4.setImageResource(R.drawable.ic_night_cloud_4);
-            imgView_cloud_5.setImageResource(R.drawable.ic_night_cloud_5);
-        }
-
-        int beforeWeather = sp.getInt("beforeWeather", -1);
-        int beforeWeatherId = sp.getInt("beforeWeatherId", -1);
-        if (beforeWeatherId != -1 && beforeWeather != -1) {
-//            judgeWeather(beforeWeatherId);
-//            weather_view.switchWeather(beforeWeather);
-
-            //------------直接切换天气有问题
-        }
-
-//        setCircleDisplay(circle_progress_1, 66f);
-//        setCircleDisplay(circle_progress_2, 20f);
-//        setCircleDisplay(circle_progress_3, 68f);
-//        setCircleDisplay(circle_progress_4, 90f);
-
-        //getSleepData();
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            int check = ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION);
-            if (check != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(context,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MConstants.PERMISSIONS_LOCATION);
-                return;
-            }
-        }
-
-        getLatAndLon();
-    }
-
-    /**
-     * 高德定位
-     * 获取经纬度
-     */
-    private void getLatAndLon() {
-        locationClient = new AMapLocationClient(context);
-        locationOption = new AMapLocationClientOption();
-        // 设置定位模式为高精度模式
-        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        // 设置定位监听
-        locationClient.setLocationListener(this);
-        //单次定位
-        locationOption.setOnceLocation(true);
-        // 设置定位参数
-        locationClient.setLocationOption(locationOption);
-        // 启动定位
-        locationClient.startLocation();
-    }
-
-    /**
-     * 设置圆形进度
-     *
-     * @param c
-     * @param value
-     */
-    private void setCircleDisplay(CircleDisplay c, float value) {
-        c.setFormatDigits(0);
-        c.setAnimDuration(3000);
-        c.setUnit("%");
-        c.showValue(value, 100f, true);
-    }
-
-    /**
-     * 获取睡眠数据
-     */
-    private void getSleepData() {
+    private void getLatestSleepData() {
         RequestParams params = MUtils.getBaseParams(MConstants.DAILY_REPORT);
         params.addParameter("member_id", "");//为当前User的id
         params.addParameter("year_month", MUtils.getCurrDate());
-        x.http().post(params, new Callback.CommonCallback<JSONObject>() {
+        x.http().get(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
                 //解析日参数数据
                 if (result != null) {
-
-
                     //当日参数为空时展示无数据界面
-                    showNoMooringDataView();
+//                    showNetworkErrorView();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof HttpException) { // 网络错误
-                    HttpException hex = (HttpException) ex;
-                    LogUtil.e("code:" + hex.getCode() + " Msg " + hex.getMessage() + " result " + hex.getResult());
                     //提示网络原因导致错误
                     showNetworkErrorView();
                 } else { // 其他错误
@@ -257,6 +171,68 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     }
 
     /**
+     * 获取天气数据
+     */
+    private void getWeatherData() {
+        //初始化当前白天/黑夜
+        if (MUtils.judgeCurrIsDayTime()) {
+            layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_night);
+            imgView_cloud_1.setImageResource(R.drawable.ic_night_cloud_1);
+            imgView_cloud_2.setImageResource(R.drawable.ic_night_cloud_2);
+            imgView_cloud_3.setImageResource(R.drawable.ic_night_cloud_3);
+            imgView_cloud_4.setImageResource(R.drawable.ic_night_cloud_4);
+            imgView_cloud_5.setImageResource(R.drawable.ic_night_cloud_5);
+        }
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            LogUtil.w("______这里是WeatherFragment_____申请了权限");
+            int check = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (check != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MConstants.PERMISSIONS_LOCATION);
+                return;
+            }
+        }
+
+        getLatAndLon();
+    }
+
+    /**
+     * 高德定位
+     * 获取经纬度
+     */
+    private void getLatAndLon() {
+        mLocationClient = new AMapLocationClient(context.getApplicationContext());
+        mLocationOption = new AMapLocationClientOption();
+        // 设置定位模式为高精度模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        // 设置不返回地址信息
+        mLocationOption.setNeedAddress(false);
+        //单次定位
+        mLocationOption.setOnceLocation(true);
+        // 设置定位监听
+        mLocationClient.setLocationListener(this);
+        // 设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+        // 启动定位
+        mLocationClient.startLocation();
+    }
+
+    /**
+     * 设置圆形进度
+     *
+     * @param c
+     * @param value
+     */
+    private void setCircleDisplay(CircleDisplay c, float value) {
+        c.setFormatDigits(0);
+        c.setAnimDuration(3000);
+        c.setUnit("%");
+        c.showValue(value, 100f, true);
+    }
+
+    /**
      * 展示无网络数据错误
      */
     private void showNetworkErrorView() {
@@ -273,7 +249,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
             @Override
             public void onClick(View v) {
                 //重新获取睡眠数据
-                getSleepData();
+                getLatestSleepData();
             }
         });
     }
@@ -326,7 +302,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private void showNoMooringDataView() {
         layout_sleep_data.setVisibility(View.INVISIBLE);
         if (no_mooring_data == null) {
-            ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_connect_mooring);
+            ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_mooring_data);
             no_mooring_data = viewStub.inflate();
         } else {
             no_mooring_data.setVisibility(View.VISIBLE);
@@ -341,28 +317,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         if (no_mooring_data != null) {
             no_mooring_data.setVisibility(View.GONE);
         }
-    }
-
-    /**
-     * 初始化晃动云彩-------有待于修改
-     */
-    private void initCloud() {
-        TranslateAnimation translate = new TranslateAnimation(0, -50, 0, 0);
-        translate.setInterpolator(new OvershootInterpolator());
-        translate.setDuration(3000);
-        translate.setRepeatCount(-1);
-        translate.setRepeatMode(Animation.REVERSE);
-        TranslateAnimation translate2 = new TranslateAnimation(-50, 0, 0, 0);
-        translate2.setInterpolator(new OvershootInterpolator());
-        translate2.setDuration(3000);
-        translate2.setRepeatCount(-1);
-        translate2.setRepeatMode(Animation.REVERSE);
-
-        imgView_cloud_1.startAnimation(translate);
-        imgView_cloud_2.startAnimation(translate2);
-        imgView_cloud_3.startAnimation(translate);
-        imgView_cloud_4.startAnimation(translate2);
-        imgView_cloud_5.startAnimation(translate);
     }
 
     /**
@@ -385,8 +339,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     JSONObject wind = result.optJSONObject("wind");
                     wind_speed = wind.optDouble("speed");
                     JSONObject sys = result.optJSONObject("sys");
-                    sunrise = translateTime(sys.optLong("sunrise"));
-                    sunset = translateTime(sys.optLong("sunset"));
+                    sunrise = MUtils.translateTime(sys.optLong("sunrise"));
+                    sunset = MUtils.translateTime(sys.optLong("sunset"));
 
                     tv_wind_speed.setText(new DecimalFormat("#0.0").format(wind_speed * 3.6)
                             + getString(R.string.unit_km_h));
@@ -422,17 +376,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 LogUtil.e("onFinished ");
             }
         });
-    }
-
-    /**
-     * 转换时间格式
-     *
-     * @param time
-     */
-    private String translateTime(long time) {
-        String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).
-                format(new java.util.Date(time * 1000L));
-        return date;
     }
 
     /**
@@ -663,8 +606,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode != MConstants.PERMISSIONS_LOCATION) {
+    public void onRequestPermissionsResult(int code, String[] permissions, int[] grantResults) {
+        if (code != MConstants.PERMISSIONS_LOCATION) {
             return;
         }
         if (grantResults.length <= 0) {
@@ -691,11 +634,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
             if (amapLocation.getErrorCode() == 0) {
                 lat = amapLocation.getLatitude();//获取纬度
                 lon = amapLocation.getLongitude();//获取经度
-
-                getLatestWeather();
-
-                LogUtil.i("定位来源: " + amapLocation.getLocationType()
+                LogUtil.w("定位来源: " + amapLocation.getLocationType()
                         + " 精度信息 " + amapLocation.getAccuracy());
+                getLatestWeather();
+                mLocationClient.stopLocation();//停止定位,这对每次启动只定位一次
             } else {
                 LogUtil.e("location Error, ErrCode:" + amapLocation.getErrorCode() + ", errInfo:"
                         + amapLocation.getErrorInfo());
@@ -707,39 +649,29 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     public void onSwitch(String userId, int location, String fTag) {
 
         LogUtil.e("________切换了User_________");
+
+        //切换时要切换对应用户数据
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
         weather_view.setRuning(true);
         MobclickAgent.onPageStart("Weather");
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
         weather_view.setRuning(false);
         MobclickAgent.onPageEnd("Weather");
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        weather_view.setRuning(false);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (null != locationClient) {
-            /**
-             * 如果AMapLocationClient是在当前Activity实例化的，
-             * 在Activity的onDestroy中一定要执行AMapLocationClient的onDestroy
-             */
-            locationClient.onDestroy();
-            locationClient = null;
-            locationOption = null;
+        if (null != mLocationClient) {
+            mLocationClient.onDestroy();//销毁客户端
+            mLocationClient = null;
+            mLocationOption = null;
         }
     }
 }
