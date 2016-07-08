@@ -1,15 +1,18 @@
 package com.mooring.mh.db;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
 /**
  * 本地用户类
- * <p>
+ * <p/>
  * Created by Will on 16/3/31.
  */
 @Table(name = "local_user")
-public class User {
+public class LocalUser implements Parcelable {
 
     @Column(isId = true, name = "id")
     private int id;
@@ -115,4 +118,45 @@ public class User {
                 + _weight + "  sex:  " + _sex + "  header:  " + _header + "  location:  "
                 + _location + "  platformId:  " + _platformId;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(_name);
+        dest.writeInt(_sex);
+        dest.writeString(_birthday);
+        dest.writeString(_height);
+        dest.writeString(_weight);
+        dest.writeInt(_location);
+        dest.writeString(_header);
+        dest.writeString(_platformId);
+    }
+
+    public static final Parcelable.Creator<LocalUser> CREATOR = new Parcelable.Creator<LocalUser>() {
+
+        @Override
+        public LocalUser createFromParcel(Parcel in) {
+            LocalUser user = new LocalUser();
+            user.id = in.readInt();
+            user._name = in.readString();
+            user._sex = in.readInt();
+            user._birthday = in.readString();
+            user._height = in.readString();
+            user._weight = in.readString();
+            user._location = in.readInt();
+            user._header = in.readString();
+            user._platformId = in.readString();
+            return user;
+        }
+
+        @Override
+        public LocalUser[] newArray(int size) {
+            return new LocalUser[size];
+        }
+    };
 }
