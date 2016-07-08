@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.AidStatus;
 import com.machtalk.sdk.domain.DeviceStatus;
-import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -28,19 +28,19 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class DryingControlActivity extends BaseActivity implements CustomToggle.OnCheckedChangeListener {
 
-    private DryingCircleView drying;
+    private DryingCircleView dryingCircleView;
     private TextView tv_drying_totalTimes;
     private CustomToggle toggle_drying;
 
     private Timer timer;
     private TimerTask timerTask;
-    private long totalTimes = 30 * 60 * 1000;//默认烘干时间30分钟
+    private long totalTimes = 30 * 60 * 1000;//默认烘干时间30分钟,保留毫秒为单位为了方便动画加载
     private int clockTime = 0;//倒计时使用
     private String deviceId;//设备ID
     private MSDKListener msdkListener;//自定义SDK回调监听
+    private boolean isPassiveOpenDrying = false;//是否被动开启烘干
 
     @Override
     protected int getLayoutId() {
@@ -49,7 +49,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
 
     @Override
     protected String getTitleName() {
-        return getResources().getString(R.string.title_drying);
+        return getString(R.string.title_drying);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
 
     @Override
     protected void initView() {
-        drying = (DryingCircleView) findViewById(R.id.drying);
+        dryingCircleView = (DryingCircleView) findViewById(R.id.dryingCircleView);
         toggle_drying = (CustomToggle) findViewById(R.id.toggle_drying);
         tv_drying_totalTimes = (TextView) findViewById(R.id.tv_drying_times);
 
@@ -100,8 +100,8 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
             return;
         }
         toggle_drying.setChecked(true);
-        drying.setAnimDuration(dryingTime - (curr - startTime));
-        drying.startAnim((float) (curr - startTime) / dryingTime);
+        dryingCircleView.setAnimDuration(dryingTime - (curr - startTime));
+        dryingCircleView.startAnim((float) (curr - startTime) / dryingTime);
         clockTime = (int) (curr - startTime) / 1000;
         initTimer();
         timer.schedule(timerTask, 0, 1000);
@@ -114,8 +114,8 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
         toggle_drying.setChecked(true);
         initTimer();
         timer.schedule(timerTask, 0, 1000);
-        drying.setAnimDuration(totalTimes);
-        drying.startAnim();
+        dryingCircleView.setAnimDuration(totalTimes);
+        dryingCircleView.startAnim();
         clockTime = 0;
 
         editor.putLong(MConstants.ATTR_DRYING_ON_TIME, System.currentTimeMillis());
@@ -128,12 +128,12 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
      * 关闭烘干
      */
     private void closeDrying() {
-        editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, false).apply();
-        drying.resetView();
-        clearTimer();
-        tv_drying_totalTimes.setText(getResources().getString(R.string.blank_time));
-        clockTime = 0;
         toggle_drying.setChecked(false);
+        clearTimer();
+        clockTime = 0;
+        dryingCircleView.resetView();
+        editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, false).apply();
+        tv_drying_totalTimes.setText(getString(R.string.blank_time));
     }
 
     /**
@@ -141,7 +141,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
      */
     private void showDialog() {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.tip_stop_drying));
+        builder.setMessage(getString(R.string.tip_stop_drying));
         builder.setLogo(R.drawable.img_close_drying);
         builder.setCanceledOnTouchOtherPlace(false);
         builder.setPositiveButton(true, new DialogInterface.OnClickListener() {
@@ -161,7 +161,6 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
                 dialog.dismiss();
             }
         });
-
         builder.create().show();
     }
 
@@ -170,7 +169,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
      */
     private void showCompleteDialog() {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.tip_drying_success));
+        builder.setMessage(getString(R.string.tip_drying_success));
         builder.setLogo(R.drawable.img_drying_complete);
         builder.setCanceledOnTouchOtherPlace(false);
         builder.setPositiveButton(true, new DialogInterface.OnClickListener() {
@@ -193,10 +192,11 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
             clockTime++;
             if (clockTime * 1000 > totalTimes) {
                 //加载完毕执行重置
-                drying.resetView();
+                dryingCircleView.resetView();
                 clearTimer();
                 clockTime = 0;
                 toggle_drying.setChecked(false);
+                editor.putBoolean(MConstants.ATTR_DRYING_SWITCH, false).apply();
                 showCompleteDialog();
             }
         }
@@ -243,15 +243,17 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
 
     @Override
     protected void OnClick(View v) {
-
     }
 
     @Override
     public void onCheckedChanged(View v, boolean isChecked) {
         if (isChecked) {
+//            MachtalkSDK.getInstance().operateDevice(deviceId,
+//                    new String[]{MConstants.ATTR_DRYING_TIME},
+//                    new String[]{String.valueOf(totalTimes / 1000)});
             MachtalkSDK.getInstance().operateDevice(deviceId,
-                    new String[]{MConstants.ATTR_DRYING_SWITCH, MConstants.ATTR_DRYING_TIME},
-                    new String[]{"1", String.valueOf(totalTimes / 1000)});
+                    new String[]{MConstants.ATTR_DRYING_SWITCH},
+                    new String[]{"1"});
             MUtils.showLoadingDialog(context);
         } else {
             showDialog(); //弹出提示
@@ -264,6 +266,35 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
     class MSDKListener extends MachtalkSDKListener {
 
         @Override
+        public void onQueryDeviceStatus(Result result, DeviceStatus ds) {
+            super.onQueryDeviceStatus(result, ds);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
+                List<AidStatus> dsList = ds.getDeviceAidStatuslist();
+                if (dsList == null) return;
+                String drySwitch = "";
+                long startTime = 0, dryTime = 0;
+                for (AidStatus as : dsList) {
+                    if (MConstants.ATTR_DRYING_SWITCH.equals(as.getAid())) {
+                        drySwitch = as.getValue();
+                    }
+                    if (MConstants.ATTR_DRYING_ON_TIME.equals(as.getAid())) {
+                        startTime = Long.parseLong(as.getValue());
+                    }
+                    if (MConstants.ATTR_DRYING_TIME.equals(as.getAid())) {
+                        dryTime = Long.parseLong(as.getValue());
+                    }
+                }
+                if ("1".equals(drySwitch)) {//设备记录的开启和烘干时间单位:秒
+                    openDryingWithParam(startTime * 1000, dryTime * 1000);
+                }
+            }
+        }
+
+        @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
             int success = Result.FAILED;
@@ -271,46 +302,21 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
                 success = result.getSuccess();
             }
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
-                List<DvidStatus> dsList = rdm.getDvidStatusList();
+                List<AidStatus> dsList = rdm.getAidStatusList();
                 if (dsList == null) return;
-                for (DvidStatus ds : dsList) {
-                    if (MConstants.ATTR_DRYING_SWITCH.equals(ds.getDvid())) {
-                        if ("1".equals(ds.getValue())) {
+                for (AidStatus as : dsList) {
+                    if (MConstants.ATTR_DRYING_SWITCH.equals(as.getAid())) {
+                        if ("1".equals(as.getValue())) {
                             openDrying();//此处要做手动操作判断,否则会出现重复回调
-                        } else if ("0".equals(ds.getValue())) {
+                            if (rdm.isRespMsg()) MUtils.hideLoadingDialog();
+                        } else if ("0".equals(as.getValue())) {
                             closeDrying();
+                            if (rdm.isRespMsg()) MUtils.hideLoadingDialog();
                         }
-                        MUtils.hideLoadingDialog();
                     }
-                }
-            }
-        }
-
-        @Override
-        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
-            super.onQueryDeviceStatus(result, deviceStatus);
-            int success = Result.FAILED;
-            if (result != null) {
-                success = result.getSuccess();
-            }
-            if (success == Result.SUCCESS && deviceStatus != null && deviceId.equals(deviceStatus.getDeviceId())) {
-                List<DvidStatus> dsList = deviceStatus.getDeviceDvidStatuslist();
-                if (dsList == null) return;
-                String drySwitch = "";
-                long startTime = 0, dryTime = 0;
-                for (DvidStatus ds : dsList) {
-                    if (MConstants.ATTR_DRYING_SWITCH.equals(ds.getDvid())) {
-                        drySwitch = ds.getValue();
-                    }
-                    if (MConstants.ATTR_DRYING_ON_TIME.equals(ds.getDvid())) {
-                        startTime = Long.parseLong(ds.getValue());
-                    }
-                    if (MConstants.ATTR_DRYING_TIME.equals(ds.getDvid())) {
-                        dryTime = Long.parseLong(ds.getValue());
-                    }
-                }
-                if ("1".equals(drySwitch)) {
-                    openDryingWithParam(startTime, dryTime);
+//                    if (MConstants.ATTR_DRYING_TIME.equals(as.getAid())) {
+//                        totalTimes = Long.parseLong(as.getValue()) * 1000;
+//                    }
                 }
             }
         }
@@ -335,7 +341,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
 
     @Override
     protected void onDestroy() {
-        drying.resetView();
+        dryingCircleView.resetView();
         clockTime = 0;
         clearTimer();
         super.onDestroy();

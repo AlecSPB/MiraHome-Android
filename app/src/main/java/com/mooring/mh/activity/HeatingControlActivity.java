@@ -7,8 +7,8 @@ import android.view.ViewTreeObserver;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.AidStatus;
 import com.machtalk.sdk.domain.DeviceStatus;
-import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -63,7 +63,7 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
     /**
      * 是否初始化完成
      */
-    private Boolean isInit = false;
+    private Boolean isPassive = false;//是否开始被动控制
 
     @Override
     protected int getLayoutId() {
@@ -299,121 +299,112 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
     class BaseListener extends MachtalkSDKListener {
 
         @Override
-        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
-            super.onQueryDeviceStatus(result, deviceStatus);
+        public void onQueryDeviceStatus(Result result, DeviceStatus ds) {
+            super.onQueryDeviceStatus(result, ds);
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
-
-            LogUtil.e("onQueryDeviceStatus  " + result.getSuccess());
-
-            if (success == Result.SUCCESS && deviceStatus != null
-                    && deviceId.equals(deviceStatus.getDeviceId())) {
-                List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
-                if (list != null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        LogUtil.e("dvid  " + list.get(i).getDvid() + " value  "
-                                + list.get(i).getValue());
-                        if (MConstants.ATTR_SINGLE_OR_DOUBLE.equals(list.get(i).getDvid())) {
-                            currUsers = Integer.parseInt(list.get(i).getValue()) + 1;
+            if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
+                List<AidStatus> listAid = ds.getDeviceAidStatuslist();
+                if (listAid == null) return;
+                for (AidStatus as : listAid) {
+                    LogUtil.e("aid  " + as.getAid() + " value  " + as.getValue());
+                    if (MConstants.ATTR_SINGLE_OR_DOUBLE.equals(as.getAid())) {
+                        currUsers = Integer.parseInt(as.getValue()) + 1;
+                    }
+                    if (MConstants.ATTR_LEFT_TARGET_TEMP_SWITCH.equals(as.getAid())) {
+                        left_drop_enable = Integer.parseInt(as.getValue()) == 1;
+                    }
+                    if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(as.getAid())) {
+                        left_real_temp = as.getValue();
+                    }
+                    if (MConstants.ATTR_LEFT_TARGET_TEMP.equals(as.getAid())) {
+                        left_target_temp = as.getValue();
+                    }
+                    if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(as.getAid())) {
+                        room_temp = as.getValue();
+                    }
+                    if (currUsers == 2) {
+                        if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(as.getAid())) {
+                            right_real_temp = as.getValue();
                         }
-                        if (MConstants.ATTR_LEFT_TARGET_TEMP_SWITCH.equals(list.get(i).getDvid())) {
-                            left_drop_enable = Integer.parseInt(list.get(i).getValue()) == 1;
+                        if (MConstants.ATTR_RIGHT_TARGET_TEMP.equals(as.getAid())) {
+                            right_target_temp = as.getValue();
                         }
-
-                        if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(list.get(i).getDvid())) {
-                            left_real_temp = list.get(i).getValue();
-                        }
-                        if (MConstants.ATTR_LEFT_TARGET_TEMP.equals(list.get(i).getDvid())) {
-                            left_target_temp = list.get(i).getValue();
-                        }
-                        if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(list.get(i).getDvid())) {
-                            room_temp = list.get(i).getValue();
-                        }
-                        if (currUsers == 2) {
-                            if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(list.get(i).getDvid())) {
-                                right_real_temp = list.get(i).getValue();
-                            }
-                            if (MConstants.ATTR_RIGHT_TARGET_TEMP.equals(list.get(i).getDvid())) {
-                                right_target_temp = list.get(i).getValue();
-                            }
-                            if (MConstants.ATTR_RIGHT_TARGET_TEMP_SWITCH.equals(list.get(i).getDvid())) {
-                                right_drop_enable = Integer.parseInt(list.get(i).getValue()) == 1;
-                            }
+                        if (MConstants.ATTR_RIGHT_TARGET_TEMP_SWITCH.equals(as.getAid())) {
+                            right_drop_enable = Integer.parseInt(as.getValue()) == 1;
                         }
                     }
-                    judgeUser();
-                    isInit = true;
                 }
+                judgeUser();
+                isPassive = true;
             } else {
-                MUtils.showToast(HeatingControlActivity.this,
-                        getResources().getString(R.string.device_not_online));
+                MUtils.showToast(context, getString(R.string.device_not_online));
             }
         }
 
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (isPassive && success == Result.SUCCESS && rdm.isRespMsg()) {
+                List<AidStatus> listAid = rdm.getAidStatusList();
+                if (listAid == null) return;
+                for (AidStatus as : listAid) {
 
-            LogUtil.e("result  " + result.getSuccess());
-            LogUtil.e("mDeviceId  " + rdm.getDeviceId() + " 操作回复 " + rdm.isRespMsg());
+                    LogUtil.e("aid  " + as.getAid() + " value  " + as.getValue());
 
-            if (rdm.isRespMsg() && isInit) {
-                List<DvidStatus> list = rdm.getDvidStatusList();
-                if (list != null) {
-                    for (int i = 0; i < list.size(); i++) {
-
-                        LogUtil.e("  dvid  " + list.get(i).getDvid() + " value  " + list.get(i).getValue());
-
-                        if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(list.get(i).getDvid())) {
-                            room_temp = list.get(i).getValue();//室温
-                            if (currUsers == 1) {
-                                dragScaleView.setRoomY(Integer.parseInt(room_temp));
-                            } else {
-                                dragScaleTwoView.setRoomY(Integer.parseInt(room_temp));
-                            }
+                    if (MConstants.ATTR_ENVIR_TEMPERATURE.equals(as.getAid())) {
+                        room_temp = as.getValue();//室温
+                        if (currUsers == 1) {
+                            dragScaleView.setRoomY(Integer.parseInt(room_temp));
+                        } else {
+                            dragScaleTwoView.setRoomY(Integer.parseInt(room_temp));
                         }
-                        if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(list.get(i).getDvid())) {
-                            left_real_temp = list.get(i).getValue();//左边实际--左床温
-                            if (currUsers == 1) {
-                                dragScaleView.setBedTemperature(left_real_temp);
-                            } else {
-                                dragScaleTwoView.setBedLeftTemp(left_real_temp);
-                            }
+                    }
+                    if (MConstants.ATTR_LEFT_ACTUAL_TEMP.equals(as.getAid())) {
+                        left_real_temp = as.getValue();//左边实际--左床温
+                        if (currUsers == 1) {
+                            dragScaleView.setBedTemperature(left_real_temp);
+                        } else {
+                            dragScaleTwoView.setBedLeftTemp(left_real_temp);
                         }
-                        if (MConstants.ATTR_LEFT_TARGET_TEMP.equals(list.get(i).getDvid())) {
-                            left_target_temp = list.get(i).getValue();//左边目标温度
-                            if (currUsers == 1) {
-                                dragScaleView.setCurrTemperature(left_target_temp);
-                            } else {
-                                dragScaleTwoView.setCurrLeftTemp(left_target_temp);
-                            }
+                    }
+                    if (MConstants.ATTR_LEFT_TARGET_TEMP.equals(as.getAid())) {
+                        left_target_temp = as.getValue();//左边目标温度
+                        if (currUsers == 1) {
+                            dragScaleView.setCurrTemperature(left_target_temp);
+                        } else {
+                            dragScaleTwoView.setCurrLeftTemp(left_target_temp);
                         }
-                        if (MConstants.ATTR_LEFT_TARGET_TEMP_SWITCH.equals(list.get(i).getDvid())) {
-                            left_drop_enable = Integer.parseInt(list.get(i).getValue()) == 1;
-                            if (currUsers == 1) {//左边目标温度开关
-                                toggle_middle.setChecked(left_drop_enable);
-                                dragScaleView.setIsDropAble(left_drop_enable);
-                            } else {
-                                toggle_left.setChecked(left_drop_enable);
-                                dragScaleTwoView.setIsLeftDropAble(left_drop_enable);
-                            }
+                    }
+                    if (MConstants.ATTR_LEFT_TARGET_TEMP_SWITCH.equals(as.getAid())) {
+                        left_drop_enable = Integer.parseInt(as.getValue()) == 1;
+                        if (currUsers == 1) {//左边目标温度开关
+                            toggle_middle.setChecked(left_drop_enable);
+                            dragScaleView.setIsDropAble(left_drop_enable);
+                        } else {
+                            toggle_left.setChecked(left_drop_enable);
+                            dragScaleTwoView.setIsLeftDropAble(left_drop_enable);
                         }
-                        if (currUsers == 2) {
-                            if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(list.get(i).getDvid())) {
-                                right_real_temp = list.get(i).getValue();//右边实际温度-右床温
-                                dragScaleTwoView.setBedRightTemp(right_real_temp);
-                            }
-                            if (MConstants.ATTR_RIGHT_TARGET_TEMP.equals(list.get(i).getDvid())) {
-                                right_target_temp = list.get(i).getValue();//右边目标温度
-                                dragScaleTwoView.setCurrRightTemp(right_target_temp);
-                            }
-                            if (MConstants.ATTR_RIGHT_TARGET_TEMP_SWITCH.equals(list.get(i).getDvid())) {
-                                right_drop_enable = Integer.parseInt(list.get(i).getValue()) == 1;
-                                toggle_right.setChecked(right_drop_enable);
-                                dragScaleTwoView.setIsRightDropAble(right_drop_enable);//右边目标温度开关
-                            }
+                    }
+                    if (currUsers == 2) {
+                        if (MConstants.ATTR_RIGHT_ACTUAL_TEMP.equals(as.getAid())) {
+                            right_real_temp = as.getValue();//右边实际温度-右床温
+                            dragScaleTwoView.setBedRightTemp(right_real_temp);
+                        }
+                        if (MConstants.ATTR_RIGHT_TARGET_TEMP.equals(as.getAid())) {
+                            right_target_temp = as.getValue();//右边目标温度
+                            dragScaleTwoView.setCurrRightTemp(right_target_temp);
+                        }
+                        if (MConstants.ATTR_RIGHT_TARGET_TEMP_SWITCH.equals(as.getAid())) {
+                            right_drop_enable = Integer.parseInt(as.getValue()) == 1;
+                            toggle_right.setChecked(right_drop_enable);
+                            dragScaleTwoView.setIsRightDropAble(right_drop_enable);//右边目标温度开关
                         }
                     }
                 }

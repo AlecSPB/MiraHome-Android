@@ -173,14 +173,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
         MobclickAgent.onPageStart("SignUp");
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
         MobclickAgent.onPageEnd("SignUp");
     }
 }

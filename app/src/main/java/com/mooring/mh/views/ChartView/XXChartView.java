@@ -16,12 +16,13 @@ import com.mooring.mh.utils.MUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 自定义双X轴图标控件,借助YAxisView作为Y轴
  *
  * @see YAxisView
- * <p/>
+ * <p>
  * Created by Will on 16/5/3.
  */
 public class XXChartView extends View {
@@ -136,13 +137,15 @@ public class XXChartView extends View {
          */
         for (int i = 0; i < Xdatas.size(); i++) {
             drawText(canvas, Xdatas.get(i), textSize, Color.WHITE, xLeft + xSpace * i, topText);
-            drawText(canvas, MUtils.getWeek(month + "-" + String.format("%02d", Integer.parseInt(Xdatas.get(i)))),
-                    textSize, Color.WHITE, xLeft + xSpace * i, viewH - textHeight);
+            drawText(canvas, MUtils.getCurrWeek(month + "-" + String.format(Locale.getDefault(),
+                    "%02d", Integer.parseInt(Xdatas.get(i)))), textSize, Color.WHITE,
+                    xLeft + xSpace * i, viewH - textHeight);
             for (int j = 0; j <= num_y; j++) {
                 canvas.drawPoint(xSpace * i + xLeft, viewH - xBottom - ySpace * j, bgPaint);
             }
             //如果是当天日期,绘制竖线
-            if (MUtils.getCurrDate().equals(month + "-" + String.format("%02d", Integer.parseInt(Xdatas.get(i))))) {
+            if (MUtils.getCurrDate().equals(month + "-" + String.format(Locale.getDefault(),
+                    "%02d", Integer.parseInt(Xdatas.get(i))))) {
                 canvas.drawLine(xLeft + xSpace * i, xBottom, xLeft + xSpace * i, viewH - xBottom, currPaint);
             }
         }

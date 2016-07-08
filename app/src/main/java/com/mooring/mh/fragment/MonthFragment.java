@@ -60,14 +60,12 @@ public class MonthFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
         MobclickAgent.onPageStart("Month");
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
         MobclickAgent.onPageEnd("Month");
     }
 

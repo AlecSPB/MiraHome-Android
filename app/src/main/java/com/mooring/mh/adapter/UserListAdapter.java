@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
-import com.mooring.mh.db.User;
+import com.mooring.mh.db.LocalUser;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
 
 import org.xutils.common.util.LogUtil;
@@ -24,10 +24,10 @@ import java.util.List;
  */
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.HorizontalViewHolder> {
 
-    private List<User> dataList;
+    private List<LocalUser> dataList;
     private OnRecyclerItemClickListener itemClickListener;
 
-    public UserListAdapter(List<User> dataList) {
+    public UserListAdapter(List<LocalUser> dataList) {
         this.dataList = dataList;
     }
 
@@ -52,7 +52,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Horizo
 
     @Override
     public void onBindViewHolder(HorizontalViewHolder viewHolder, int position) {
-        final User data = dataList.get(position);
+        final LocalUser data = dataList.get(position);
         LogUtil.w("viewHolder.getAdapterPosition():    " + viewHolder.getAdapterPosition());
 
         if (position != dataList.size() - 1) {

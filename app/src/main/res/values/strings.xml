@@ -55,6 +55,7 @@
     <string name="clock_edit_success">修改成功</string>
     <string name="clock_delete_success">删除成功</string>
     <string name="tip_add_clock">你还没有闹钟，点击这里添加吧!</string>
+    <string name="tv_empty_clock">mirahome</string>
 
     <!--DryingControlActivity 烘干页面-->
     <string name="title_drying">烘干</string>

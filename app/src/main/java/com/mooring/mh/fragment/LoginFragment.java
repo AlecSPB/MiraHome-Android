@@ -17,7 +17,7 @@ import com.mooring.mh.R;
 import com.mooring.mh.activity.ConfirmationPswActivity;
 import com.mooring.mh.activity.MainActivity;
 import com.mooring.mh.db.DbXUtils;
-import com.mooring.mh.db.User;
+import com.mooring.mh.db.LocalUser;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.umeng.analytics.MobclickAgent;
@@ -95,7 +95,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         imgView_facebook.setOnClickListener(this);
 
         //--------------暂时使用,真实情况去除!!!!!!!!---------------------------
-        edit_userName.setText("13661498824");
+        edit_userName.setText("18136093612");
         edit_userPwd.setText("123456");
 
     }
@@ -195,9 +195,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      */
     private void checkHasLocalUser() {
 
-        List<User> users = new ArrayList<User>();
+        List<LocalUser> users = new ArrayList<LocalUser>();
         try {
-            users = dbManager.findAll(User.class);
+            users = dbManager.findAll(LocalUser.class);
             if (users.size() == 0) {
                 //跳转添加用户界面
             } else {
@@ -338,7 +338,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         if (data != null) {
             for (int i = 0; i < data.length(); i++) {
                 JSONObject o = data.optJSONObject(i);
-                User user = new User();
+                LocalUser user = new LocalUser();
                 user.setId(o.optInt(MConstants.SP_KEY_UID));
                 user.set_name(o.optString("telephone"));
                 user.set_sex(o.optInt("sex"));
@@ -365,16 +365,14 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
         MobclickAgent.onPageStart("Login");
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
         MachtalkSDK.getInstance().removeSdkListener(msdkListener);
         MobclickAgent.onPageEnd("Login");
     }

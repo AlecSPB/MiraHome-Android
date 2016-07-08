@@ -13,8 +13,8 @@ import android.widget.ToggleButton;
 
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.AidStatus;
 import com.machtalk.sdk.domain.DeviceStatus;
-import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -29,6 +29,7 @@ import com.umeng.analytics.MobclickAgent;
 import org.xutils.common.util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,8 +52,8 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     private TimingSDKListener timingSDKListener;
     private int currLocation;//当前位置
     private String propertyId;//左右属性ID--对应125:126
-    private boolean isOperate = false;//是否是手动操作
     private boolean isDeviceExist = false;//设备是否在线
+    private String resultFlag;//onActivityResult回调
 
     @Override
     protected int getLayoutId() {
@@ -151,12 +152,13 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
      */
     private void parsingAlarmString(String alarms) {
         LogUtil.d("所有闹钟___" + alarms + "___中间是什么");
-        if (!TextUtils.isEmpty(alarms) && !getString(R.string.app_name).toLowerCase().equals(alarms)) {
+        if (!TextUtils.isEmpty(alarms) && !getString(R.string.tv_empty_clock).equals(alarms)) {
             dataList.clear();
             String[] alarmArr = alarms.split(";");
-            for (int i = 0; i < alarmArr.length - 1; i++) {
-                dataList.add(alarmArr[i]);
-            }
+
+            dataList.addAll(Arrays.asList(alarmArr));
+            dataList.remove(dataList.size() - 1);
+            adapter.notifyDataSetChanged();
             timing_swipeRefresh.setVisibility(View.VISIBLE);
             layout_alarm_none.setVisibility(View.GONE);
         } else {
@@ -218,16 +220,18 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
      */
     private void sendAlarmString(List<String> dataList) {
         String temp = "";
-        for (int i = 0; i < dataList.size(); i++) {
-            temp += dataList.get(i) + ";";
-        }
-        if (!TextUtils.isEmpty(temp)) {
+        if (dataList.size() <= 0) {
+            temp = getString(R.string.tv_empty_clock);
+        } else {
+            for (String data : dataList) {
+                temp = data + ";";
+            }
             temp += "^";
-            MachtalkSDK.getInstance().operateDevice(deviceId,
-                    new String[]{propertyId},
-                    new String[]{temp});
-            isOperate = true;
         }
+        MachtalkSDK.getInstance().operateDevice(deviceId,
+                new String[]{propertyId},
+                new String[]{temp});
+        MUtils.showLoadingDialog(context);
     }
 
     @Override
@@ -246,9 +250,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
                 temp = temp.substring(0, 12) + (isChecked ? "1" : "0");
                 break;
         }
-        LogUtil.e("此时的闹钟:___" + temp);
         dataList.set(position, temp);
-        LogUtil.e("设置之后的闹钟:___" + dataList.get(position).toString());
         sendAlarmString(dataList);
     }
 
@@ -278,14 +280,12 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
             if (result != null) {
                 success = result.getSuccess();
             }
-            LogUtil.e("onQueryDeviceStatus  " + success);
             if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
-                List<DvidStatus> list = ds.getDeviceDvidStatuslist();
-                if (list != null) {
-                    for (DvidStatus DS : list) {
-                        if (propertyId.equals(DS.getDvid())) {
-                            parsingAlarmString(DS.getValue());
-                        }
+                List<AidStatus> listAid = ds.getDeviceAidStatuslist();
+                if (listAid != null) return;
+                for (AidStatus as : listAid) {
+                    if (propertyId.equals(as.getAid())) {
+                        parsingAlarmString(as.getValue());
                     }
                 }
             } else {
@@ -297,23 +297,43 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
         @Override
         public void onReceiveDeviceMessage(Result result, ReceivedDeviceMessage rdm) {
             super.onReceiveDeviceMessage(result, rdm);
-            if (!isOperate) {
-                return;
-            }
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
-            LogUtil.e("onReceiveDeviceMessage  " + success);
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
-                if (rdm.getDvidStatusList() != null &&
-                        propertyId.equals(rdm.getDvidStatusList().get(0).getDvid())) {
-                    LogUtil.w("  操作成功   ");
+                if (!rdm.isRespMsg()) {
+                    return;
                 }
-            } else {
-                LogUtil.w("  操作失败   ");
+                MUtils.hideLoadingDialog();
+                List<AidStatus> listAid = rdm.getAidStatusList();
+                if (listAid == null) return;
+                for (AidStatus as : listAid) {
+                    if (propertyId.equals(as.getAid())) {
+                        adapter.notifyDataSetChanged();
+                        if (resultFlag.equals("edit")) {
+                            MUtils.showToast(context, getString(R.string.clock_edit_success));
+                        }
+                        if (resultFlag.equals("add")) {
+                            if (timing_swipeRefresh.getVisibility() == View.INVISIBLE) {
+                                timing_swipeRefresh.setVisibility(View.VISIBLE);
+                                layout_alarm_none.setVisibility(View.GONE);
+                            }
+                            MUtils.showToast(context, getString(R.string.clock_add_success));
+                        }
+                        if (resultFlag.equals("delete")) {
+                            if (dataList.size() <= 0) {
+                                timing_swipeRefresh.setVisibility(View.INVISIBLE);
+                                layout_alarm_none.setVisibility(View.VISIBLE);
+                            }
+                            MUtils.showToast(context, getString(R.string.clock_delete_success));
+                        }
+                        resultFlag = "";
+                    } else {
+                        MUtils.showToast(context, getString(R.string.operate_failed));
+                    }
+                }
             }
-            isOperate = false;
         }
     }
 
@@ -344,41 +364,28 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == MConstants.ALARM_EDIT_REQUEST && resultCode == MConstants.ALARM_EDIT_RESULT) {
-            String flag = data.getStringExtra("flag");
+            resultFlag = data.getStringExtra("flag");
             int position = data.getIntExtra("position", -1);
             String result = "";
-            if ("edit".equals(flag) && position != -1) {
+            if ("edit".equals(resultFlag) && position != -1) {
                 result += data.getStringExtra("time");
                 result += paringArrayList(data.getStringArrayListExtra("repeat"));
                 result += data.getBooleanExtra("smart", false) ? "1" : "0";
                 result += data.getBooleanExtra("set", false) ? "1" : "0";
                 dataList.set(position, result);
                 dataList = sortArrayList(dataList);
-                adapter.notifyDataSetChanged();
-                MUtils.showToast(context, getResources().getString(R.string.clock_edit_success));
             }
-            if ("add".equals(flag)) {
+            if ("add".equals(resultFlag)) {
                 result += data.getStringExtra("time");
                 result += paringArrayList(data.getStringArrayListExtra("repeat"));
                 result += data.getBooleanExtra("smart", false) ? "1" : "0";
                 result += "1";
                 dataList.add(result);
                 dataList = sortArrayList(dataList);
-                adapter.notifyDataSetChanged();
-                if (timing_swipeRefresh.getVisibility() == View.INVISIBLE) {
-                    timing_swipeRefresh.setVisibility(View.VISIBLE);
-                    layout_alarm_none.setVisibility(View.GONE);
-                }
-                MUtils.showToast(context, getResources().getString(R.string.clock_add_success));
             }
-            if ("delete".equals(flag) && position != -1) {
+            if ("delete".equals(resultFlag) && position != -1) {
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
-                MUtils.showToast(context, getResources().getString(R.string.clock_delete_success));
-                if (dataList.size() <= 0) {
-                    timing_swipeRefresh.setVisibility(View.INVISIBLE);
-                    layout_alarm_none.setVisibility(View.VISIBLE);
-                }
             }
 
             sendAlarmString(dataList);
@@ -386,8 +393,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
         //判断设备是否在线
         judgeDeviceIsOnline();
 
@@ -397,8 +403,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
         MachtalkSDK.getInstance().removeSdkListener(timingSDKListener);
         MobclickAgent.onPageEnd("Timing");
     }
@@ -410,6 +415,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
             propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
                     : MConstants.ATTR_ALARM_RIGHT;
             MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+            MUtils.showLoadingDialog(context);
         }
     }
 }

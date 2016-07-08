@@ -63,7 +63,7 @@ public class StartPageActivity extends AppCompatActivity {
         editor.apply();
 
         //设定Log输出等级以及输出到本地文件
-        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_NO, BuildConfig.LOG_DEBUG);
+        MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, BuildConfig.LOG_DEBUG);
         MachtalkSDK.getInstance().startSDK(context, null);
 
         baseListener = new BaseListener();
@@ -125,8 +125,7 @@ public class StartPageActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             List<String> permissions = findDeniedPermissions(PERMISSION);
             if (permissions.size() > 0) {
-                this.requestPermissions(
-                        permissions.toArray(new String[permissions.size()]),
+                this.requestPermissions(permissions.toArray(new String[permissions.size()]),
                         MConstants.PERMISSIONS_STORAGE);
                 return;
             }
@@ -138,7 +137,6 @@ public class StartPageActivity extends AppCompatActivity {
      * 执行方法
      */
     private void executeMethod() {
-        MUtils.showLoadingDialog(context);
         if (sp.getBoolean(MConstants.SP_KEY_FIRST_START, true)) {
             // 引导页
             startActivity(new Intent(context, GuidePageActivity.class));
@@ -152,10 +150,10 @@ public class StartPageActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPwd) &&
                     sp.getBoolean(MConstants.HAS_LOCAL_USER, false)) {
+                MUtils.showLoadingDialog(context);
                 MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
             } else {
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
-                MUtils.hideLoadingDialog();
                 context.finish();
             }
         }

@@ -21,12 +21,12 @@ import org.xutils.x;
  * Created by Will on 16/3/24.
  */
 public abstract class BaseFragment extends Fragment {
-    protected View rootView;
+    protected View rootView;//容器View
     protected FragmentActivity context;
     protected SharedPreferences sp;
     protected SharedPreferences.Editor editor;
-    protected DbManager dbManager;
-    protected String deviceId;
+    protected DbManager dbManager;//数据库管理者
+    protected String deviceId;//设备ID
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 获取布局文件Id
      *
-     * @return
+     * @return 布局ID--R.id.main
      */
     protected abstract int getLayoutId();
 
@@ -70,4 +70,28 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void initFragment();
 
+    /**
+     * 自定义OnResume,自定义的方法在当前fragment不可见状态下不执行
+     * 针对,智成云的监听回调和友盟统计
+     */
+    protected abstract void OnResume();
+
+    /**
+     * 自定义OnPause,自定义的方法在当前fragment不可见状态下不执行
+     */
+    protected abstract void OnPause();
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isVisible()) return;
+        OnResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!isVisible()) return;
+        OnPause();
+    }
 }

@@ -180,7 +180,7 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
         List<SleepTimeInfo> listSleepOut = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             SleepTimeInfo s = new SleepTimeInfo();
-            s.setTime((int) (50+3 * Math.random()));
+            s.setTime((int) (50 + 3 * Math.random()));
             s.setType(i % 4);
             listSleepIn.add(s);
             listSleepOut.add(s);
@@ -193,14 +193,12 @@ public class DayFragment extends BaseFragment implements View.OnClickListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
         MobclickAgent.onPageStart("Day");
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
         MobclickAgent.onPageEnd("Day");
     }
 }

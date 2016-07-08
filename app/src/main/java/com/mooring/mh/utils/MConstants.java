@@ -310,14 +310,13 @@ public class MConstants {
     public final static String ATTR_TEMP_UNIT = "119";//温度单位
     public final static String ATTR_BLANKETS_TOWARD = "121";//毯子朝向
     public final static String ATTR_TIME_ZONE = "122";//时区
-    public final static String ATTR_IS_CONNECTED = "123";//是否连接
+    public final static String ATTR_IS_CONNECTED = "123";//毯子是否连接
     public final static String ATTR_SINGLE_OR_DOUBLE = "124";//单双人
     public final static String ATTR_ALARM_LEFT = "125";//左边闹钟
     public final static String ATTR_ALARM_RIGHT = "126";//右边闹钟
     public final static String ATTR_DRYING_ON_TIME = "127";//烘干开始时间
     public final static String ATTR_LEFT_TARGET_TEMP_SWITCH = "128";//左边目标温度开关
     public final static String ATTR_RIGHT_TARGET_TEMP_SWITCH = "129";//右边目标温度开关
-    public final static String ATTR_SUMMER_SEASON = "130";//夏时令
 
     /**
      * 用户在床上的位置

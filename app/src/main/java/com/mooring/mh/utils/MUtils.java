@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 
 /**
  * 公共工具类
- * <p/>
+ * <p>
  * Created by Will on 16/3/25.
  */
 public class MUtils {
@@ -175,16 +175,16 @@ public class MUtils {
     /**
      * 创建指定大小的Bitmap
      *
-     * @param bgimage
+     * @param bgImage
      * @param newWidth
      * @param newHeight
-     * @return
+     * @return 指定大小的Bitmap
      */
-    public static Bitmap zoomImage(Bitmap bgimage, double newWidth,
+    public static Bitmap zoomImage(Bitmap bgImage, double newWidth,
                                    double newHeight) {
         // 获取这个图片的宽和高
-        float width = bgimage.getWidth();
-        float height = bgimage.getHeight();
+        float width = bgImage.getWidth();
+        float height = bgImage.getHeight();
         // 创建操作图片用的matrix对象
         Matrix matrix = new Matrix();
         // 计算宽高缩放率
@@ -192,7 +192,7 @@ public class MUtils {
         float scaleHeight = ((float) newHeight) / height;
         // 缩放图片动作
         matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) newWidth,
+        Bitmap bitmap = Bitmap.createBitmap(bgImage, 0, 0, (int) newWidth,
                 (int) newHeight, matrix, true);
         return bitmap;
     }
@@ -201,9 +201,9 @@ public class MUtils {
      * 获取当天是周几
      *
      * @param pTime 2015-03-04
-     * @return
+     * @return 当前周几
      */
-    public static String getWeek(String pTime) {
+    public static String getCurrWeek(String pTime) {
         String Week = "";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Calendar c = Calendar.getInstance();
@@ -237,32 +237,40 @@ public class MUtils {
     }
 
     /**
-     * 获取当然系统时间
+     * 获取当然系统日期
      *
-     * @return
+     * @return 当前日期 2016-07-08
      */
     public static String getCurrDate() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//设置日期格式
-        return df.format(new Date());
+        return getCurrTime("yyyy-MM-dd");
     }
 
     /**
      * 获取当然系统时间
      *
-     * @return
+     * @return 按照给定格式返回当前系统时间
      */
     public static String getCurrTime(String format) {
-
         SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());//设置日期格式
-
         return df.format(new Date());
+    }
+
+    /**
+     * 转换时间格式(UTC-->DateFormat)
+     *
+     * @param time 指定格式时间 2016-07-08 14:16:30
+     */
+    public static String translateTime(long time) {
+        String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).
+                format(new java.util.Date(time * 1000L));
+        return date;
     }
 
     /**
      * 判断当前时间是都在指定区间内是白天
      *
-     * @param before
-     * @param after
+     * @param before 左范围
+     * @param after  右范围
      * @return true:白天
      */
     public static boolean judgeTimeInterval(String before, String after) {
@@ -278,6 +286,16 @@ public class MUtils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 判断当前是否是白天
+     *
+     * @return true --> 白天
+     */
+    public static boolean judgeCurrIsDayTime() {
+        int currHour = Integer.parseInt(MUtils.getCurrTime("HH"));
+        return currHour >= 6 && currHour <= 18;
     }
 
     /**
@@ -298,8 +316,8 @@ public class MUtils {
     /**
      * 解析闹钟设定日期
      *
-     * @param alarmDay
-     * @return
+     * @param alarmDay 1100110 1代表当天设定
+     * @return 7天中闹钟设定的重复情况
      */
     public static ArrayList<String> ParsingDay(String alarmDay) {
         if (alarmDay == null) {
@@ -315,8 +333,8 @@ public class MUtils {
     /**
      * 摄氏度转华氏度
      *
-     * @param temperature
-     * @return
+     * @param temperature 当前摄氏温度
+     * @return 对应华氏温度
      */
     public static float C2F(float temperature) {
         return (float) (32 + 1.8 * temperature);
@@ -325,8 +343,8 @@ public class MUtils {
     /**
      * 华氏度转摄氏度
      *
-     * @param temperature
-     * @return
+     * @param temperature 当前华氏温度
+     * @return 对应摄氏温度
      */
     public static float F2C(float temperature) {
         return (temperature - 32) * 5 / 9;
@@ -379,14 +397,7 @@ public class MUtils {
         intent.putExtra("aspectY", 1);
         // 裁剪后输出图片的尺寸大小
         intent.putExtra("outputX", 300);
-        intent.putExtra("private boolean isZh() {\n" +
-                "Locale locale = getResources().getConfiguration().locale;\n" +
-                "String language = locale.getLanguage();\n" +
-                "if (language.endsWith(\"zh\"))\n" +
-                "return true;\n" +
-                "else\n" +
-                "return false;\n" +
-                "}", 300);
+        intent.putExtra("outputY", 300);
         // 图片格式
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);// 取消人脸识别

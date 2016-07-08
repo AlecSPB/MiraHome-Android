@@ -119,9 +119,10 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
         }
     }
 
+
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void OnResume() {
+        if (!isVisible()) return;
         //判断设备是否在线
         judgeDeviceIsOnline();
 
@@ -129,8 +130,8 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void OnPause() {
+        if (!isVisible()) return;
         MobclickAgent.onPageEnd("Control");
     }
 }

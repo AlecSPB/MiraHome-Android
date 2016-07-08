@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.db.DbXUtils;
-import com.mooring.mh.db.User;
+import com.mooring.mh.db.LocalUser;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.utils.NetworkUtil;
@@ -213,7 +213,7 @@ public class UserInfoActivity extends BaseActivity {
                 if (result != null && result.optInt("code") == 0) {
                     JSONObject data = result.optJSONObject("data");
                     int member_id = data.optInt(MConstants.SP_KEY_MEMBER_ID);
-                    User user = new User();
+                    LocalUser user = new LocalUser();
                     user.setId(member_id);
                     user.set_birthday(tv_birthday.getText().toString());
                     user.set_height(tv_height.getText().toString());
@@ -272,7 +272,7 @@ public class UserInfoActivity extends BaseActivity {
             @Override
             public void onSuccess(JSONObject result) {
                 if (result != null && result.optInt("code") == 0) {
-                    User user = new User();
+                    LocalUser user = new LocalUser();
                     user.setId(member_id);
                     user.set_birthday(tv_birthday.getText().toString());
                     user.set_height(tv_height.getText().toString());
@@ -322,7 +322,7 @@ public class UserInfoActivity extends BaseActivity {
                 if (result != null && result.optInt("code") == 0) {
                     MUtils.showToast(context, getString(R.string.delete_user_success));
                     try {
-                        if (dbManager.findAll(User.class).size() <= 0) {
+                        if (dbManager.findAll(LocalUser.class).size() <= 0) {
                             editor.putBoolean(MConstants.HAS_LOCAL_USER, false).apply();
                         }
                     } catch (DbException e) {
@@ -368,7 +368,7 @@ public class UserInfoActivity extends BaseActivity {
                     public void onClick(View v) {
                         //放在左边
                         try {
-                            dbManager.update(User.class, WhereBuilder.b("id", "=", member_id),
+                            dbManager.update(LocalUser.class, WhereBuilder.b("id", "=", member_id),
                                     new KeyValue("_location", MConstants.BED_LEFT));
                         } catch (DbException e) {
                             e.printStackTrace();
@@ -381,7 +381,7 @@ public class UserInfoActivity extends BaseActivity {
                     public void onClick(View v) {
                         //放在右边
                         try {
-                            dbManager.update(User.class, WhereBuilder.b("id", "=", member_id),
+                            dbManager.update(LocalUser.class, WhereBuilder.b("id", "=", member_id),
                                     new KeyValue("_location", MConstants.BED_RIGHT));
                         } catch (DbException e) {
                             e.printStackTrace();

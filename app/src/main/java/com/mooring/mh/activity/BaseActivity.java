@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
-import com.machtalk.sdk.domain.DvidStatus;
+import com.machtalk.sdk.domain.AidStatus;
 import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * 自定义BaseActivity for common
- * <p>
+ * <p/>
  * Created by Will on 16/3/30.
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
@@ -57,8 +57,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         //如果不调用此方法，不仅会导致按照"几天不活跃"条件来推送失效
         PushAgent.getInstance(context).onAppStart();
 
-        MachtalkSDK.getInstance().startSDK(this, null);//-----------测试,待定
-        MachtalkSDK.getInstance().setContext(this);
         baseListener = new BaseListener();
 
         initActivity();
@@ -115,6 +113,23 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         @Override
         public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus scs) {
             super.onServerConnectStatusChanged(scs);
+            if (scs == MachtalkSDKConstant.ServerConnStatus.RECONNECTING) {
+                //后台重新登录中（关闭自动登录功能后将不会再有通知）
+                return;
+            }
+            if (scs == MachtalkSDKConstant.ServerConnStatus.NETWORK_UNAVAILABLE) {
+                //网络连接不可用（手机断开网络连接时会通知）
+                return;
+            }
+            if (scs == MachtalkSDKConstant.ServerConnStatus.NETWORK_RECOVERY) {
+                //网络连接恢复（手机重新连接上了网络）
+                MachtalkSDK.getInstance().setReconnect(true, 10);//自动重新连接
+                return;
+            }
+            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_TIMEOUT) {
+                //用户登录时连接超时
+                return;
+            }
             //服务器连接中断,提示用户
             if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_BREAK) {
                 MUtils.showToast(context, getString(R.string.tip_server_conn_failed));
@@ -133,10 +148,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             if (result != null) {
                 success = result.getSuccess();
             }
-            if (success == Result.SUCCESS && rdm != null && rdm.getDvidStatusList() != null) {
-                List<DvidStatus> deviceStatus = rdm.getDvidStatusList();
+            if (success == Result.SUCCESS && rdm != null && rdm.getAidStatusList() != null) {
+                List<AidStatus> deviceStatus = rdm.getAidStatusList();
                 for (int i = 0; i < deviceStatus.size(); i++) {
-                    if (MConstants.ATTR_IS_CONNECTED.equals(deviceStatus.get(i).getDvid())) {
+                    if (MConstants.ATTR_IS_CONNECTED.equals(deviceStatus.get(i).getValue())) {
                         //下面MConstants.ATTR_IS_CONNECTED担当两个不同角色
                         boolean conn = sp.getBoolean(MConstants.ATTR_IS_CONNECTED, false);
                         //最新的状态值保存下来
@@ -205,7 +220,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v ) {
         if (!self_control_back && v.getId() == R.id.imgView_act_back) {
             context.finish();
         }

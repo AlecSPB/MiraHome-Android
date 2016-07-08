@@ -37,14 +37,14 @@ import com.google.android.gms.fitness.result.DataReadResult;
 import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
+import com.machtalk.sdk.domain.AidStatus;
 import com.machtalk.sdk.domain.DeviceStatus;
-import com.machtalk.sdk.domain.DvidStatus;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.adapter.OnRecyclerItemClickListener;
 import com.mooring.mh.adapter.UserListAdapter;
 import com.mooring.mh.db.DbXUtils;
-import com.mooring.mh.db.User;
+import com.mooring.mh.db.LocalUser;
 import com.mooring.mh.fragment.ControlFragment;
 import com.mooring.mh.fragment.ParameterFragment;
 import com.mooring.mh.fragment.TimingFragment;
@@ -138,9 +138,9 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     private BaseListener baseListener;
     private DbManager dbManager;
     private int currLocation = MConstants.LEFT_USER;//当前用户的位置
-    private User currLeftUser;//当前左侧User
-    private User currRightUser;//当前右侧User
-    private List<User> currentUsers;//存放当前需要展现的用户,一个或者两个
+    private LocalUser currLeftUser;//当前左侧User
+    private LocalUser currRightUser;//当前右侧User
+    private List<LocalUser> allUsers;//存放当前需要展现的用户,一个或者两个
     private java.lang.Class<?> cls;//跳转对象Activity
     private boolean isStartAct = false;//是否启动StartActivity
     private int entrance_flag = -1;//即作为flag参数,有作为跳转标志
@@ -153,7 +153,6 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     private final int PARAMETER = 3;
     private final int TIMING = 4;
     private int currFragmentIndex = 0;//当前显示的Fragment
-    private PushAgent mPushAgent;//推送
 
     @Override
     protected int getLayoutId() {
@@ -172,15 +171,15 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         fragmentManager = getSupportFragmentManager();
 
         //初始化数据库
-        DbManager.DaoConfig dao = DbXUtils.getDaoConfig(this);
+        DbManager.DaoConfig dao = DbXUtils.getDaoConfig(context);
         dbManager = x.getDb(dao);
 
         //初始化智成云监听回调
-        MachtalkSDK.getInstance().setContext(this);
+        MachtalkSDK.getInstance().setContext(context);
         baseListener = new BaseListener();
 
         //注册推送
-        mPushAgent = PushAgent.getInstance(this);
+        PushAgent mPushAgent = PushAgent.getInstance(context);
         if (!mPushAgent.isEnabled()) {
             mPushAgent.enable(new IUmengRegisterCallback() {
                 @Override
@@ -286,29 +285,29 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
          * 以下操作和当前用户数/单双毯没有关联性---------------------
          */
         try {
-            currLeftUser = dbManager.selector(User.class).
+            currLeftUser = dbManager.selector(LocalUser.class).
                     where("_location", "=", MConstants.BED_LEFT).findFirst();
-            currRightUser = dbManager.selector(User.class).
+            currRightUser = dbManager.selector(LocalUser.class).
                     where("_location", "=", MConstants.BED_RIGHT).findFirst();
-            currentUsers = dbManager.selector(User.class).findAll();
+            allUsers = dbManager.selector(LocalUser.class).findAll();
         } catch (DbException e) {
             e.printStackTrace();
         }
 
-        if (currentUsers == null) {
-            currentUsers = new ArrayList<>();
+        if (allUsers == null) {
+            allUsers = new ArrayList<>();
             for (int i = 0; i < 8; i++) {
-                User user = new User();
+                LocalUser user = new LocalUser();
                 user.set_name("Alex");
                 user.set_header(Environment.getExternalStorageDirectory().getPath() + "/Download/11223.jpg");
-                currentUsers.add(user);
+                allUsers.add(user);
             }
         }
         /**
          * 添加一个空的User作为添加按钮
          */
-        currentUsers.add(new User());
-        adapter = new UserListAdapter(currentUsers);
+        allUsers.add(new LocalUser());
+        adapter = new UserListAdapter(allUsers);
         adapter.setOnItemClickListener(this);
         menu_recyclerView.setAdapter(adapter);
 
@@ -401,7 +400,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     /**
      * 获取可见Fragment
      *
-     * @return
+     * @return 当前可见的Fragment对象
      */
     public Fragment getVisibleFragment() {
         List<Fragment> fragments = fragmentManager.getFragments();
@@ -409,8 +408,9 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
             return null;
         }
         for (Fragment fragment : fragments) {
-            if (fragment != null && fragment.isVisible())
+            if (fragment != null && fragment.isVisible()) {
                 return fragment;
+            }
         }
         return null;
     }
@@ -435,7 +435,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
      * 交换用户位置
      */
     private void switchUserLocation() {
-        MUtils.showToast(this, "switch User Location");
+        MUtils.showToast(this, "switch LocalUser Location");
 
         //切换成功之后,弹出切换成功Dialog
     }
@@ -466,7 +466,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     public void computeCurrentUsers(String value) {
         int num = Integer.parseInt(value);
         if (num == 1) {//双人毯
-            if (currentUsers.size() > 1) {//多个人
+            if (allUsers.size() > 1) {//多个人
                 circleImg_middle.setVisibility(View.GONE);
                 layout_two_user.setVisibility(View.VISIBLE);
                 circleImg_left.setOnClickListener(this);
@@ -764,7 +764,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
      * 退出登录
      */
     private void logOut() {
-        MUtils.showToast(this, "退出登录");
+        MUtils.showToast(context, "退出登录");
 
         // MachtalkSDK.getInstance().userLogout();
         /**
@@ -816,12 +816,12 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
             }
             if (success == Result.SUCCESS && deviceStatus != null &&
                     deviceId.equals(deviceStatus.getDeviceId())) {
-                List<DvidStatus> list = deviceStatus.getDeviceDvidStatuslist();
+                List<AidStatus> list = deviceStatus.getDeviceAidStatuslist();
                 if (list == null) {
                     return;
                 }
-                for (DvidStatus d : list) {
-                    if (d.getDvid().equals(MConstants.ATTR_SINGLE_OR_DOUBLE)) {
+                for (AidStatus d : list) {
+                    if (d.getAid().equals(MConstants.ATTR_SINGLE_OR_DOUBLE)) {
                         computeCurrentUsers(d.getValue());//得到当前单/双人模式
                     }
                 }
@@ -966,7 +966,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     public void onItemClick(View view, int position) {
         isStartAct = true;
         cls = UserInfoActivity.class;
-        if (position != currentUsers.size() - 1) {
+        if (position != allUsers.size() - 1) {
             entrance_flag = MConstants.USER_INFO_REQUEST;
         } else {
             entrance_flag = MConstants.ADD_USER_REQUEST;
@@ -1012,9 +1012,9 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     /**
      * 权限申请回调
      */
-   /* @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MConstants.PERMISSIONS_LOCATION) {
+    @Override
+    public void onRequestPermissionsResult(int code, String[] permissions, int[] grantResults) {
+        if (code == MConstants.PERMISSIONS_LOCATION) {
             if (grantResults.length <= 0) {
                 LogUtil.i(getString(R.string.error_permission_failed));
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -1025,7 +1025,8 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
                 MUtils.showGoSettingDialog(this, getString(R.string.permission_location));
             }
         }
-    }*/
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
