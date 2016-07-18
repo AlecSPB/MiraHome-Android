@@ -38,8 +38,8 @@ public class NotFindDeviceActivity extends BaseActivity {
     protected void OnClick(View v) {
         if (v.getId() == R.id.imgView_retry_connect) {
             startActivity(new Intent(context, SetWifiActivity.class));
+            context.finish();
         }
-        context.finish();
     }
 
     @Override

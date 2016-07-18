@@ -36,8 +36,6 @@ public abstract class BaseFragment extends Fragment {
         editor = sp.edit();
         editor.apply();
 
-        deviceId = sp.getString(MConstants.DEVICE_ID, "");
-
         DbManager.DaoConfig dao = DbXUtils.getDaoConfig(context);
         dbManager = x.getDb(dao);
 
@@ -84,6 +82,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        deviceId = sp.getString(MConstants.DEVICE_ID, "");
         if (!isVisible()) return;
         OnResume();
     }

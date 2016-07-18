@@ -1,8 +1,8 @@
 package com.mooring.mh.adapter;
 
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
@@ -36,15 +36,15 @@ public class GuideViewPagerAdapter extends PagerAdapter {
      * 初始化position位置的界面
      */
     @Override
-    public Object instantiateItem(View view, int position) {
+    public Object instantiateItem(ViewGroup container, int position) {
 
-        ((ViewPager) view).addView(views.get(position), 0);
+        container.addView(views.get(position), 0);
 
         return views.get(position);
     }
 
     @Override
-    public void destroyItem(View view, int position, Object object) {
-        ((ViewPager) view).removeView(views.get(position));
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        container.removeView(views.get(position));
     }
 }

@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
+import com.mooring.mh.utils.MUtils;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -78,12 +79,14 @@ public class ParameterDetailActivity extends BaseActivity {
             case 4:
                 layout_detail.setBackgroundResource(R.drawable.bg_temperature_layout);
                 imgView_detail_ic.setImageResource(R.drawable.ic_temperature);
-                tv_detail_unit.setText(getString(R.string.unit_celsius));
+                tv_detail_unit.setText(MUtils.getCurrTempUnit() ?
+                        getString(R.string.unit_celsius) : getString(R.string.unit_fahrenheit));
                 break;
             case 5:
                 layout_detail.setBackgroundResource(R.drawable.bg_bed_temperature);
                 imgView_detail_ic.setImageResource(R.drawable.ic_bed_temperature);
-                tv_detail_unit.setText(getString(R.string.unit_celsius));
+                tv_detail_unit.setText(MUtils.getCurrTempUnit()  ?
+                        getString(R.string.unit_celsius) : getString(R.string.unit_fahrenheit));
                 break;
             case 6:
                 layout_detail.setBackgroundResource(R.drawable.bg_light_layout);

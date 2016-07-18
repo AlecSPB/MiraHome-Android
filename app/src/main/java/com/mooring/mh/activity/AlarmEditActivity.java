@@ -80,6 +80,8 @@ public class AlarmEditActivity extends BaseActivity {
         if ("edit".equals(flag)) {
             imgView_act_right.setVisibility(View.VISIBLE);
             imgView_act_right.setOnClickListener(this);
+        } else {
+            tv_act_title.setText(getString(R.string.title_alarm_add));
         }
         layout_repeat.setOnClickListener(this);
         tv_confirm.setOnClickListener(this);
@@ -122,7 +124,6 @@ public class AlarmEditActivity extends BaseActivity {
 
         asv_alarm_edit.setTvData(repeat);
         tglBtn_alarm_smart.setChecked(smart);
-
     }
 
     @Override

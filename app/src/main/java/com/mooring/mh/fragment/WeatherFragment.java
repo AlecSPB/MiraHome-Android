@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ImageView;
@@ -124,7 +125,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         layout_sleep_data = rootView.findViewById(R.id.layout_sleep_data);
         tv_sleep_detail.setOnClickListener(this);
 
-        getLatestSleepData();
+//        getLatestSleepData();
 
         getWeatherData();
     }
@@ -175,6 +176,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private void getWeatherData() {
         //初始化当前白天/黑夜
+        LogUtil.w("此时是白天吗:  " + MUtils.judgeCurrIsDayTime());
         if (MUtils.judgeCurrIsDayTime()) {
             layout_weather_bg.setBackgroundResource(R.drawable.img_weather_bg_night);
             imgView_cloud_1.setImageResource(R.drawable.ic_night_cloud_1);
@@ -203,6 +205,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      * 获取经纬度
      */
     private void getLatAndLon() {
+        LogUtil.w("_____发起定位请求_____");
         mLocationClient = new AMapLocationClient(context.getApplicationContext());
         mLocationOption = new AMapLocationClientOption();
         // 设置定位模式为高精度模式
@@ -237,6 +240,12 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private void showNetworkErrorView() {
         layout_sleep_data.setVisibility(View.INVISIBLE);
+        if (no_data_conn_mooring != null) {
+            no_data_conn_mooring.setVisibility(View.GONE);
+        }
+        if (no_mooring_data != null) {
+            no_mooring_data.setVisibility(View.GONE);
+        }
         if (no_network_data == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_network_data);
             no_network_data = viewStub.inflate();
@@ -269,6 +278,12 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private void showConnectMooringView() {
         layout_sleep_data.setVisibility(View.INVISIBLE);
+        if (no_network_data != null) {
+            no_network_data.setVisibility(View.GONE);
+        }
+        if (no_mooring_data != null) {
+            no_mooring_data.setVisibility(View.GONE);
+        }
         if (no_data_conn_mooring == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_connect_mooring);
             no_data_conn_mooring = viewStub.inflate();
@@ -301,6 +316,12 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      */
     private void showNoMooringDataView() {
         layout_sleep_data.setVisibility(View.INVISIBLE);
+        if (no_data_conn_mooring != null) {
+            no_data_conn_mooring.setVisibility(View.GONE);
+        }
+        if (no_network_data != null) {
+            no_network_data.setVisibility(View.GONE);
+        }
         if (no_mooring_data == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_mooring_data);
             no_mooring_data = viewStub.inflate();
@@ -323,10 +344,12 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
      * 获取天气数据
      */
     private void getLatestWeather() {
+        LogUtil.d("____发起了天气数据请求_______");
         RequestParams params = new RequestParams(MConstants.WEATHER_SERVER);
         params.addParameter("lon", lon);
         params.addParameter("lat", lat);
-        params.addParameter("APPID", MConstants.OPEN_WEATHER_ID);
+        params.addParameter("units", MUtils.getCurrTempUnit() ? "metric" : "imperial");
+        params.addParameter("appId", MConstants.OPEN_WEATHER_ID);
         x.http().get(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -335,7 +358,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     weatherId = weather.optJSONObject(0).getInt("id");
                     JSONObject main = result.optJSONObject("main");
                     humidity = main.optInt("humidity");
-                    temp = main.optDouble("temp") - 272.15;
+                    temp = main.optDouble("temp");
                     JSONObject wind = result.optJSONObject("wind");
                     wind_speed = wind.optDouble("speed");
                     JSONObject sys = result.optJSONObject("sys");
@@ -345,13 +368,13 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     tv_wind_speed.setText(new DecimalFormat("#0.0").format(wind_speed * 3.6)
                             + getString(R.string.unit_km_h));
                     tv_humidity.setText(humidity + getString(R.string.unit_percent));
-                    tv_curr_temp.setText(Math.round(temp) + getString(R.string.unit_celsius));
+                    tv_curr_temp.setText(Math.round(temp) + (MUtils.getCurrTempUnit() ?
+                            getString(R.string.unit_celsius) : getString(R.string.unit_fahrenheit)));
                     judgeWeather(weatherId);
                     weather_view.switchWeather(weatherKind);
                     editor.putInt("beforeWeather", weatherKind);
                     editor.putInt("beforeWeatherId", weatherId);
                     editor.apply();
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -366,14 +389,14 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
             @Override
             public void onCancelled(CancelledException cex) {
-                LogUtil.e("cex  " + cex.getMessage() + "  ");
+                LogUtil.w("cex  " + cex.getMessage() + "  ");
                 tv_error_no_weather_data.setVisibility(View.VISIBLE);
                 layout_weather_data.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFinished() {
-                LogUtil.e("onFinished ");
+                LogUtil.d("onFinished ");
             }
         });
     }
@@ -587,7 +610,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
             case R.id.tv_sleep_detail:
                 Intent it = new Intent();
                 it.setClass(getActivity(), SleepDetailActivity.class);
-                getActivity().startActivity(it);
+                context.startActivity(it);
                 break;
         }
     }
@@ -603,6 +626,38 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
             }
             weather_view.setRuning(true);
         }
+    }
+
+    @Override
+    public void onSwitch(String userId, int location, String fTag) {
+        if (MConstants.OBSERVER_TEMP_UNIT == location) {
+            if (fTag.equals(MConstants.DEGREES_C + "")) {
+                temp = MUtils.F2C((float) temp);
+                tv_curr_temp.setText(Math.round(temp) + getString(R.string.unit_celsius));
+            } else if (fTag.equals(MConstants.DEGREES_F + "")) {
+                temp = MUtils.C2F((float) temp);
+                tv_curr_temp.setText(Math.round(temp) + getString(R.string.unit_fahrenheit));
+            }
+        }
+        if (!isVisible()) return;
+        if (!TextUtils.isEmpty(userId)) {//切换头像时
+            if (!MUtils.isCurrDeviceOnline()) return;
+            //请求切换后用户日报数据
+        } else {
+            switch (location) {
+                case MConstants.OBSERVER_DEVICE_STATUS:
+                    if (fTag.equals(MConstants.DEVICE_ONLINE + "")) {
+                        //设备上线
+                        hideConnectMooringView();
+                    } else if (fTag.equals(MConstants.DEVICE_OFFLINE + "")) {
+                        //设备下线
+                        showConnectMooringView();
+                    }
+                    break;
+            }
+        }
+        LogUtil.e("________切换了User_________");
+        //切换时要切换对应用户数据
     }
 
     @Override
@@ -630,6 +685,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onLocationChanged(AMapLocation amapLocation) {
+        LogUtil.w("______执行了定位监听________");
         if (null != amapLocation) {
             if (amapLocation.getErrorCode() == 0) {
                 lat = amapLocation.getLatitude();//获取纬度
@@ -643,14 +699,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                         + amapLocation.getErrorInfo());
             }
         }
-    }
-
-    @Override
-    public void onSwitch(String userId, int location, String fTag) {
-
-        LogUtil.e("________切换了User_________");
-
-        //切换时要切换对应用户数据
     }
 
     @Override

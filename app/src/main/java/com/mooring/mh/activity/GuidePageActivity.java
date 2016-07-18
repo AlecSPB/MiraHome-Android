@@ -197,8 +197,8 @@ public class GuidePageActivity extends AppCompatActivity {
     private void startButton() {
         //修改初次登陆
         editor.putBoolean(MConstants.SP_KEY_FIRST_START, false).apply();
-
         startActivity(new Intent(GuidePageActivity.this, LoginAndSignUpActivity.class));
+        overridePendingTransition(R.anim.slide_right_in, R.anim.anim_blank);
         this.finish();
     }
 

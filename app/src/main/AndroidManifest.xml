@@ -68,13 +68,14 @@
         <!--展示更多-->
         <activity android:name=".activity.SleepDetailActivity" />
 
-        <!--登录和注册-->
+        <!--登录和注册   单一实例模式-->
         <activity
             android:name=".activity.LoginAndSignUpActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <!--修改密码-->
-        <activity android:name=".activity.ConfirmationPswActivity" />
+        <activity android:name=".activity.ChangePasswordActivity" />
 
         <!--通用展示成功和失败页面-->
         <activity android:name=".activity.CommonSuccessActivity" />

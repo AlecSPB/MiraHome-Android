@@ -10,26 +10,26 @@ public class MConstants {
     /**
      * 服务器地址
      */
-    public static final String SERVICE_URL = "https://api.mirahome.me:3000/v1/";
+    public final static String SERVICE_URL = "https://api.mirahome.me:3000/v1/";
 
     /**
      * 获取token
      */
-    public static final String TOKEN = SERVICE_URL + "token";
+    public final static String TOKEN = SERVICE_URL + "token";
 
     /**
      * 获取短信验证码
      * <p/>
      * mobile_phone: '手机号码'
      */
-    public static final String SMS_CODE = SERVICE_URL + "sms_code";
+    public final static String SMS_CODE = SERVICE_URL + "sms_code";
 
     /**
      * 获取邮件验证码
      * <p/>
      * email: 'mail@mirahome.me'
      */
-    public static final String VERIFY_CODE = SERVICE_URL + "verify_code";
+    public final static String VERIFY_CODE = SERVICE_URL + "verify_code";
 
     /**
      * 用手机号码注册用户
@@ -39,21 +39,21 @@ public class MConstants {
      * sms_code: '短信验证码',
      * ios_device_id: 'ios设备token'
      */
-    public static final String MOBILE_PHONE_USER = SERVICE_URL + "mobile_phone_user";
+    public final static String MOBILE_PHONE_USER = SERVICE_URL + "mobile_phone_user";
 
     /**
      * 检查手机号码是否已经被注册
      * <p/>
      * mobile_phone: '18600001111'
      */
-    public static final String IS_MOBILE_PHONE_USED = SERVICE_URL + "is_mobile_phone_used";
+    public final static String IS_MOBILE_PHONE_USED = SERVICE_URL + "is_mobile_phone_used";
 
     /**
      * 检查email是否已经被注册
      * <p/>
      * email: ''
      */
-    public static final String IS_EMAIL_USED = SERVICE_URL + "is_email_used";
+    public final static String IS_EMAIL_USED = SERVICE_URL + "is_email_used";
 
     /**
      * 使用Email注册用户
@@ -63,14 +63,14 @@ public class MConstants {
      * verify_code: '', //验证码
      * ios_device_id: 'ios设备token'
      */
-    public static final String EMAIL_USER = SERVICE_URL + "email_user";
+    public final static String EMAIL_USER = SERVICE_URL + "email_user";
 
     /**
      * 发送重置密码邮件
      * <p/>
      * email: ''
      */
-    public static final String SEND_RESET_PASSWORD_EMAIL = SERVICE_URL + "send_reset_password_email";
+    public final static String SEND_RESET_PASSWORD_EMAIL = SERVICE_URL + "send_reset_password_email";
 
     /**
      * 使用邮件验证码重置密码
@@ -79,14 +79,14 @@ public class MConstants {
      * new_password: '12345678',
      * email: 'suyuan@mirahome.me'
      */
-    public static final String RESET_PASSWORD_BY_EMAIL = SERVICE_URL + "reset_password_by_email";
+    public final static String RESET_PASSWORD_BY_EMAIL = SERVICE_URL + "reset_password_by_email";
 
     /**
      * 发送重置密码手机验证码
      * <p/>
      * mobile_phone: '18600001111'
      */
-    public static final String SEND_RESET_PASSWORD_SMS_CODE = SERVICE_URL + "send_reset_password_sms_code";
+    public final static String SEND_RESET_PASSWORD_SMS_CODE = SERVICE_URL + "send_reset_password_sms_code";
 
     /**
      * 使用手机验证码重置密码
@@ -95,7 +95,7 @@ public class MConstants {
      * new_password: '12345678',
      * mobile_phone: '18616120000'
      */
-    public static final String RESET_PASSWORD_BY_PHONE = SERVICE_URL + "reset_password_by_phone";
+    public final static String RESET_PASSWORD_BY_PHONE = SERVICE_URL + "reset_password_by_phone";
 
     /**
      * 手机号登录
@@ -103,7 +103,7 @@ public class MConstants {
      * mobile_phone: '手机号码',
      * password: ''
      */
-    public static final String LOGIN_BY_MOBILE_PHONE = SERVICE_URL + "login_by_mobile_phone";
+    public final static String LOGIN_BY_MOBILE_PHONE = SERVICE_URL + "login_by_mobile_phone";
 
     /**
      * 使用email登录
@@ -111,7 +111,7 @@ public class MConstants {
      * email: '',
      * password: ''
      */
-    public static final String LOGIN_BY_EMAIL = SERVICE_URL + "login_by_email";
+    public final static String LOGIN_BY_EMAIL = SERVICE_URL + "login_by_email";
 
     /**
      * 使用weixin登录
@@ -119,7 +119,7 @@ public class MConstants {
      * access_token: 'miratoken',
      * open_id: '
      */
-    public static final String LOGIN_WEIXIN = SERVICE_URL + "login_weixin";
+    public final static String LOGIN_WEIXIN = SERVICE_URL + "login_weixin";
 
     /**
      * 使用weibo登录
@@ -127,7 +127,7 @@ public class MConstants {
      * access_token: 'miratoken',
      * weibo_id: ''
      */
-    public static final String LOGIN_WEIBO = SERVICE_URL + "login_weibo";
+    public final static String LOGIN_WEIBO = SERVICE_URL + "login_weibo";
 
     /**
      * 使用facebook登录
@@ -135,7 +135,7 @@ public class MConstants {
      * access_token: 'miratoken',
      * facebook_id: ''
      */
-    public static final String LOGIN_FACEBOOK = SERVICE_URL + "login_facebook";
+    public final static String LOGIN_FACEBOOK = SERVICE_URL + "login_facebook";
 
     /**
      * 使用qq登录
@@ -143,14 +143,14 @@ public class MConstants {
      * access_token: 'miratoken',
      * qq_id: ''
      */
-    public static final String LOGIN_QQ = SERVICE_URL + "login_qq";
+    public final static String LOGIN_QQ = SERVICE_URL + "login_qq";
 
     /**
      * 退出登陆
      * <p/>
      * apikey: ''
      */
-    public static final String LOGOUT = SERVICE_URL + "logout";
+    public final static String LOGOUT = SERVICE_URL + "logout";
 
     /**
      * 修改密码
@@ -159,7 +159,7 @@ public class MConstants {
      * new_password: '',
      * apikey: '' //登录成功以后从服务器返回
      */
-    public static final String CHANGE_PASSWORD = SERVICE_URL + "change_password";
+    public final static String CHANGE_PASSWORD = SERVICE_URL + "change_password";
 
     /**
      * 添加成员
@@ -171,7 +171,7 @@ public class MConstants {
      * height: 200, //cm
      * weight: 70 //kg
      */
-    public static final String MEMBER = SERVICE_URL + "member";
+    public final static String MEMBER = SERVICE_URL + "member";
 
     /**
      * 更新或删除成员
@@ -184,13 +184,13 @@ public class MConstants {
      * height: 10,
      * weight: 10
      */
-    public static final String MANAGE_MEMBER = SERVICE_URL + "member/:member_id";
+    public final static String MANAGE_MEMBER = SERVICE_URL + "member/:member_id";
 
 
     /**
      * 获取当前user下所有成员
      */
-    public static final String GET_MEMBER_BY_USER_ID = SERVICE_URL + "get_member_by_user_id";
+    public final static String GET_MEMBER_BY_USER_ID = SERVICE_URL + "get_member_by_user_id";
     /**
      * 设置闹钟
      * <p/>
@@ -199,14 +199,14 @@ public class MConstants {
      * minute: 10,
      * member_id: 1
      */
-    public static final String SET_ALARM = SERVICE_URL + "set_alarm";
+    public final static String SET_ALARM = SERVICE_URL + "set_alarm";
 
     /**
      * 上传文件
      * <p/>
      * Filedata: ''
      */
-    public static final String UPLOAD = SERVICE_URL + "upload";
+    public final static String UPLOAD = SERVICE_URL + "upload";
 
     /*设备相关*/
     /**
@@ -214,14 +214,14 @@ public class MConstants {
      * <p/>
      * device_id: 1,
      */
-    public static final String BIND_DEVICE = SERVICE_URL + "bind_device";
+    public final static String BIND_DEVICE = SERVICE_URL + "bind_device";
 
     /**
      * 获取设备状态
      * device_id: 1,
      * user_id: 1
      */
-    public static final String DEVICE_INFO = SERVICE_URL + "device_info/:device_id";
+    public final static String DEVICE_INFO = SERVICE_URL + "device_info/:device_id";
 
     /**
      * 设置成员到设备
@@ -229,12 +229,12 @@ public class MConstants {
      * device_side: 1, //1或2
      * member_id: 1
      */
-    public static final String MEMBER_TO_DEVICE = SERVICE_URL + "member_to_device";
+    public final static String MEMBER_TO_DEVICE = SERVICE_URL + "member_to_device";
 
     /**
      * 设备上的成员换边
      */
-    public static final String CHANGE_SIDE = SERVICE_URL + "change_side";
+    public final static String CHANGE_SIDE = SERVICE_URL + "change_side";
 
     /**
      * 获取日报告
@@ -242,7 +242,7 @@ public class MConstants {
      * member_id: 1
      * year_month: '2010-08'  //月份必须为两位数字
      */
-    public static final String DAILY_REPORT = SERVICE_URL + "daily_report";
+    public final static String DAILY_REPORT = SERVICE_URL + "daily_report";
 
     /**
      * 获取月报告
@@ -250,17 +250,17 @@ public class MConstants {
      * member_id: 1
      * year_month: '2010-08'  //月份必须为两位数字
      */
-    public static final String MONTHLY_REPORT = SERVICE_URL + "monthly_report";
+    public final static String MONTHLY_REPORT = SERVICE_URL + "monthly_report";
 
     /**
      * open weather map 服务器地址
      */
-    public static final String WEATHER_SERVER = "http://api.openweathermap.org/data/2.5/weather";
+    public final static String WEATHER_SERVER = "http://api.openweathermap.org/data/2.5/weather";
 
     /**
      * open weather map 的appId
      */
-    public static final String OPEN_WEATHER_ID = "a6c9476969cc87a5e3ba40bd69d25e3b";
+    public final static String OPEN_WEATHER_ID = "a6c9476969cc87a5e3ba40bd69d25e3b";
 
     /**
      * sharedPreferences文件信息
@@ -276,10 +276,10 @@ public class MConstants {
     public final static String DEVICE_MODEL = "deviceModel";//设备Model
     public final static String DEVICE_TYPE = "deviceType";//设备type
     public final static String DEVICE_NAME = "deviceName";//设备name
-    public final static String DEVICE_ONLINE = "deviceOnline";//设备在线
+    public final static String DEVICE_WAN_ONLINE = "deviceOnline";//设备在线
     public final static String DEVICE_LAN_ONLINE = "deviceLanOnline";//设备局域网在线
     public final static String ENTRANCE_FLAG = "entrance_flag";//进入标志
-    public final static String TEMPERATURE_UNIT = "temperature_unit";//温度单位
+    public final static String TEMPERATURE_UNIT = "temperature_unit";//温度单位,true为摄氏度
     public final static String CURR_BLANKET_MODEL = "curr_blanket_model";//当前毯子所处模式
     public final static String LOGOUT_KICKOFF = "logout_kickoff";//用户被挤下线标志
     public final static String CURR_USER_ID = "curr_user_id";//当前用户id,用来提取出当前用户使用
@@ -287,7 +287,7 @@ public class MConstants {
     public final static String CURR_SYSTEM_LANGUAGE = "curr_system_language";//当前系统语言
 
     /**
-     * 设备属性值
+     * 以下全部对应设备属性值
      */
     public final static String ATTR_ENVIR_TEMPERATURE = "101";//环境温度
     public final static String ATTR_ENVIR_HUMIDITY = "102";//环境湿度值
@@ -319,141 +319,51 @@ public class MConstants {
     public final static String ATTR_RIGHT_TARGET_TEMP_SWITCH = "129";//右边目标温度开关
 
     /**
-     * 用户在床上的位置
+     * Intent传递参数0x100
      */
-    public final static int BED_OUT = 0;
-    public final static int BED_LEFT = 1;
-    public final static int BED_RIGHT = 2;
+    public final static int SIGN_UP_SUCCESS = 0x101;//注册成功
+    public final static int CONFIRM_SUCCESS = 0x102;//修改密码成
+    public final static int ADD_USER_REQUEST = 0x103;//跳转添加用户
+    public final static int ADD_USER_RESULT = 0x104;//添加用户finish标识
+    public final static int USER_INFO_REQUEST = 0x105;// 跳转添加用户
+    public final static int USER_INFO_RESULT = 0x106;// 添加用户finish标识
+    public final static int ALARM_EDIT_REQUEST = 0x107;//编辑闹钟跳转标识
+    public final static int ALARM_EDIT_RESULT = 0x108;// 编辑闹钟回调标识
+    public final static int REPEAT_ALARM_REQUEST = 0x109;//闹钟重复次数跳转标识
+    public final static int REPEAT_ALARM_RESULT = 0x110;//闹钟重复次数回调标识
+    public final static int CONNECTED_SUCCESS = 0x111;//设备连接成功
+    public final static int CAMERA_PHOTO = 0x112;//跳转照相机
+    public final static int GALLERY_PHOTO = 0x113;//跳转相册
+    public final static int CROP_PHOTO = 0x114;// 剪裁图片
+    public final static int PERMISSIONS_LOCATION = 0x115;//申请位置权限
+    public final static int PERMISSIONS_STORAGE = 0x116;//申请文件读写权限
+    public final static int EXISTING_REQUEST = 0x117;// 跳转已存在设备请求
+    public final static int EXISTING_RESULT = 0x118;// 跳转已存在设备回调
+    public final static int ADD_USER_SUCCESS = 0x119;//添加用户成功
+    public final static int CHANGE_PSW_REQUEST = 0x120;//修改密码请求
+    public final static int CHANGE_PSW_RESULT = 0x121;//修改密码回调
 
     /**
-     * 注册成功
+     * 用户在床上的位置0x400
      */
-    public static final int SIGN_UP_SUCCESS = 0X11;
+    public final static int BED_OUT = 0x401;//不在
+    public final static int BED_LEFT = 0x402;//左边
+    public final static int BED_RIGHT = 0x403;//右边
 
     /**
-     * 修改密码成功
+     * 工具类常量0x700
      */
-    public static final int CONFIRM_SUCCESS = 0X12;
+    public final static int DEGREES_C = 0x701;//摄氏度
+    public final static int DEGREES_F = 0x702;//华氏度
+    public final static int LEFT_USER = 0x703;//左边用户标识
+    public final static int RIGHT_USER = 0x704;//右边用户标识
+    public final static int DOUBLE_BLANKET_SINGLE = 0x705;//双人毯,单个人
+    public final static int DOUBLE_BLANKET_MULTIPLE = 0x706;//双人毯,多人
+    public final static int SINGLE_BLANKET = 0x707;//单人毯
+    public final static int DEVICE_ONLINE = 0x708;//设备上线
+    public final static int DEVICE_OFFLINE = 0x709;//设备下线
+    public final static int OBSERVER_TEMP_UNIT = 0x710;//观察者温度单位
+    public final static int OBSERVER_DEVICE_STATUS = 0x711;//观察者设备状态
 
-    /**
-     * 左边用户标识
-     */
-    public static final int LEFT_USER = 0X13;
-
-    /**
-     * 右边用户标识
-     */
-    public static final int RIGHT_USER = 0X14;
-
-    /**
-     * 跳转添加用户
-     */
-    public static final int ADD_USER_REQUEST = 0X15;
-
-    /**
-     * 添加用户finish标识
-     */
-    public static final int ADD_USER_RESULT = 0X16;
-
-    /**
-     * 跳转添加用户
-     */
-    public static final int USER_INFO_REQUEST = 0X17;
-
-    /**
-     * 添加用户finish标识
-     */
-    public static final int USER_INFO_RESULT = 0X18;
-
-    /**
-     * 编辑闹钟跳转标识
-     */
-    public static final int ALARM_EDIT_REQUEST = 0X19;
-
-    /**
-     * 编辑闹钟回调标识
-     */
-    public static final int ALARM_EDIT_RESULT = 0X20;
-
-    /**
-     * 闹钟重复次数跳转标识
-     */
-    public static final int REPEAT_ALARM_REQUEST = 0X21;
-
-    /**
-     * 闹钟重复次数回调标识
-     */
-    public static final int REPEAT_ALARM_RESULT = 0X22;
-
-    /**
-     * 设备连接成功
-     */
-    public static final int CONNECTED_SUCCESS = 0X23;
-
-    /**
-     * 跳转照相机
-     */
-    public static final int CAMERA_PHOTO = 0X24;
-
-    /**
-     * 跳转相册
-     */
-    public static final int GALLERY_PHOTO = 0X25;
-
-    /**
-     * 跳转相册
-     */
-    public static final int CROP_PHOTO = 0X26;
-
-    /**
-     * 位置权限
-     */
-    public static final int PERMISSIONS_LOCATION = 0X27;
-
-    /**
-     * 文件读写权限
-     */
-    public static final int PERMISSIONS_STORAGE = 0X28;
-
-    /**
-     * 双人毯,单个人
-     */
-    public static final int DOUBLE_BLANKET_SINGLE = 0X29;
-
-    /**
-     * 双人毯,多人
-     */
-    public static final int DOUBLE_BLANKET_MULTIPLE = 0X30;
-
-    /**
-     * 单人毯
-     */
-    public static final int SINGLE_BLANKET = 0X31;
-
-    /**
-     * 添加用户成功
-     */
-    public static final int ADD_USER_SUCCESS = 0X32;
-    /**
-     * 修改密码请求
-     */
-    public static final int CONFIR_PSW_REQUEST = 0X33;
-    /**
-     * 修改密码回调
-     */
-    public static final int CONFIR_PSW_RESULT = 0X34;
-    /**
-     * 工具类常量
-     */
-    public final static int DEGREES_C = 0X35;//摄氏度
-    public final static int DEGREES_F = 0X36;//华氏度
-    /**
-     * 跳转已存在设备请求
-     */
-    public final static int EXISTING_REQUEST = 0X37;
-    /**
-     * 跳转已存在设备回调
-     */
-    public final static int EXISTING_RESULT = 0X38;
 
 }

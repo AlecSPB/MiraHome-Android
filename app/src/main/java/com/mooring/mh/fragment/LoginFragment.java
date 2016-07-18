@@ -14,7 +14,7 @@ import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
-import com.mooring.mh.activity.ConfirmationPswActivity;
+import com.mooring.mh.activity.ChangePasswordActivity;
 import com.mooring.mh.activity.MainActivity;
 import com.mooring.mh.db.DbXUtils;
 import com.mooring.mh.db.LocalUser;
@@ -93,6 +93,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         imgView_weChart.setOnClickListener(this);
         imgView_QQ.setOnClickListener(this);
         imgView_facebook.setOnClickListener(this);
+        edit_userName.setText(sp.getString(MConstants.SP_KEY_USERNAME, ""));//取出本地默认账号
 
         //--------------暂时使用,真实情况去除!!!!!!!!---------------------------
         edit_userName.setText("18136093612");
@@ -127,7 +128,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
      */
     private void login() {
 
-        MUtils.showLoadingDialog(context);
+        MUtils.showLoadingDialog(context, null);
         MachtalkSDK.getInstance().userLogin(
                 edit_userName.getText().toString(),
                 edit_userPwd.getText().toString(), null);
@@ -258,7 +259,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.tv_forget_psw:
                 //跳转忘记密码
-                startActivity(new Intent(context, ConfirmationPswActivity.class));
+                startActivity(new Intent(context, ChangePasswordActivity.class));
                 break;
             case R.id.tv_login_btn:
                 userName = edit_userName.getText().toString().trim();

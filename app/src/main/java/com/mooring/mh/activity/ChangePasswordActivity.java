@@ -26,7 +26,7 @@ import org.xutils.x;
  * <p/>
  * Created by Will on 16/3/30.
  */
-public class ConfirmationPswActivity extends BaseActivity {
+public class ChangePasswordActivity extends BaseActivity {
     private EditText edit_confirm_phone;
     private TextView tv_confirm_next;
     private TextView tv_confirm_error;
@@ -39,7 +39,7 @@ public class ConfirmationPswActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_confirmation_psw;
+        return R.layout.activity_change_password;
     }
 
     @Override
@@ -76,10 +76,10 @@ public class ConfirmationPswActivity extends BaseActivity {
                 setError(getString(R.string.error_account_format));
             } else {
                 Intent it = new Intent();
-                it.setClass(ConfirmationPswActivity.this, VerifyPhoneActivity.class);
+                it.setClass(ChangePasswordActivity.this, VerifyPhoneActivity.class);
                 it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.CONFIRM_SUCCESS);
                 it.putExtra(MConstants.SP_KEY_USERNAME, phone);
-                startActivityForResult(it, MConstants.CONFIR_PSW_REQUEST);
+                startActivityForResult(it, MConstants.CHANGE_PSW_REQUEST);
             }
         }
     }
@@ -133,7 +133,7 @@ public class ConfirmationPswActivity extends BaseActivity {
      */
     private void showSuccess() {
         Intent it = new Intent();
-        it.setClass(ConfirmationPswActivity.this, CommonSuccessActivity.class);
+        it.setClass(ChangePasswordActivity.this, CommonSuccessActivity.class);
         it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.CONFIRM_SUCCESS);
         startActivity(it);
     }
@@ -163,7 +163,7 @@ public class ConfirmationPswActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MConstants.CONFIR_PSW_REQUEST && resultCode == MConstants.CONFIR_PSW_RESULT) {
+        if (requestCode == MConstants.CHANGE_PSW_REQUEST && resultCode == MConstants.CHANGE_PSW_RESULT) {
             edit_confirm_phone.setText("");
             edit_confirm_phone.setHint(getString(R.string.tv_new_password));
             tv_confirm_next.setText(getString(R.string.tv_confirm));
@@ -178,14 +178,14 @@ public class ConfirmationPswActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onPageStart("ConfirmationPsw");
+        MobclickAgent.onPageStart("ChangePassword");
         MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        MobclickAgent.onPageEnd("ConfirmationPsw");
+        MobclickAgent.onPageEnd("ChangePassword");
         MobclickAgent.onPause(this);
     }
 }

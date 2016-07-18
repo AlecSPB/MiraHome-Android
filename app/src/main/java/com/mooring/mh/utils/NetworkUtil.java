@@ -9,6 +9,8 @@ import android.net.wifi.WifiManager;
 import org.xutils.common.util.LogUtil;
 
 /**
+ * 网络工具类 包括移动数据网络和wifi
+ * <p/>
  * Created by Will on 16/4/25.
  */
 public class NetworkUtil {
@@ -16,14 +18,14 @@ public class NetworkUtil {
     /**
      * 判断WIFI网络是否可用
      *
-     * @param context
-     * @return
+     * @param context 上下文
+     * @return true 连接
      */
     public static boolean isWifiConnected(Context context) {
         if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.
+            ConnectivityManager cManager = (ConnectivityManager) context.
                     getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mWiFiNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo mWiFiNetworkInfo = cManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             if (mWiFiNetworkInfo != null && mWiFiNetworkInfo.isAvailable()) {
                 return mWiFiNetworkInfo.isConnected();
             }
@@ -34,8 +36,8 @@ public class NetworkUtil {
     /**
      * 判断WIFI网络是否打开
      *
-     * @param context
-     * @return
+     * @param context 上下文
+     * @return true 打开
      */
     public static boolean isWifiOpened(Context context) {
         WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -43,22 +45,24 @@ public class NetworkUtil {
     }
 
     /**
-     * 获取当前ssid
+     * 获取当前ss_id
      *
-     * @return
+     * @param context 上下文
+     * @return wifi名称
      */
     public static String getSSID(Context context) {
         if (isWifiConnected(context)) {
-            WifiInfo wifiInfo = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE)).getConnectionInfo();
-            String ssid = wifiInfo.getSSID();
-            if (ssid != null) {
-                LogUtil.e("Current wifi ssid is " + ssid);
-                ssid = ssid.replaceAll("\"", "");
-                if ("0x".equals(ssid) || "<unknown ssid>".equalsIgnoreCase(ssid)) {
-                    ssid = null;
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            String ss_id = wifiInfo.getSSID();
+            if (ss_id != null) {
+                LogUtil.e("Current wifi ss_id is " + ss_id);
+                ss_id = ss_id.replaceAll("\"", "");
+                if ("0x".equals(ss_id) || "<unknown ssid>".equalsIgnoreCase(ss_id)) {
+                    ss_id = null;
                 }
             }
-            return ssid;
+            return ss_id;
         }
         return "";
     }
@@ -66,8 +70,8 @@ public class NetworkUtil {
     /**
      * 判断网络是否可用
      *
-     * @param context
-     * @return
+     * @param context 上下文
+     * @return true 可用
      */
     public static boolean isNetworkConnected(Context context) {
         if (context != null) {

@@ -1,7 +1,6 @@
 package com.mooring.mh.activity;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,10 +17,13 @@ import com.machtalk.sdk.domain.ReceivedDeviceMessage;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
 import com.mooring.mh.app.InitApplicationHelper;
+import com.mooring.mh.utils.ActivityCollector;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.other.CommonDialog;
 import com.umeng.message.PushAgent;
+
+import org.xutils.common.util.LogUtil;
 
 import java.util.List;
 
@@ -39,11 +41,13 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected ImageView imgView_act_back;//Activity返回
     protected TextView tv_act_title;//Activity的title
     protected boolean self_control_back = false;//是否自主控制返回按钮事件
+    private boolean noNetwork = false;//是否无网络
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        ActivityCollector.add(this);
 
         if (getLayoutId() == 0) {
             throw new IllegalStateException("Layout files can not be empty");
@@ -115,29 +119,34 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             super.onServerConnectStatusChanged(scs);
             if (scs == MachtalkSDKConstant.ServerConnStatus.RECONNECTING) {
                 //后台重新登录中（关闭自动登录功能后将不会再有通知）
-                return;
+                MUtils.showLoadingDialog(context, "连接中...");
+            } else {
+                MUtils.hideLoadingDialog();
             }
-            if (scs == MachtalkSDKConstant.ServerConnStatus.NETWORK_UNAVAILABLE) {
+            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_TIMEOUT ||
+                    scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_BREAK) {
+                if (!noNetwork) {
+                    //网络不可用
+                    MUtils.showToast(context, "无法连接到服务器");
+                }
+                if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_BREAK) {
+                    //服务中断
+                    editor.putBoolean(MConstants.DEVICE_WAN_ONLINE, false);
+                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false);
+                    editor.apply();
+                }
+            } else if (scs == MachtalkSDKConstant.ServerConnStatus.NETWORK_UNAVAILABLE) {
                 //网络连接不可用（手机断开网络连接时会通知）
-                return;
-            }
-            if (scs == MachtalkSDKConstant.ServerConnStatus.NETWORK_RECOVERY) {
+                noNetwork = true;
+                MUtils.showToast(context, "网络连接不可用");
+            } else if (scs == MachtalkSDKConstant.ServerConnStatus.NETWORK_RECOVERY) {
                 //网络连接恢复（手机重新连接上了网络）
-                MachtalkSDK.getInstance().setReconnect(true, 10);//自动重新连接
-                return;
+                noNetwork = false;
+                MUtils.showToast(context, "网络已连接");
             }
-            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_TIMEOUT) {
-                //用户登录时连接超时
-                return;
-            }
-            //服务器连接中断,提示用户
-            if (scs == MachtalkSDKConstant.ServerConnStatus.CONNECT_BREAK) {
-                MUtils.showToast(context, getString(R.string.tip_server_conn_failed));
-                return;
-            }
+            //登录被挤掉
             if (scs == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
                 logoutAndRetryLogin();
-                return;
             }
         }
 
@@ -168,25 +177,29 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
 
         @Override
-        public void onDeviceOnOffline(String deviceId, MachtalkSDKConstant.DeviceOnOffline dool) {
-            super.onDeviceOnOffline(deviceId, dool);
-            if (sp.getString(MConstants.DEVICE_ID, "").equals(deviceId)) {
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {
-                    editor.putBoolean(MConstants.DEVICE_ONLINE, true).apply();
-                    //弹出Dialog,跳转到连接设备界面
-                    return;
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
-                    editor.putBoolean(MConstants.DEVICE_ONLINE, false).apply();
-                    return;
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {
-                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true).apply();
-                    return;
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
-                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false).apply();
-                }
+        public void onDeviceOnOffline(String deviceId, MachtalkSDKConstant.DeviceOnOffline status) {
+            super.onDeviceOnOffline(deviceId, status);
+            deviceOnOffLine(deviceId, status);
+        }
+    }
+
+    /**
+     * 设备上下线
+     *
+     * @param deviceId 设备ID
+     * @param status
+     */
+    protected void deviceOnOffLine(String deviceId, MachtalkSDKConstant.DeviceOnOffline status) {
+        LogUtil.w("onDeviceOnOffline:" + status + "," + deviceId);
+        if (sp.getString(MConstants.DEVICE_ID, "").equals(deviceId)) {
+            if (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {//广域网上线
+                editor.putBoolean(MConstants.DEVICE_WAN_ONLINE, true).apply();
+            } else if (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
+                editor.putBoolean(MConstants.DEVICE_WAN_ONLINE, false).apply();
+            } else if (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {
+                editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true).apply();
+            } else if (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
+                editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false).apply();
             }
         }
     }
@@ -195,10 +208,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      * 检测到用户被挤出登录
      */
     protected void logoutAndRetryLogin() {
-        Intent it = new Intent(context, LoginAndSignUpActivity.class);
-        it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.LOGOUT_KICKOFF);
-        startActivity(it);
-        BaseActivity.this.finish();
+        finish();
     }
 
     /**
@@ -220,7 +230,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onClick(View v ) {
+    public void onClick(View v) {
         if (!self_control_back && v.getId() == R.id.imgView_act_back) {
             context.finish();
         }
@@ -238,5 +248,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onPause() {
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(baseListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        ActivityCollector.remove(this);
+        super.onDestroy();
+        System.gc();
     }
 }

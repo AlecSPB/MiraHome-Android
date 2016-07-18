@@ -1,6 +1,7 @@
 package com.mooring.mh.fragment;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.animation.AlphaAnimation;
@@ -19,6 +20,8 @@ import com.mooring.mh.activity.SetWifiActivity;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.umeng.analytics.MobclickAgent;
+
+import org.xutils.common.util.LogUtil;
 
 import java.util.List;
 
@@ -46,7 +49,9 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     private TextView tv_body_movement;
     private TextView tv_humidity;
     private TextView tv_temperature;
+    private TextView tv_unit_temp;
     private TextView tv_bed_temperature;
+    private TextView tv_unit_bed_temp;
     private TextView tv_light;
     private TextView tv_noise;
     private MSDKListener msdkListener;
@@ -54,7 +59,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     private int currLocation;//当前用户
     private AlphaAnimation alphaAnimation;//显示动画
     private boolean isRefresh = false;//是否自动刷新数据
-    private boolean isDeviceExist = false;//设备是否存在
+    private int isDeviceExist = 0;//设备是否存在,0:默认,1:存在,2:不存在
 
     @Override
     protected int getLayoutId() {
@@ -65,7 +70,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     protected void initFragment() {
 
         msdkListener = new MSDKListener();
-        currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+        currLocation = MUtils.getCurrUserLocation();
     }
 
     @Override
@@ -86,7 +91,9 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         tv_body_movement = (TextView) rootView.findViewById(R.id.tv_body_movement);
         tv_humidity = (TextView) rootView.findViewById(R.id.tv_humidity);
         tv_temperature = (TextView) rootView.findViewById(R.id.tv_temperature);
+        tv_unit_temp = (TextView) rootView.findViewById(R.id.tv_unit_temp);
         tv_bed_temperature = (TextView) rootView.findViewById(R.id.tv_bed_temperature);
+        tv_unit_bed_temp = (TextView) rootView.findViewById(R.id.tv_unit_bed_temp);
         tv_light = (TextView) rootView.findViewById(R.id.tv_light);
         tv_noise = (TextView) rootView.findViewById(R.id.tv_noise);
 
@@ -99,23 +106,30 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
         layout_light.setOnClickListener(this);
         layout_noise.setOnClickListener(this);
 
-        alphaAnimation = new AlphaAnimation(0.05f, 1.0f);
-        alphaAnimation.setDuration(1500);
-        alphaAnimation.setRepeatCount(-1);
-        alphaAnimation.setRepeatMode(Animation.REVERSE);
+        //初始化温度单位,防止在当前fragment没有attach上观察者之前,更改温度单位
+        if (sp.getBoolean(MConstants.TEMPERATURE_UNIT, true)) {
+            tv_unit_temp.setText(getString(R.string.unit_celsius));
+            tv_unit_bed_temp.setText(getString(R.string.unit_celsius));
+        } else {
+            tv_unit_temp.setText(getString(R.string.unit_fahrenheit));
+            tv_unit_bed_temp.setText(getString(R.string.unit_fahrenheit));
+        }
+
     }
 
     /**
      * 判断设备是否在线
      */
     private void judgeDeviceIsOnline() {
-        if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
-                sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+        LogUtil.e(sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) + "—LAN————ONLINE—" +
+                sp.getBoolean(MConstants.DEVICE_WAN_ONLINE, false));
+
+        if (MUtils.isCurrDeviceOnline()) {
             hideNoDeviceView();
-            isDeviceExist = true;
+            isDeviceExist = 1;
         } else {
             showNoDeviceView();
-            isDeviceExist = false;
+            isDeviceExist = 2;
         }
     }
 
@@ -123,7 +137,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
      * 显示无设备去连接界面
      */
     private void showNoDeviceView() {
-        if (!isDeviceExist) return;
+        if (isDeviceExist == 2) return;
         layout_parameter.setVisibility(View.GONE);
         if (layout_no_device == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
@@ -147,21 +161,26 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
      * 隐藏无设备去连接界面
      */
     private void hideNoDeviceView() {
-        if (isDeviceExist) return;
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        if (isDeviceExist == 1) return;
         layout_parameter.setVisibility(View.VISIBLE);
         if (layout_no_device != null) {
             layout_no_device.setVisibility(View.GONE);
         }
-        //执行动画
-        startAnimation();
-        //执行一次查询
-//        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        startAnimation();//执行动画
     }
 
     /**
      * 开始动画加载
      */
     private void startAnimation() {
+        isRefresh = false;//首先停止刷新
+        if (alphaAnimation == null) {
+            alphaAnimation = new AlphaAnimation(0.05f, 1.0f);
+            alphaAnimation.setDuration(1500);
+            alphaAnimation.setRepeatCount(-1);
+            alphaAnimation.setRepeatMode(Animation.REVERSE);
+        }
         tv_heart_rate.setText(getString(R.string.wait_loading));
         tv_breathing_rate.setText(getString(R.string.wait_loading));
         tv_body_movement.setText(getString(R.string.wait_loading));
@@ -286,7 +305,7 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
                 parseAidStatusList(deviceStatus.getDeviceAidStatuslist());
                 isRefresh = true;
             } else {
-                MUtils.showToast(context, getResources().getString(R.string.device_not_online));
+                MUtils.showToast(context, getString(R.string.check_device_online));
             }
         }
 
@@ -335,17 +354,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    public void onSwitch(String userId, int location, String fTag) {
-        if (fTag.equals(this.getTag())) {//当前fragment为展现
-            //执行切换
-            isRefresh = false;
-            currLocation = location;
-            startAnimation();
-            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
-        }
-    }
-
-    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (hidden) {
@@ -358,14 +366,44 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
             judgeDeviceIsOnline();
 
             //获取当前的User,如果没有改变,则不做切换
-            if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
-                isRefresh = false;
-                currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+            if (currLocation != MUtils.getCurrUserLocation()) {
+                currLocation = MUtils.getCurrUserLocation();
+                if (!MUtils.isCurrDeviceOnline()) return;//设备不在线直接跳出
                 startAnimation();
+                MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
             }
+        }
+    }
 
-            //每次展现的时候请求一次,保证数据最新
+    @Override
+    public void onSwitch(String userId, int location, String fTag) {
+        if (MConstants.OBSERVER_TEMP_UNIT == location) {
+            if (fTag.equals(MConstants.DEGREES_C + "")) {
+                tv_unit_temp.setText(getString(R.string.unit_celsius));
+                tv_unit_bed_temp.setText(getString(R.string.unit_celsius));
+            } else if (fTag.equals(MConstants.DEGREES_F + "")) {
+                tv_unit_temp.setText(getString(R.string.unit_fahrenheit));
+                tv_unit_bed_temp.setText(getString(R.string.unit_fahrenheit));
+            }
+        }
+        if (!isVisible()) return;
+        if (!TextUtils.isEmpty(userId)) {//切换头像时
+            if (!MUtils.isCurrDeviceOnline()) return;
+            currLocation = location;
+            startAnimation();
             MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        } else {
+            switch (location) {
+                case MConstants.OBSERVER_DEVICE_STATUS:
+                    if (fTag.equals(MConstants.DEVICE_ONLINE + "")) {
+                        hideNoDeviceView();
+                        isDeviceExist = 1;
+                    } else if (fTag.equals(MConstants.DEVICE_OFFLINE + "")) {
+                        showNoDeviceView();
+                        isDeviceExist = 2;
+                    }
+                    break;
+            }
         }
     }
 
@@ -373,7 +411,6 @@ public class ParameterFragment extends BaseFragment implements View.OnClickListe
     protected void OnResume() {
         //执行判断设备在线状态
         judgeDeviceIsOnline();
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
 
         MachtalkSDK.getInstance().setContext(context);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);

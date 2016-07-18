@@ -41,7 +41,6 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     private LinearLayoutManager layoutManager;
     private DeviceListAdapter adapter;
     private List<Device> deviceList;
-
     /**
      * 单个设备情况
      */
@@ -53,8 +52,8 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     private TextView tv_device_name;
 
     private MSDKListener msdkListener;
-    private Dialog dialog;
-    private Device singleDevice;
+    private Dialog dialog;//弹出提示
+    private Device singleDevice;//单个设备对象
 
     @Override
     protected int getLayoutId() {
@@ -90,15 +89,16 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         imgView_retry_add_device.setOnClickListener(this);
         layout_one_device.setOnClickListener(this);
 
-        MachtalkSDK.getInstance().queryDeviceList();
+        //每次打开自动直连当前设备
+        MachtalkSDK.getInstance().startSearchLanDevices(3, true);
     }
 
     /**
      * show提示dialog
      */
-    private void showDialog() {
+    private void showIsReConnectDialog() {
         CommonDialog.Builder builder = new CommonDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.tip_failed_get_list));
+        builder.setMessage(getString(R.string.tip_failed_get_list));
         builder.setLogo(R.drawable.img_failed_connect_network);
         builder.setCanceledOnTouchOtherPlace(false);
 
@@ -173,7 +173,7 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                         editor.putString(MConstants.DEVICE_NAME, device.getName());
                         editor.putString(MConstants.DEVICE_MODEL, device.getModel());
                         editor.putString(MConstants.DEVICE_TYPE, device.getType());
-                        editor.putBoolean(MConstants.DEVICE_ONLINE, device.isOnline());
+                        editor.putBoolean(MConstants.DEVICE_WAN_ONLINE, device.isOnline());
                         editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, device.isLanOnline());
                         editor.apply();
 
@@ -197,7 +197,6 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                 break;
             case R.id.imgView_retry_add_device:
                 startActivity(new Intent(context, SetWifiActivity.class));
-                context.finish();
                 break;
             case R.id.layout_one_device:
                 decideDevice(singleDevice);
@@ -217,10 +216,8 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         public void onQueryDeviceList(Result result, DeviceListInfo dli) {
             super.onQueryDeviceList(result, dli);
             int success = Result.FAILED;
-            String errorMsg = null;
             if (result != null) {
                 success = result.getSuccess();
-                errorMsg = result.getErrorMessage();
             }
             if (success == Result.SUCCESS && dli != null && dli.getDeviceList() != null) {
                 deviceList = dli.getDeviceList();
@@ -235,14 +232,14 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                     layout_one_device.setVisibility(View.VISIBLE);
                     imgView_one_device.setVisibility(View.VISIBLE);
                     device_recyclerView.setVisibility(View.GONE);
-                    tv_device_name.setText(deviceList.get(0).getName());
-                    if (!deviceList.get(0).isOnline()) {
+                    singleDevice = deviceList.get(0);
+                    tv_device_name.setText(singleDevice.getName());
+                    if (!singleDevice.isOnline()) {
                         imgView_one_device.setAlpha(0.5f);
                     }
-                    if (deviceList.get(0).getId().equals(sp.getString(MConstants.DEVICE_ID, ""))) {
+                    if (singleDevice.getId().equals(sp.getString(MConstants.DEVICE_ID, ""))) {
                         imgView_check_box.setVisibility(View.VISIBLE);
                     }
-                    singleDevice = deviceList.get(0);
                 } else {
                     imgView_no_device.setVisibility(View.GONE);
                     device_recyclerView.setVisibility(View.VISIBLE);
@@ -252,23 +249,18 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
                     device_recyclerView.setLayoutManager(layoutManager);
                     //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
                     device_recyclerView.setHasFixedSize(true);
-                    adapter = new DeviceListAdapter(deviceList);
+                    adapter = new DeviceListAdapter(deviceList, sp.getString(MConstants.DEVICE_ID, ""));
                     adapter.setItemClickListener(ExistingDeviceActivity.this);
                     device_recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
             } else {
-                if (errorMsg == null) {
-                    errorMsg = getResources().getString(R.string.load_device_list_fail);
-                }
-                LogUtil.e(errorMsg);
-
                 device_recyclerView.setVisibility(View.GONE);
                 layout_single_device.setVisibility(View.VISIBLE);
                 imgView_no_device.setVisibility(View.VISIBLE);
                 layout_one_device.setVisibility(View.GONE);
                 //查无结果,弹出dialog是否重试
-                showDialog();
+                showIsReConnectDialog();
             }
         }
 
@@ -276,35 +268,50 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
         public void onUnbindDevice(Result result, UnbindDeviceResult udr) {
             super.onUnbindDevice(result, udr);
             int success = Result.FAILED;
-            String errorMsg = null;
             if (result != null) {
                 success = result.getSuccess();
-                errorMsg = result.getErrorMessage();
             }
             if (success == Result.SUCCESS) {
                 //在解绑设备的回调中,重新请求数据舒心当前页面
                 MachtalkSDK.getInstance().queryDeviceList();
                 MUtils.showToast(context, getString(R.string.unbind_success));
             } else {
-                if (errorMsg == null) {
-                    errorMsg = getResources().getString(R.string.unbind_failed);
-                }
-                MUtils.showToast(context, errorMsg);
+                MUtils.showToast(context, getString(R.string.unbind_failed));
             }
         }
 
         @Override
         public void onSearchLanDevice(SearchedLanDevice sld) {
             super.onSearchLanDevice(sld);
-            LogUtil.e("检索当前的局域网设备  :  " + sld.getDeviceId());
+            LogUtil.w("检索当前的局域网设备  :  " + sld.getDeviceId() + " ip " + sld.getIp()
+                    + " mode " + sld.getDeviceModel() + " pin " + sld.getDevicePin() + " timeStamp "
+                    + sld.getTimeStamp() + " controlModel " + sld.getControlModel() + " status " +
+                    sld.getCurrentStatus() + " port " + sld.getPort() + " Protocol " + sld.getSupportProtocol());
+
             MachtalkSDK.getInstance().connectLanDevice(sld.getDeviceId(), sld.getIp(), true);
         }
 
         @Override
         public void onConnectLanDevice(Result result, String deviceId) {
             super.onConnectLanDevice(result, deviceId);
-            LogUtil.e("连接上的局域网设备  :  " + deviceId);
+            LogUtil.w("连接上的局域网设备  :  " + deviceId);
+        }
+    }
 
+    @Override
+    protected void deviceOnOffLine(String deviceId, MachtalkSDKConstant.DeviceOnOffline status) {
+        super.deviceOnOffLine(deviceId, status);
+        if (deviceId.equals(sp.getString(MConstants.DEVICE_ID, ""))) {
+            if (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {//广域网上线
+                imgView_one_device.setAlpha(1.0f);
+                singleDevice.setOnline(true);
+            } else if (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
+                imgView_one_device.setAlpha(0.5f);
+                singleDevice.setOnline(false);
+            }
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -316,6 +323,7 @@ public class ExistingDeviceActivity extends BaseActivity implements OnRecyclerIt
     @Override
     public void onResume() {
         super.onResume();
+        MachtalkSDK.getInstance().queryDeviceList();
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(msdkListener);
         MobclickAgent.onPageStart("ExistingDevice");

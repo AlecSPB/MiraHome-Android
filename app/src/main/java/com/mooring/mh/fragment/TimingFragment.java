@@ -52,7 +52,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     private TimingSDKListener timingSDKListener;
     private int currLocation;//当前位置
     private String propertyId;//左右属性ID--对应125:126
-    private boolean isDeviceExist = false;//设备是否在线
+    private int isDeviceExist = 0;//设备是否存在,0:默认,1:存在,2:不存在
     private String resultFlag;//onActivityResult回调
 
     @Override
@@ -64,7 +64,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     protected void initFragment() {
         dataList = new ArrayList<>();
         timingSDKListener = new TimingSDKListener();
-        currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+        currLocation = MUtils.getCurrUserLocation();
         propertyId = (currLocation == MConstants.LEFT_USER) ?
                 MConstants.ATTR_ALARM_LEFT : MConstants.ATTR_ALARM_RIGHT;
     }
@@ -96,14 +96,15 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     /**
      * 判断设备是否在线
      */
-    private void judgeDeviceIsOnline() {
-        if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
-                sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+    private boolean judgeDeviceIsOnline() {
+        if (MUtils.isCurrDeviceOnline()) {
             hideNoDeviceView();
-            isDeviceExist = true;
+            isDeviceExist = 1;
+            return true;
         } else {
             showNoDeviceView();
-            isDeviceExist = false;
+            isDeviceExist = 2;
+            return false;
         }
     }
 
@@ -111,7 +112,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
      * 显示无设备去连接界面
      */
     private void showNoDeviceView() {
-        if (!isDeviceExist) return;
+        if (isDeviceExist == 2) return;
         layout_timing.setVisibility(View.GONE);
         if (layout_no_device == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
@@ -134,7 +135,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
      * 隐藏无设备去连接界面
      */
     private void hideNoDeviceView() {
-        if (isDeviceExist) return;
+        if (isDeviceExist == 1) return;
         layout_timing.setVisibility(View.VISIBLE);
         if (layout_no_device != null) {
             layout_no_device.setVisibility(View.GONE);
@@ -148,10 +149,10 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     /**
      * 解析闹钟数据
      *
-     * @param alarms
+     * @param alarms 1120111111101,^
      */
     private void parsingAlarmString(String alarms) {
-        LogUtil.d("所有闹钟___" + alarms + "___中间是什么");
+        LogUtil.w("所有闹钟___" + alarms + "___中间是什么");
         if (!TextUtils.isEmpty(alarms) && !getString(R.string.tv_empty_clock).equals(alarms)) {
             dataList.clear();
             String[] alarmArr = alarms.split(";");
@@ -216,7 +217,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     /**
      * 发送改变后的闹钟
      *
-     * @param dataList
+     * @param dataList 闹钟列表
      */
     private void sendAlarmString(List<String> dataList) {
         String temp = "";
@@ -224,14 +225,14 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
             temp = getString(R.string.tv_empty_clock);
         } else {
             for (String data : dataList) {
-                temp = data + ";";
+                temp += data + ";";
             }
             temp += "^";
         }
         MachtalkSDK.getInstance().operateDevice(deviceId,
                 new String[]{propertyId},
                 new String[]{temp});
-        MUtils.showLoadingDialog(context);
+        MUtils.showLoadingDialog(context, null);
     }
 
     @Override
@@ -282,16 +283,18 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
             }
             if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
                 List<AidStatus> listAid = ds.getDeviceAidStatuslist();
-                if (listAid != null) return;
+                if (listAid == null) return;
                 for (AidStatus as : listAid) {
                     if (propertyId.equals(as.getAid())) {
                         parsingAlarmString(as.getValue());
+                        timing_swipeRefresh.setRefreshing(false);
+                        return;
                     }
                 }
             } else {
-                MUtils.showToast(context, getString(R.string.device_not_online));
+                timing_swipeRefresh.setRefreshing(false);
+                MUtils.showToast(context, getString(R.string.check_device_online));
             }
-            timing_swipeRefresh.setRefreshing(false);
         }
 
         @Override
@@ -302,9 +305,7 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
                 success = result.getSuccess();
             }
             if (success == Result.SUCCESS && rdm != null && deviceId.equals(rdm.getDeviceId())) {
-                if (!rdm.isRespMsg()) {
-                    return;
-                }
+                if (!rdm.isRespMsg()) return;
                 MUtils.hideLoadingDialog();
                 List<AidStatus> listAid = rdm.getAidStatusList();
                 if (listAid == null) return;
@@ -347,14 +348,43 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
             MachtalkSDK.getInstance().setSdkListener(timingSDKListener);
 
             //判断设备是否在线
-            judgeDeviceIsOnline();
+            if (!judgeDeviceIsOnline()) return;
 
             //判断执行切换
-            if (currLocation != sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER)) {
-                currLocation = sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+            if (currLocation != MUtils.getCurrUserLocation()) {
+                currLocation = MUtils.getCurrUserLocation();
                 propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
                         : MConstants.ATTR_ALARM_RIGHT;
                 MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+                return;
+            }
+
+            //查询无结果时,再次执行查询
+            if (layout_alarm_none.getVisibility() == View.VISIBLE) {
+                MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+            }
+        }
+    }
+
+    @Override
+    public void onSwitch(String userId, int location, String fTag) {
+        if (!isVisible()) return;
+        if (!TextUtils.isEmpty(userId)) {//切换头像时
+            if (!MUtils.isCurrDeviceOnline()) return;
+            currLocation = location;
+            propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
+                    : MConstants.ATTR_ALARM_RIGHT;
+            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+            MUtils.showLoadingDialog(context, null);
+        } else {
+            if (location == MConstants.OBSERVER_DEVICE_STATUS) {
+                if (fTag.equals(MConstants.DEVICE_ONLINE + "")) {
+                    hideNoDeviceView();
+                    isDeviceExist = 1;
+                } else if (fTag.equals(MConstants.DEVICE_OFFLINE + "")) {
+                    showNoDeviceView();
+                    isDeviceExist = 2;
+                }
             }
         }
     }
@@ -362,7 +392,6 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == MConstants.ALARM_EDIT_REQUEST && resultCode == MConstants.ALARM_EDIT_RESULT) {
             resultFlag = data.getStringExtra("flag");
             int position = data.getIntExtra("position", -1);
@@ -373,17 +402,22 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
                 result += data.getBooleanExtra("smart", false) ? "1" : "0";
                 result += data.getBooleanExtra("set", false) ? "1" : "0";
                 dataList.set(position, result);
-                dataList = sortArrayList(dataList);
-            }
-            if ("add".equals(resultFlag)) {
+                if (dataList.size() > 1) {
+                    dataList = sortArrayList(dataList);
+                }
+            } else if ("add".equals(resultFlag)) {
                 result += data.getStringExtra("time");
                 result += paringArrayList(data.getStringArrayListExtra("repeat"));
                 result += data.getBooleanExtra("smart", false) ? "1" : "0";
                 result += "1";
                 dataList.add(result);
-                dataList = sortArrayList(dataList);
-            }
-            if ("delete".equals(resultFlag) && position != -1) {
+                if (dataList.size() > 1) {
+                    dataList = sortArrayList(dataList);
+                }
+                for (String da : dataList) {
+                    LogUtil.i("____闹钟_____" + da + "_____" + dataList.size());
+                }
+            } else if ("delete".equals(resultFlag) && position != -1) {
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
             }
@@ -406,16 +440,5 @@ public class TimingFragment extends BaseFragment implements AlarmClockAdapter.On
     protected void OnPause() {
         MachtalkSDK.getInstance().removeSdkListener(timingSDKListener);
         MobclickAgent.onPageEnd("Timing");
-    }
-
-    @Override
-    public void onSwitch(String userId, int location, String fTag) {
-        if (fTag.equals(this.getTag())) {
-            currLocation = location;
-            propertyId = (currLocation == MConstants.LEFT_USER) ? MConstants.ATTR_ALARM_LEFT
-                    : MConstants.ATTR_ALARM_RIGHT;
-            MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
-            MUtils.showLoadingDialog(context);
-        }
     }
 }

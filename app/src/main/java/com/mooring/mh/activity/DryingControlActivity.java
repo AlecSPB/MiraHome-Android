@@ -151,7 +151,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
                 MachtalkSDK.getInstance().operateDevice(deviceId,
                         new String[]{MConstants.ATTR_DRYING_SWITCH},
                         new String[]{"0"});
-                MUtils.showLoadingDialog(context);
+                MUtils.showLoadingDialog(context,null);
                 dialog.dismiss();
             }
         });
@@ -254,7 +254,7 @@ public class DryingControlActivity extends BaseActivity implements CustomToggle.
             MachtalkSDK.getInstance().operateDevice(deviceId,
                     new String[]{MConstants.ATTR_DRYING_SWITCH},
                     new String[]{"1"});
-            MUtils.showLoadingDialog(context);
+            MUtils.showLoadingDialog(context,null);
         } else {
             showDialog(); //弹出提示
         }

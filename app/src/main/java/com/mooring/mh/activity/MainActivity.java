@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -38,6 +37,8 @@ import com.machtalk.sdk.connect.MachtalkSDK;
 import com.machtalk.sdk.connect.MachtalkSDKConstant;
 import com.machtalk.sdk.connect.MachtalkSDKListener;
 import com.machtalk.sdk.domain.AidStatus;
+import com.machtalk.sdk.domain.Device;
+import com.machtalk.sdk.domain.DeviceListInfo;
 import com.machtalk.sdk.domain.DeviceStatus;
 import com.machtalk.sdk.domain.Result;
 import com.mooring.mh.R;
@@ -49,13 +50,13 @@ import com.mooring.mh.fragment.ControlFragment;
 import com.mooring.mh.fragment.ParameterFragment;
 import com.mooring.mh.fragment.TimingFragment;
 import com.mooring.mh.fragment.WeatherFragment;
+import com.mooring.mh.utils.ActivityCollector;
 import com.mooring.mh.utils.MConstants;
 import com.mooring.mh.utils.MUtils;
 import com.mooring.mh.views.CircleImgView.CircleImageView;
 import com.mooring.mh.views.CircleImgView.ZoomCircleView;
 import com.mooring.mh.views.other.CustomToggle;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 
 import org.xutils.DbManager;
@@ -175,24 +176,13 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         dbManager = x.getDb(dao);
 
         //初始化智成云监听回调
-        MachtalkSDK.getInstance().setContext(context);
         baseListener = new BaseListener();
+        MachtalkSDK.getInstance().startSearchLanDevices(10000, true);//开启检索周边设备
 
         //注册推送
         PushAgent mPushAgent = PushAgent.getInstance(context);
-        if (!mPushAgent.isEnabled()) {
-            mPushAgent.enable(new IUmengRegisterCallback() {
-                @Override
-                public void onRegistered(final String registrationId) {
-                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            LogUtil.w("device_token:  " + registrationId);
-                        }
-                    });
-                }
-            });
-        }
+        mPushAgent.enable();
+
     }
 
     @Override
@@ -280,7 +270,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
      */
     private void initData() {
         //温度开关调制默认打开状态
-        toggle_temp.setChecked(sp.getBoolean(MConstants.TEMPERATURE_UNIT, true));
+        toggle_temp.setChecked(MUtils.getCurrTempUnit());
         /**
          * 以下操作和当前用户数/单双毯没有关联性---------------------
          */
@@ -311,7 +301,8 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         adapter.setOnItemClickListener(this);
         menu_recyclerView.setAdapter(adapter);
 
-        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);
+        MachtalkSDK.getInstance().queryDeviceList();//查询设备列表
+        MachtalkSDK.getInstance().queryDeviceStatus(deviceId);//查询属性值
     }
 
     /**
@@ -484,7 +475,7 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
             editor.putInt(MConstants.CURR_BLANKET_MODEL, MConstants.SINGLE_BLANKET);
         }
         //根据设备是否在线,决定当前Menu中显示内容
-        if (sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+        if (sp.getBoolean(MConstants.DEVICE_WAN_ONLINE, false)) {
             layout_exist_device.setVisibility(View.VISIBLE);
             layout_connect_mooring.setVisibility(View.GONE);
             tv_not_connected.setText(sp.getString(MConstants.DEVICE_NAME, ""));
@@ -808,18 +799,15 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     class BaseListener extends MachtalkSDKListener {
 
         @Override
-        public void onQueryDeviceStatus(Result result, DeviceStatus deviceStatus) {
-            super.onQueryDeviceStatus(result, deviceStatus);
+        public void onQueryDeviceStatus(Result result, DeviceStatus ds) {
+            super.onQueryDeviceStatus(result, ds);
             int success = Result.FAILED;
             if (result != null) {
                 success = result.getSuccess();
             }
-            if (success == Result.SUCCESS && deviceStatus != null &&
-                    deviceId.equals(deviceStatus.getDeviceId())) {
-                List<AidStatus> list = deviceStatus.getDeviceAidStatuslist();
-                if (list == null) {
-                    return;
-                }
+            if (success == Result.SUCCESS && ds != null && deviceId.equals(ds.getDeviceId())) {
+                List<AidStatus> list = ds.getDeviceAidStatuslist();
+                if (list == null) return;
                 for (AidStatus d : list) {
                     if (d.getAid().equals(MConstants.ATTR_SINGLE_OR_DOUBLE)) {
                         computeCurrentUsers(d.getValue());//得到当前单/双人模式
@@ -829,24 +817,53 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         }
 
         @Override
-        public void onDeviceOnOffline(String dvId, MachtalkSDKConstant.DeviceOnOffline dool) {
-            super.onDeviceOnOffline(dvId, dool);
-
-            if (deviceId.equals(dvId)) {
-                LogUtil.w("onDeviceOnOffline:" + dool + "," + dvId);
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE) {
-                    editor.putBoolean(MConstants.DEVICE_ONLINE, true);
+        public void onQueryDeviceList(Result result, DeviceListInfo dli) {
+            super.onQueryDeviceList(result, dli);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            LogUtil.w("success:" + success);
+            if (success == Result.SUCCESS && dli != null && dli.getDeviceList() != null) {
+                boolean existFlag = false;
+                List<Device> dList = dli.getDeviceList();
+                for (Device device : dList) {
+                    if (deviceId.equals(device.getId())) {
+                        LogUtil.w("deviceId:" + device.getId() + " online:" + device.isOnline());
+                        existFlag = true;
+                        editor.putString(MConstants.DEVICE_MODEL, device.getModel());
+                        editor.putString(MConstants.DEVICE_TYPE, device.getType());
+                        editor.putString(MConstants.DEVICE_NAME, device.getName());
+                        editor.putBoolean(MConstants.DEVICE_WAN_ONLINE, device.isOnline());
+                        editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, device.isLanOnline());
+                        editor.apply();
+                    }
                 }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_OFFLINE) {
-                    editor.putBoolean(MConstants.DEVICE_ONLINE, false);
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE) {
-                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true);
-                }
-                if (dool == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_OFFLINE) {
+                if (!existFlag) {
+                    editor.putBoolean(MConstants.DEVICE_WAN_ONLINE, false);
                     editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, false);
+                    editor.apply();
                 }
-                return;
+            } else {
+                MUtils.showToast(context, getString(R.string.load_device_list_fail));
+            }
+        }
+
+        @Override
+        public void onConnectLanDevice(Result result, String deviceID) {
+            super.onConnectLanDevice(result, deviceID);
+            int success = Result.FAILED;
+            if (result != null) {
+                success = result.getSuccess();
+            }
+            if (success == Result.SUCCESS) {
+                LogUtil.i("连接设备成功！" + deviceID);
+                if (deviceID.equals(deviceId)) {
+                    editor.putBoolean(MConstants.DEVICE_LAN_ONLINE, true);
+                    editor.apply();
+                }
+            } else {
+                LogUtil.e("连接设备失败！:" + deviceID);
             }
         }
     }
@@ -885,11 +902,13 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
                 break;
             case R.id.imgView_title_plus:
                 if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
-                        sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+                        sp.getBoolean(MConstants.DEVICE_WAN_ONLINE, false)) {
                     Intent it = new Intent();
                     it.putExtra("flag", "add");
                     it.setClass(context, AlarmEditActivity.class);
                     startActivityForResult(it, MConstants.ALARM_EDIT_REQUEST);
+                } else {
+                    MUtils.showToast(context, getString(R.string.device_not_online));
                 }
                 break;
             case R.id.imgView_switch_user:
@@ -956,8 +975,9 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
             tv_fahrenheit.setTextColor(getResources().getColor(R.color.colorPurple));
         }
         editor.putBoolean(MConstants.TEMPERATURE_UNIT, isChecked).apply();
-        MachtalkSDK.getInstance().operateDevice(
-                sp.getString(MConstants.DEVICE_ID, ""),
+        notifyObservers("", MConstants.OBSERVER_TEMP_UNIT,
+                (isChecked ? MConstants.DEGREES_C : MConstants.DEGREES_F) + "");
+        MachtalkSDK.getInstance().operateDevice(sp.getString(MConstants.DEVICE_ID, ""),
                 new String[]{MConstants.ATTR_TEMP_UNIT},
                 new String[]{isChecked ? "0" : "1"});
     }
@@ -996,19 +1016,6 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (mDrawerLayout.isDrawerOpen(activity_menu)) {
-                mDrawerLayout.closeDrawer(activity_menu);
-                return true;
-            } else {
-                return super.onKeyDown(keyCode, event);
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     /**
      * 权限申请回调
      */
@@ -1028,6 +1035,49 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     }
 
     @Override
+    protected void logoutAndRetryLogin() {
+        Intent it = new Intent(context, LoginAndSignUpActivity.class);
+        it.putExtra(MConstants.ENTRANCE_FLAG, MConstants.LOGOUT_KICKOFF);
+        startActivity(it);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.anim_blank);
+        super.logoutAndRetryLogin();
+    }
+
+    @Override
+    protected void deviceOnOffLine(String deviceId, MachtalkSDKConstant.DeviceOnOffline status) {
+
+        if (!sp.getBoolean(MConstants.DEVICE_WAN_ONLINE, false) &&
+                !sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) &&
+                (status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_WAN_ONLINE ||
+                        status == MachtalkSDKConstant.DeviceOnOffline.DEVICE_LAN_ONLINE)) {//设备上线
+            notifyObservers("", MConstants.OBSERVER_DEVICE_STATUS, MConstants.DEVICE_ONLINE + "");
+        }
+
+        super.deviceOnOffLine(deviceId, status);
+
+        if (!sp.getBoolean(MConstants.DEVICE_WAN_ONLINE, false) &&
+                !sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false)) {//设备下线
+            notifyObservers("", MConstants.OBSERVER_DEVICE_STATUS, MConstants.DEVICE_OFFLINE + "");
+        }
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if (mDrawerLayout.isDrawerOpen(activity_menu)) {
+                mDrawerLayout.closeDrawer(activity_menu);
+            } else {
+                MachtalkSDK.getInstance().userLogout();
+                MachtalkSDK.getInstance().stopSDK();
+                ActivityCollector.finishAll();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
@@ -1037,6 +1087,11 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
     @Override
     protected void onResume() {
         super.onResume();
+        if (MUtils.isCurrDeviceOnline()) {
+            tv_not_connected.setText(sp.getString(MConstants.DEVICE_NAME, ""));
+        } else {
+            tv_not_connected.setText(getString(R.string.tv_not_connected));
+        }
         MachtalkSDK.getInstance().setContext(this);
         MachtalkSDK.getInstance().setSdkListener(baseListener);
         MobclickAgent.onResume(this);
@@ -1047,12 +1102,5 @@ public class MainActivity extends SubjectActivity implements OnRecyclerItemClick
         super.onPause();
         MachtalkSDK.getInstance().removeSdkListener(baseListener);
         MobclickAgent.onPause(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        MachtalkSDK.getInstance().stopSDK();
-        super.onDestroy();
-        System.gc();
     }
 }

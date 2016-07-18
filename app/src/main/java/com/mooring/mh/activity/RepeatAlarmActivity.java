@@ -45,8 +45,7 @@ public class RepeatAlarmActivity extends BaseActivity implements
     private ToggleButton tglBtn_sun;
     private TextView tv_confirm;
 
-    private ArrayList<String> repeat;
-
+    private ArrayList<String> repeat;//重复天数
 
     @Override
     protected int getLayoutId() {
@@ -159,27 +158,27 @@ public class RepeatAlarmActivity extends BaseActivity implements
                 changeBg(layout_mon, tv_mon, isChecked);
                 break;
             case R.id.tglBtn_tue:
-                repeat.set(1, isChecked ? "2" : "0");
+                repeat.set(1, isChecked ? "1" : "0");
                 changeBg(layout_tue, tv_tue, isChecked);
                 break;
             case R.id.tglBtn_wed:
-                repeat.set(2, isChecked ? "3" : "0");
+                repeat.set(2, isChecked ? "1" : "0");
                 changeBg(layout_wed, tv_wed, isChecked);
                 break;
             case R.id.tglBtn_tues:
-                repeat.set(3, isChecked ? "4" : "0");
+                repeat.set(3, isChecked ? "1" : "0");
                 changeBg(layout_tues, tv_tues, isChecked);
                 break;
             case R.id.tglBtn_fri:
-                repeat.set(4, isChecked ? "5" : "0");
+                repeat.set(4, isChecked ? "1" : "0");
                 changeBg(layout_fri, tv_fri, isChecked);
                 break;
             case R.id.tglBtn_sat:
-                repeat.set(5, isChecked ? "6" : "0");
+                repeat.set(5, isChecked ? "1" : "0");
                 changeBg(layout_sat, tv_sat, isChecked);
                 break;
             case R.id.tglBtn_sun:
-                repeat.set(6, isChecked ? "7" : "0");
+                repeat.set(6, isChecked ? "1" : "0");
                 changeBg(layout_sun, tv_sun, isChecked);
                 break;
         }

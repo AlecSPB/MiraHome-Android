@@ -334,8 +334,8 @@ public class SetWifiActivity extends BaseActivity {
             if (success == Result.SUCCESS) {
                 LogUtil.w("当前绑定设备ID是:   " + deviceId);
                 //添加成功之后,跳转到已有设备列表界面
-                startActivityForResult(new Intent(context, ExistingDeviceActivity.class),
-                        MConstants.EXISTING_REQUEST);
+                Intent it = new Intent(context, ExistingDeviceActivity.class);
+                startActivityForResult(it, MConstants.EXISTING_REQUEST);
             } else {
                 //添加失败直接跳转错误界面
                 hideWithAnimation(layout_scan_wifi);

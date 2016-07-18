@@ -13,11 +13,13 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mooring.mh.BuildConfig;
@@ -39,7 +41,7 @@ import java.util.regex.Pattern;
 
 /**
  * 公共工具类
- * <p>
+ * <p/>
  * Created by Will on 16/3/25.
  */
 public class MUtils {
@@ -536,7 +538,7 @@ public class MUtils {
      *
      * @param c
      */
-    public static void showLoadingDialog(Context c) {
+    public static void showLoadingDialog(Context c, String text) {
         if (loading_dialog != null && !loading_dialog.isShowing()) {
             loading_dialog.show();
             return;
@@ -544,6 +546,11 @@ public class MUtils {
         loading_dialog = new Dialog(c, R.style.LoadingDialogStyle);
         loading_dialog.setContentView(R.layout.dialog_loading);
         loading_dialog.setCanceledOnTouchOutside(false);
+        if (!TextUtils.isEmpty(text)) {
+            TextView tv = (TextView) loading_dialog.findViewById(R.id.tv_dialog_text);
+            tv.setVisibility(View.VISIBLE);
+            tv.setText(text);
+        }
         ImageView imageView = (ImageView) loading_dialog.findViewById(R.id.imgView_loading);
         AnimationDrawable _animation = (AnimationDrawable) imageView.getDrawable();
         _animation.start();
@@ -555,6 +562,7 @@ public class MUtils {
      */
     public static void hideLoadingDialog() {
         if (loading_dialog != null && loading_dialog.isShowing()) {
+            loading_dialog.findViewById(R.id.tv_dialog_text).setVisibility(View.GONE);
             loading_dialog.dismiss();
             loading_dialog = null;
         }
@@ -567,6 +575,34 @@ public class MUtils {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * 当前设备是否在线
+     *
+     * @return true 设备在线
+     */
+    public static boolean isCurrDeviceOnline() {
+        return InitApplicationHelper.sp.getBoolean(MConstants.DEVICE_WAN_ONLINE, false) ||
+                InitApplicationHelper.sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false);
+    }
+
+    /**
+     * 获取当前用户位置
+     *
+     * @return 用户位置
+     */
+    public static int getCurrUserLocation() {
+        return InitApplicationHelper.sp.getInt(MConstants.CURR_USER_LOCATION, MConstants.LEFT_USER);
+    }
+
+    /**
+     * 获取当前温度单位
+     *
+     * @return true:℃  false:℉
+     */
+    public static boolean getCurrTempUnit() {
+        return InitApplicationHelper.sp.getBoolean(MConstants.TEMPERATURE_UNIT, true);
     }
 
 }

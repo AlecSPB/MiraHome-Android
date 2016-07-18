@@ -12,6 +12,14 @@
     <string name="tip_disconnect_blanket">MOORING睡毯与控制器断开，请连接</string>
     <string name="tip_server_conn_failed">服务器连接中断</string>
 
+    <!--设备相关-->
+    <string name="device_not_online">设备不在线,请先连接设备</string>
+    <string name="check_device_online">查询状态失败，请查看设备是否在线</string>
+    <string name="load_device_list_fail">获取设备列表失败</string>
+    <string name="operate_failed">操作失败,请重试</string>
+    <string name="unbind_success">解绑成功</string>
+    <string name="unbind_failed">解绑失败</string>
+
     <!--GuidePageActivity 导航页面-->
     <string name="guide_four_start">开始</string>
     <string name="tip_sleep_report">睡眠报告</string>
@@ -22,13 +30,6 @@
     <string name="tip_sleep_three">实时准确监测你的睡眠心率，呼吸，体动\n等身体指标及室温，湿度，噪音，光线等\n环境数据</string>
     <string name="tip_smart_wake">智能叫醒</string>
     <string name="tip_sleep_four">通过控制睡毯温度变化，调整你的睡眠阶\n段，让你在浅睡眠状态伴随的轻微的震动\n下自然醒来开始</string>
-
-    <!--设备相关-->
-    <string name="device_not_online">查询状态失败，请查看设备是否在线</string>
-    <string name="load_device_list_fail">获取设备列表失败</string>
-    <string name="operate_failed">操作失败,请重试</string>
-    <string name="unbind_success">解绑成功</string>
-    <string name="unbind_failed">解绑失败</string>
 
     <!--AboutActivity 关于页面-->
     <string name="title_about">关于</string>
@@ -125,7 +126,7 @@
     <string name="error_verify">验证码输入错误</string>
     <string name="error_code_empty">验证码不能为空</string>
 
-    <!--ConfirmationPswActivity 修改密码页面 -->
+    <!--ChangePasswordActivity 修改密码页面 -->
     <string name="modify_success">重置密码成功</string>
     <string name="title_confirmation_psw">重置密码</string>
     <string name="tv_next">下一步</string>
@@ -180,7 +181,8 @@
     <string name="tip_add_user_success">有新用户加入</string>
 
     <!--AlarmEditActivity 闹钟编辑页面-->
-    <string name="title_alarm_edit">闹钟设置</string>
+    <string name="title_alarm_add">添加闹钟</string>
+    <string name="title_alarm_edit">编辑闹钟</string>
     <string name="tv_repeat">重复</string>
     <string name="tv_smart_alarm">智能闹钟</string>
 

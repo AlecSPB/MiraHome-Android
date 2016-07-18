@@ -29,7 +29,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         LogUtil.w("uncaughtException, thread: " + thread + " name: " + thread.getName()
-                + " id: " + thread.getId() + "exception: " + ex.toString());
+                + " id: " + thread.getId() + "exception: " + ex.toString()
+                + " Priority: " + thread.getPriority() + " State: " + thread.getState().toString());
         String threadName = thread.getName();
         if ("sub1".equals(threadName)) {
             LogUtil.d("");

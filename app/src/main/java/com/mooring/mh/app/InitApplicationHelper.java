@@ -13,6 +13,7 @@ import com.umeng.message.PushAgent;
 import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.entity.UMessage;
 
+import org.xutils.common.util.LogUtil;
 import org.xutils.x;
 
 /**
@@ -24,7 +25,7 @@ import org.xutils.x;
 public class InitApplicationHelper {
 
     public static Application mApp;
-    private static InitApplicationHelper instance;
+    public static InitApplicationHelper instance;
     public static SharedPreferences sp;
     private PushAgent mPushAgent;
 
@@ -41,7 +42,7 @@ public class InitApplicationHelper {
 
     public void init(Application app) {
         InitApplicationHelper.mApp = app;
-        sp = app.getSharedPreferences("mooring", Context.MODE_PRIVATE);
+        sp = app.getSharedPreferences("mooring", Context.MODE_PRIVATE);//实例化
 
         //xUtils初始化
         x.Ext.init(app);
@@ -51,10 +52,10 @@ public class InitApplicationHelper {
         CrashHandler.getInstance().init();
 
         //注册推送
-        mPushAgent = PushAgent.getInstance(app);
+        mPushAgent = PushAgent.getInstance(mApp);
         mPushAgent.setDebugMode(BuildConfig.LOG_DEBUG);
 
-        //以下还是测试阶段
+        //自定义推送样式
         UmengMessageHandler messageHandler = new UmengMessageHandler() {
 
             @Override
@@ -67,12 +68,16 @@ public class InitApplicationHelper {
                         myNotificationView.setTextViewText(R.id.notification_title, msg.title);
                         myNotificationView.setTextViewText(R.id.notification_text, msg.text);
 //                        myNotificationView.setImageViewBitmap(R.id.notification_large_icon, getLargeIcon(context, msg));
-                        myNotificationView.setImageViewResource(R.id.notification_small_icon, getSmallIconId(context, msg));
+//                        myNotificationView.setImageViewResource(R.id.notification_small_icon, getSmallIconId(context, msg));
                         builder.setContent(myNotificationView)
-                                .setSmallIcon(getSmallIconId(context, msg))
+                                .setSmallIcon(R.drawable.umeng_push_notification_default)
                                 .setTicker(msg.ticker)
                                 .setAutoCancel(true);
 
+                        LogUtil.w("_ticker:" + msg.ticker + "_icon:" + msg.icon + "_title:" +
+                                msg.title + "_text:" + msg.text + "_largeIcon:" + msg.largeIcon +
+                                "_img:" + msg.img + "_activity:" + msg.activity + "_display_type:" +
+                                msg.display_type + "_message_id" + msg.message_id + "_msg_id" + msg.msg_id);
                         return builder.build();
 
                     default:

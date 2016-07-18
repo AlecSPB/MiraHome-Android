@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * 起始页--执行动画,判断是否首次使用,是否自动登录
- * <p/>
+ * <p>
  * Created by Will on 16/3/24.
  */
 public class StartPageActivity extends AppCompatActivity {
@@ -64,7 +64,10 @@ public class StartPageActivity extends AppCompatActivity {
 
         //设定Log输出等级以及输出到本地文件
         MachtalkSDK.getInstance().setLog(MachtalkSDKConstant.LOG_LEVEL.LOG_LEVEL_ALL, BuildConfig.LOG_DEBUG);
-        MachtalkSDK.getInstance().startSDK(context, null);
+        MachtalkSDK.getInstance().startSDK(this, null);
+        //默认情况下是支持重连的，默认重连的间隔是20秒，app中可关闭重连功能，也可修改重连时间间隔（必须大于
+        //或等于10秒，如果设置的值小于10秒将按10秒计算）
+        MachtalkSDK.getInstance().setReconnect(true, 15);
 
         baseListener = new BaseListener();
 
@@ -150,10 +153,11 @@ public class StartPageActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPwd) &&
                     sp.getBoolean(MConstants.HAS_LOCAL_USER, false)) {
-                MUtils.showLoadingDialog(context);
+                MUtils.showLoadingDialog(context, null);
                 MachtalkSDK.getInstance().userLogin(userName, userPwd, null);
             } else {
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
+                overridePendingTransition(R.anim.slide_right_in, R.anim.anim_blank);
                 context.finish();
             }
         }
@@ -209,14 +213,6 @@ public class StartPageActivity extends AppCompatActivity {
      * 自定义回调监听
      */
     class BaseListener extends MachtalkSDKListener {
-        @Override
-        public void onServerConnectStatusChanged(MachtalkSDKConstant.ServerConnStatus serverConnStatus) {
-            super.onServerConnectStatusChanged(serverConnStatus);
-            if (serverConnStatus == MachtalkSDKConstant.ServerConnStatus.LOGOUT_KICKOFF) {
-                context.finish();
-                return;
-            }
-        }
 
         @Override
         public void onUserLogin(Result result, String user) {
@@ -239,6 +235,8 @@ public class StartPageActivity extends AppCompatActivity {
                     errMsg = getResources().getString(R.string.network_exception);
                 }
                 MUtils.showToast(context, errMsg);
+                Intent it = new Intent();
+                it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(new Intent(context, LoginAndSignUpActivity.class));
             }
             MUtils.hideLoadingDialog();
@@ -258,7 +256,6 @@ public class StartPageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        MachtalkSDK.getInstance().removeSdkListener(baseListener);
         MobclickAgent.onPageEnd("StartPage");
         MobclickAgent.onPause(this);
     }

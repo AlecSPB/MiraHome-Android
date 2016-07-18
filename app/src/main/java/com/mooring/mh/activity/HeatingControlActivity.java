@@ -79,7 +79,7 @@ public class HeatingControlActivity extends BaseActivity implements CustomToggle
     protected void initActivity() {
 
         deviceId = sp.getString(MConstants.DEVICE_ID, "");
-        temp_unit = sp.getBoolean(MConstants.TEMPERATURE_UNIT, true);
+        temp_unit = MUtils.getCurrTempUnit();
 
         listener = new BaseListener();
 

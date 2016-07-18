@@ -318,7 +318,7 @@ public class VerifyPhoneActivity extends BaseActivity {
         Intent it = new Intent();
         it.putExtra("isReturn", true);
         it.putExtra("verify_code", sms_code);
-        this.setResult(MConstants.CONFIR_PSW_RESULT, it);
+        this.setResult(MConstants.CHANGE_PSW_RESULT, it);
         this.finish();
     }
 

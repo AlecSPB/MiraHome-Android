@@ -9,6 +9,7 @@ import com.mooring.mh.activity.DryingControlActivity;
 import com.mooring.mh.activity.HeatingControlActivity;
 import com.mooring.mh.activity.SetWifiActivity;
 import com.mooring.mh.utils.MConstants;
+import com.mooring.mh.utils.MUtils;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -22,7 +23,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     private View layout_no_device;//无设备去连接
     private View layout_heating;
     private View layout_drying;
-    private boolean isDeviceExist = false;//设备是否在线标志
+    private int isDeviceExist = 0;//设备是否存在,0:默认,1:存在,2:不存在
 
     @Override
     protected int getLayoutId() {
@@ -48,13 +49,12 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
      * 判断设备是否在线
      */
     private void judgeDeviceIsOnline() {
-        if (sp.getBoolean(MConstants.DEVICE_LAN_ONLINE, false) ||
-                sp.getBoolean(MConstants.DEVICE_ONLINE, false)) {
+        if (MUtils.isCurrDeviceOnline()) {
             hideNoDeviceView();
-            isDeviceExist = true;
+            isDeviceExist = 1;
         } else {
             showNoDeviceView();
-            isDeviceExist = false;
+            isDeviceExist = 2;
         }
     }
 
@@ -62,7 +62,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
      * 显示无设备去连接界面
      */
     private void showNoDeviceView() {
-        if (!isDeviceExist) return;
+        if (isDeviceExist == 2) return;
         layout_control.setVisibility(View.GONE);
         if (layout_no_device == null) {
             ViewStub viewStub = (ViewStub) rootView.findViewById(R.id.VStub_no_device);
@@ -85,7 +85,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
      * 隐藏无设备去连接界面
      */
     private void hideNoDeviceView() {
-        if (isDeviceExist) return;
+        if (isDeviceExist == 1) return;
         layout_control.setVisibility(View.VISIBLE);
         if (layout_no_device != null) {
             layout_no_device.setVisibility(View.GONE);
@@ -108,10 +108,6 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onSwitch(String userId, int location, String fTag) {
-    }
-
-    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
@@ -119,6 +115,19 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
         }
     }
 
+    @Override
+    public void onSwitch(String userId, int location, String fTag) {
+        if (!isVisible()) return;
+        if (location == MConstants.OBSERVER_DEVICE_STATUS) {//设备上下线
+            if (fTag.equals(MConstants.DEVICE_ONLINE + "")) {
+                hideNoDeviceView();
+                isDeviceExist = 1;
+            } else if (fTag.equals(MConstants.DEVICE_OFFLINE + "")) {
+                showNoDeviceView();
+                isDeviceExist = 2;
+            }
+        }
+    }
 
     @Override
     protected void OnResume() {

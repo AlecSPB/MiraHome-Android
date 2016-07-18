@@ -33,13 +33,14 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
     /**
      * 创建新View，被LayoutManager所调用
      *
-     * @param parent
-     * @param viewType
-     * @return
+     * @param parent   ViewGroup
+     * @param viewType viewType
+     * @return ViewHolder
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.alarm_clock_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.alarm_clock_item, parent, false);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,8 +50,7 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             }
         });
 
-        ViewHolder vh = new ViewHolder(view);
-        return vh;
+        return new ViewHolder(view);
     }
 
     /**
@@ -60,7 +60,7 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
      * @param position
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         String times = data.get(position);
         if (times != null && !"".equals(times) && times.length() == 13) {
             String time = times.substring(0, 4);
@@ -75,18 +75,18 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
             holder.tglBtn_wake_up.setOnCheckedChangeListener(new CompoundButton.
                     OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                public void onCheckedChanged(CompoundButton btnView, boolean isChecked) {
                     if (onToggleBtnChange != null) {
-                        onToggleBtnChange.onChanged(buttonView, isChecked,position);
+                        onToggleBtnChange.onChanged(btnView, isChecked, holder.getAdapterPosition());
                     }
                 }
             });
             holder.tglBtn_clock_set.setOnCheckedChangeListener(new CompoundButton.
                     OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                public void onCheckedChanged(CompoundButton btnView, boolean isChecked) {
                     if (onToggleBtnChange != null) {
-                        onToggleBtnChange.onChanged(buttonView, isChecked,position);
+                        onToggleBtnChange.onChanged(btnView, isChecked, holder.getAdapterPosition());
                     }
                 }
             });
@@ -99,7 +99,7 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
     /**
      * 设置item点击监听
      *
-     * @param itemClickListener
+     * @param itemClickListener item点击监听
      */
     public void setItemClickListener(OnRecyclerItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -135,7 +135,7 @@ public class AlarmClockAdapter extends RecyclerView.Adapter<AlarmClockAdapter.Vi
     }
 
     public interface OnToggleBtnChange {
-        void onChanged(CompoundButton cb, boolean isChecked,int position);
+        void onChanged(CompoundButton cb, boolean isChecked, int position);
     }
 
     /**

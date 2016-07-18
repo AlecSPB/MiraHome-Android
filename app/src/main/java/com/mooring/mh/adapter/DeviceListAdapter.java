@@ -9,23 +9,23 @@ import android.widget.TextView;
 
 import com.machtalk.sdk.domain.Device;
 import com.mooring.mh.R;
-import com.mooring.mh.app.InitApplicationHelper;
-import com.mooring.mh.utils.MConstants;
 
 import java.util.List;
 
 /**
  * 设备列表适配器
- * <p>
+ * <p/>
  * Created by Will on 16/5/13.
  */
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceHolder> {
 
     private OnRecyclerItemClickListener itemClickListener;
     private List<Device> data;
+    private String currDeviceId;
 
-    public DeviceListAdapter(List<Device> mDeviceList) {
+    public DeviceListAdapter(List<Device> mDeviceList, String currDeviceId) {
         this.data = mDeviceList;
+        this.currDeviceId = currDeviceId;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         Device device = data.get(position);
         if (device != null) {
             holder.tv_device_name.setText(device.getName());
-            if (device.getId().equals(InitApplicationHelper.sp.getString(MConstants.DEVICE_ID, ""))) {
+            if (device.getId().equals(currDeviceId)) {
                 holder.imgView_check_box.setVisibility(View.VISIBLE);
             }
             if (!device.isOnline()) {
@@ -66,7 +66,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     /**
      * 设置item点击监听
      *
-     * @param itemClickListener
+     * @param itemClickListener item点击监听
      */
     public void setItemClickListener(OnRecyclerItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;

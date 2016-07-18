@@ -13,6 +13,12 @@
         <item name="android:windowBackground">@drawable/bg_activity_base</item>
     </style>
 
+    <style name="Theme.LoginAndSignUp" parent="Base.Theme">
+        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <!--Start和Guide页面使用的Theme-->
     <style name="ActivityAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/slide_right_in</item>

@@ -1,42 +1,60 @@
 package com.mooring.mh.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mooring.mh.R;
 import com.mooring.mh.utils.MConstants;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.message.PushAgent;
 
 /**
  * 注册成功,修改密码,设备连接成功,添加用户公用
- * <p/>
+ * <p>
  * Created by Will on 16/3/30.
  */
-public class CommonSuccessActivity extends AppCompatActivity {
+public class CommonSuccessActivity extends BaseActivity {
     private ImageView imgView_success_icon;
     private TextView tv_success_tip;
     private int entrance_flag = 0;//0X11:signUp  0X12:confirm  0X21:connected 0X30:add user
-    private Context context;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = this;
-        setContentView(R.layout.activity_common_success);
+    protected int getLayoutId() {
+        return R.layout.activity_common_success;
+    }
 
+    @Override
+    protected String getTitleName() {
+        return null;
+    }
+
+    @Override
+    protected void initActivity() {
         Intent it = getIntent();
         entrance_flag = it.getIntExtra(MConstants.ENTRANCE_FLAG, 0);
+    }
 
-        //如果不调用此方法，不仅会导致按照"几天不活跃"条件来推送失效
-        PushAgent.getInstance(context).onAppStart();
+    @Override
+    protected void initView() {
+        imgView_success_icon = (ImageView) findViewById(R.id.imgView_success_icon);
+        tv_success_tip = (TextView) findViewById(R.id.tv_success_tip);
 
-        initView();
+        switch (entrance_flag) {
+            case MConstants.ADD_USER_SUCCESS:
+                editImageText(R.drawable.img_add_new_user, R.string.tip_add_user_success);
+                break;
+            case MConstants.SIGN_UP_SUCCESS:
+                editImageText(R.drawable.img_badge_success, R.string.register_complete);
+                break;
+            case MConstants.CONFIRM_SUCCESS:
+                editImageText(R.drawable.img_badge_confirm_success, R.string.modify_success);
+                break;
+            case MConstants.CONNECTED_SUCCESS:
+                editImageText(R.drawable.img_badge_success, R.string.mooring_conn_success);
+                break;
+        }
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
@@ -58,7 +76,7 @@ public class CommonSuccessActivity extends AppCompatActivity {
                             break;
                     }
                     startActivity(intent);
-                    CommonSuccessActivity.this.finish();
+                    context.finish();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -66,31 +84,15 @@ public class CommonSuccessActivity extends AppCompatActivity {
         }, 1000);
     }
 
-    private void initView() {
-        imgView_success_icon = (ImageView) findViewById(R.id.imgView_success_icon);
-        tv_success_tip = (TextView) findViewById(R.id.tv_success_tip);
-
-        switch (entrance_flag) {
-            case MConstants.ADD_USER_SUCCESS:
-                editImageText(R.drawable.img_add_new_user, R.string.tip_add_user_success);
-                break;
-            case MConstants.SIGN_UP_SUCCESS:
-                editImageText(R.drawable.img_badge_success, R.string.register_complete);
-                break;
-            case MConstants.CONFIRM_SUCCESS:
-                editImageText(R.drawable.img_badge_confirm_success, R.string.modify_success);
-                break;
-            case MConstants.CONNECTED_SUCCESS:
-                editImageText(R.drawable.img_badge_success, R.string.mooring_conn_success);
-                break;
-        }
+    @Override
+    protected void OnClick(View v) {
     }
 
     /**
      * 修改图片背景和展示文字
      *
-     * @param imgRs
-     * @param tvRs
+     * @param imgRs 图片id
+     * @param tvRs  文本id
      */
     private void editImageText(int imgRs, int tvRs) {
         imgView_success_icon.setImageResource(imgRs);
